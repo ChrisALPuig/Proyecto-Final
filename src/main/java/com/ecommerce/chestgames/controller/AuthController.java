@@ -1,6 +1,7 @@
 package com.ecommerce.chestgames.controller;
 
 import com.ecommerce.chestgames.dto.AuthResponse;
+import com.ecommerce.chestgames.dto.CreateAdminRequest;
 import com.ecommerce.chestgames.dto.LoginRequest;
 import com.ecommerce.chestgames.dto.RegisterRequest;
 import com.ecommerce.chestgames.entity.Role;
@@ -11,6 +12,7 @@ import com.ecommerce.chestgames.utils.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -83,4 +85,31 @@ public class AuthController {
                 new AuthResponse(token, userDetails.getUsername(), roles)
         );
     }
+    @PostMapping("/create-admin")
+    //@PreAuthorize("hasRole('ADMIN')") // Solo usuarios con ROLE_ADMIN pueden crear otros admins
+    public ResponseEntity<?> createAdmin(@RequestBody @Valid CreateAdminRequest request) {
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            return ResponseEntity.badRequest().body("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already exists");
+        }
+
+        // Traer el rol ADMIN de la DB
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                .orElseThrow(() -> new RuntimeException("Admin role not found"));
+
+        User admin = new User();
+        admin.setUsername(request.getUsername());
+        admin.setEmail(request.getEmail());
+        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        admin.getRoles().add(adminRole);
+
+        userRepository.save(admin);
+
+        return ResponseEntity.ok("Admin created successfully");
+    }
+
 }

@@ -10,5 +10,8 @@ public class CreateAdminRequest {
     private String username;
 
     @NotBlank
+    private String email;
+
+    @NotBlank
     private String password;
 }
