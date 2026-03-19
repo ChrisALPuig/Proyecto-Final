@@ -1,34 +1,47 @@
 package com.ecommerce.chestgames.controller;
 
+import com.ecommerce.chestgames.dto.CartItemDTO;
 import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.service.CartService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/cart")
-@RequiredArgsConstructor
-@PreAuthorize("hasRole('USER')")
+@RequestMapping("/api/cart")
 public class CartController {
 
     private final CartService cartService;
 
-    @PostMapping("/add")
-    public void add(@RequestParam Long productId,
-                    @RequestParam int quantity,
-                    Authentication authentication) {
-
-        User user = (User) authentication.getPrincipal();
-        cartService.addProduct(productId, quantity, user);
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
     }
 
-    @DeleteMapping("/remove/{productId}")
-    public void remove(@PathVariable Long productId,
-                       Authentication authentication) {
+    @GetMapping
+    public List<CartItemDTO> getCart(@AuthenticationPrincipal User user) {
+        return cartService.getCart(user);
+    }
 
-        User user = (User) authentication.getPrincipal();
-        cartService.removeProduct(productId, user);
+    @PostMapping("/{gameId}")
+    public void addToCart(@AuthenticationPrincipal User user, @PathVariable Long gameId) {
+        cartService.addGameToCart(user, gameId, 1); // cantidad por defecto 1
+    }
+
+    @PutMapping("/{gameId}")
+    public void updateQuantity(@AuthenticationPrincipal User user,
+                               @PathVariable Long gameId,
+                               @RequestParam int quantity) {
+        cartService.updateGameQuantity(user, gameId, quantity);
+    }
+
+    @DeleteMapping("/{gameId}")
+    public void removeFromCart(@AuthenticationPrincipal User user, @PathVariable Long gameId) {
+        cartService.removeGameFromCart(user, gameId);
+    }
+
+    @DeleteMapping
+    public void clearCart(@AuthenticationPrincipal User user) {
+        cartService.clearCart(user);
     }
 }

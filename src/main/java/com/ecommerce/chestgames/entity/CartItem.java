@@ -4,20 +4,24 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+@Entity
 @Getter
 @Setter
-@Entity
 public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    // Cada item pertenece a un carrito
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    @ManyToOne
-    private Product product;
+    // Referencia al juego
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "game_id")
+    private Game game;
 
-    private Integer quantity;
+    private int quantity;
 }

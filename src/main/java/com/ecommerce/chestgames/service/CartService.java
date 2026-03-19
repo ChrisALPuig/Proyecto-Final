@@ -1,114 +1,104 @@
 package com.ecommerce.chestgames.service;
 
-import com.ecommerce.chestgames.entity.Cart;
+import com.ecommerce.chestgames.dto.CartItemDTO;
 import com.ecommerce.chestgames.entity.CartItem;
-import com.ecommerce.chestgames.entity.Product;
+import com.ecommerce.chestgames.entity.Game;
 import com.ecommerce.chestgames.entity.User;
+import com.ecommerce.chestgames.entity.Cart;
 import com.ecommerce.chestgames.repository.CartRepository;
-import com.ecommerce.chestgames.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import com.ecommerce.chestgames.repository.GameRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class CartService {
 
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
+    private final GameRepository gameRepository;
 
-    // ==============================
-    // OBTENER O CREAR CARRITO
-    // ==============================
-    private Cart getOrCreateCart(User user) {
-        return cartRepository.findByUser(user)
-                .orElseGet(() -> {
-                    Cart cart = new Cart();
-                    cart.setUser(user);
-                    return cartRepository.save(cart);
-                });
+    public CartService(CartRepository cartRepository, GameRepository gameRepository) {
+        this.cartRepository = cartRepository;
+        this.gameRepository = gameRepository;
     }
 
-    // ==============================
-    // AGREGAR PRODUCTO
-    // ==============================
-    @Transactional
-    public void addProduct(Long productId, Integer quantity, User user) {
+    public List<CartItemDTO> getCart(User user) {
+        Cart cart = cartRepository.findByUser(user)
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    newCart.setItems(new HashSet<>());
+                    return cartRepository.save(newCart);
+                });
 
-        if (quantity <= 0) {
-            throw new RuntimeException("La cantidad debe ser mayor a 0");
-        }
+        return cart.getItems().stream()
+                .map(item -> new CartItemDTO(
+                        item.getGame().getId(),
+                        item.getGame().getTitle(),
+                        item.getGame().getPrice(),
+                        item.getGame().getCoverImage(),
+                        item.getQuantity()
+                ))
+                .collect(Collectors.toList());
+    }
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+    public void addGameToCart(User user, Long gameId, int quantity) {
+        Cart cart = cartRepository.findByUser(user)
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    newCart.setItems(new HashSet<>());
+                    return cartRepository.save(newCart);
+                });
 
-        if (product.getStock() < quantity) {
-            throw new RuntimeException("Stock insuficiente");
-        }
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Game not found"));
 
-        Cart cart = getOrCreateCart(user);
-
-        Optional<CartItem> existingItem = cart.getItems()
-                .stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+        var existingItem = cart.getItems().stream()
+                .filter(i -> i.getGame().getId().equals(gameId))
                 .findFirst();
 
         if (existingItem.isPresent()) {
-
-            CartItem item = existingItem.get();
-            int newQuantity = item.getQuantity() + quantity;
-
-            if (product.getStock() < newQuantity) {
-                throw new RuntimeException("Stock insuficiente");
-            }
-
-            item.setQuantity(newQuantity);
-
+            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
         } else {
-
             CartItem newItem = new CartItem();
-            newItem.setCart(cart);
-            newItem.setProduct(product);
+            newItem.setGame(game);
             newItem.setQuantity(quantity);
-
+            newItem.setCart(cart);
             cart.getItems().add(newItem);
         }
 
         cartRepository.save(cart);
     }
 
-    // ==============================
-    // QUITAR PRODUCTO COMPLETAMENTE
-    // ==============================
-    @Transactional
-    public void removeProduct(Long productId, User user) {
+    public void updateGameQuantity(User user, Long gameId, int quantity) {
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        Cart cart = getOrCreateCart(user);
-
-        cart.getItems().removeIf(item ->
-                item.getProduct().getId().equals(productId)
-        );
+        cart.getItems().stream()
+                .filter(i -> i.getGame().getId().equals(gameId))
+                .findFirst()
+                .ifPresent(i -> i.setQuantity(quantity));
 
         cartRepository.save(cart);
     }
 
-    // ==============================
-    // LIMPIAR CARRITO
-    // ==============================
-    @Transactional
-    public void clearCart(User user) {
+    public void removeGameFromCart(User user, Long gameId) {
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        Cart cart = getOrCreateCart(user);
+        cart.getItems().removeIf(i -> i.getGame().getId().equals(gameId));
+
+        cartRepository.save(cart);
+    }
+
+    public void clearCart(User user) {
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
         cart.getItems().clear();
         cartRepository.save(cart);
-    }
-
-    // ==============================
-    // OBTENER CARRITO
-    // ==============================
-    public Cart getCart(User user) {
-        return getOrCreateCart(user);
     }
 }
