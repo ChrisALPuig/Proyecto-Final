@@ -40,4 +40,22 @@ public class GameController {
         if (game.getTags() != null) game.getTags().size();
         if (game.getFeatures() != null) game.getFeatures().size();
     }
+
+    @GetMapping("/search")
+    public List<Game> searchGames(@RequestParam String query,
+                                  @RequestParam(defaultValue = "all") String filter) {
+
+        if (query == null || query.isBlank()) {
+            return List.of(); // Retorna lista vacía si no hay query
+        }
+
+        List<Game> games = gameRepository.findByTitleContainingIgnoreCase(query);
+
+        // Inicializar colecciones para evitar lazy loading
+        games.forEach(this::initializeCollections);
+
+        // Opcional: puedes filtrar por "filter" si implementas categorías
+        // Ejemplo: filter = "sales", "news"
+        return games;
+    }
 }
