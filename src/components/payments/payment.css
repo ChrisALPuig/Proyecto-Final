@@ -295,6 +295,8 @@
   animation: slideDown 0.3s ease;
 }
 
+
+
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -519,4 +521,53 @@
   .product-preview-price {
     font-size: 11px;
   }
+
+  /* ===================================== */
+/* CAMPOS DE PAGO Y STRIPE CARD ELEMENT  */
+/* ===================================== */
+.payment-form input,
+.stripe-card-element {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #4d4d4d; /* gris oscuro */
+  color: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.payment-form input::placeholder {
+  color: #bbbbbb;
+}
+
+.payment-form input:focus,
+.stripe-card-element.focused {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* CardElement */
+.stripe-card-element {
+  padding: 12px 14px;
+  background-color: #4d4d4d;
+  color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* Placeholder del CardElement */
+.StripeElement .__PrivateStripeElement input::placeholder {
+  color: #bbbbbb;
+}
+
+/* Errores de Stripe */
+.StripeElement .StripeElement--invalid {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
 }

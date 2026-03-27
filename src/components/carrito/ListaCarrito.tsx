@@ -1,21 +1,70 @@
-import { IonContent, IonImg, IonRouterLink } from '@ionic/react';
+import { IonContent, IonImg } from '@ionic/react';
 import ImagenToggle from './fav.tsx';
 import { useCart } from '../../contexts/useCart.tsx';
+import { useHistory } from 'react-router';
 import './ListaCarrito.css';
 
 const ListaCarrito = () => {
   const { cartItems, removeFromCart } = useCart();
+  const history = useHistory();
 
-  // Calcula el subtotal sumando precio * cantidad de cada item
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
+  const generateOrderId = () => {
+    if (crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'ORDER-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+  };
+
+  const handleProceedToPayment = async () => {
+    if (cartItems.length === 0) {
+      alert('El carrito está vacío');
+      return;
+    }
+
+    const orderId = generateOrderId();
+
+    try {
+      // Por cada producto, crear un registro Payment en backend
+      for (const item of cartItems) {
+        const payload = {
+          orderId,
+          productName: item.name,
+          amount: Math.round(item.price * item.quantity), // en euros
+        };
+
+        const res = await fetch('http://localhost:8080/api/orders/continue-to-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (data.status !== 'success') {
+          alert(`Error creando el pago: ${data.message || data.status}`);
+          return;
+        }
+
+        // Guardar paymentId en localStorage para usarlo en Payment.tsx
+        localStorage.setItem('paymentId', data.paymentId);
+      }
+
+      // Guardar orderId en localStorage para usarlo en Payment.tsx
+      localStorage.setItem('orderId', orderId);
+
+      // Redirigir a la página de pago
+      history.push('/payment');
+    } catch (err) {
+      console.error('Error creando los pagos:', err);
+      alert('Error creando los pagos. Intenta nuevamente.');
+    }
+  };
+
   return (
     <IonContent>
-
-      {/* PASOS */}
       <div className="lista-carrito">
         <div className="item-carrito">
           <div className="circulo">1</div>
@@ -25,10 +74,7 @@ const ListaCarrito = () => {
         </div>
       </div>
 
-      {/* CONTENEDOR PRINCIPAL */}
       <div className="layout-carrito">
-
-        {/* CAJA IZQUIERDA (JUEGOS) */}
         <div className='caja-juego'>
           <span className='titulo-juego'>
             {cartItems.length} Item{cartItems.length !== 1 ? 's' : ''} in the cart
@@ -66,7 +112,6 @@ const ListaCarrito = () => {
           )}
         </div>
 
-        {/* CAJA DERECHA (RESUMEN) */}
         <div className="caja-resumen">
           <h2>Order Summary</h2>
 
@@ -80,18 +125,18 @@ const ListaCarrito = () => {
             <span>{subtotal.toFixed(2)}€</span>
           </div>
 
-          <IonRouterLink routerLink="/payment">
-            <button className="boton-pago">Continue to Payment</button>
-          </IonRouterLink>
+          <button className="boton-pago" onClick={handleProceedToPayment}>
+            Continue to Payment
+          </button>
         </div>
-
       </div>
 
-      {/* BOTÓN VOLVER HOME */}
-      <IonRouterLink routerLink="/home">
-        <button className="boton-home">← Back to shopping</button>
-      </IonRouterLink>
-
+      <IonImg
+        src="/assets/images/back-home.png"
+        className="boton-home"
+        onClick={() => history.push('/home')}
+        alt="Back to home"
+      />
     </IonContent>
   );
 };

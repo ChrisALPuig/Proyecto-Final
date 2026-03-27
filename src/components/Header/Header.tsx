@@ -11,29 +11,23 @@ const Header: React.FC = () => {
   const history = useHistory();
   const cartRef = useRef<HTMLDivElement>(null);
   const wishlistRef = useRef<HTMLDivElement>(null);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("all");
   const [cartPopoverOpen, setCartPopoverOpen] = useState(false);
   const [wishlistPopoverOpen, setWishlistPopoverOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const { isAuthenticated, logout } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+  const { isAuthenticated, logout } = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const filters = [
-    { id: "all", label: "Todos" },
-    { id: "games", label: "Juegos" },
-    { id: "sales", label: "Ofertas" },
-    { id: "news", label: "Noticias" },
-  ];
-
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
   const closeSearch = () => {
     setSearchOpen(false);
     setSearchQuery("");
-    setSelectedFilter("all");
     setSearchResults([]);
   };
 
@@ -49,15 +43,29 @@ const Header: React.FC = () => {
     setCartItems(cartItems.filter((item) => item.id !== itemId));
   };
 
-  const handleCartClick = () => setCartPopoverOpen(true);
-  const handleWishlistClick = () => setWishlistPopoverOpen(true);
+  // 🔒 Carrito y wishlist protegidos
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      history.push("/login", { from: "/cart" });
+      return;
+    }
+    setCartPopoverOpen(true);
+  };
 
-  // Función de búsqueda
+  const handleWishlistClick = () => {
+    if (!isAuthenticated) {
+      history.push("/login", { from: "/wishlist" });
+      return;
+    }
+    setWishlistPopoverOpen(true);
+  };
+
+  // Búsqueda sin filtros
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    if (!query) {
+    if (!query.trim()) {
       setSearchResults([]);
       return;
     }
@@ -65,7 +73,7 @@ const Header: React.FC = () => {
     fetch(
       `http://localhost:8080/api/games/search?query=${encodeURIComponent(
         query
-      )}&filter=${selectedFilter}`
+      )}`
     )
       .then((res) => res.json())
       .then((data) => setSearchResults(data))
@@ -105,6 +113,8 @@ const Header: React.FC = () => {
                   style={{ cursor: "pointer" }}
                 />
               </div>
+
+              {/* Usuario */}
               {!isAuthenticated ? (
                 <>
                   <button
@@ -121,14 +131,56 @@ const Header: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <User
-                  className="icon user-icon"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    logout();
-                    history.push("/home");
-                  }}
-                />
+                <div style={{ position: "relative" }}>
+                  <User
+                    className="icon user-icon"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  />
+                  {userMenuOpen && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "40px",
+                        right: 0,
+                        background: "white",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                        borderRadius: "6px",
+                        zIndex: 1000,
+                        width: "150px",
+                      }}
+                    >
+                      <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                        <li
+                          style={{
+                            padding: "10px",
+                            cursor: "pointer",
+                            borderBottom: "1px solid #eee",
+                          }}
+                          onClick={() => {
+                            history.push("/profile");
+                            setUserMenuOpen(false);
+                          }}
+                        >
+                          Mi perfil
+                        </li>
+                        <li
+                          style={{
+                            padding: "10px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            logout();
+                            history.push("/home");
+                            setUserMenuOpen(false);
+                          }}
+                        >
+                          Cerrar sesión
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 
@@ -139,7 +191,7 @@ const Header: React.FC = () => {
           </div>
         </IonToolbar>
 
-        {/* Barra de búsqueda expandida */}
+        {/* Barra de búsqueda */}
         {searchOpen && (
           <div className="search-bar-expanded">
             <div className="search-content">
@@ -158,22 +210,6 @@ const Header: React.FC = () => {
                 </button>
               </div>
 
-              {/* Filtros */}
-              <div className="filters-wrapper">
-                {filters.map((filter) => (
-                  <button
-                    key={filter.id}
-                    className={`filter-btn ${
-                      selectedFilter === filter.id ? "active" : ""
-                    }`}
-                    onClick={() => setSelectedFilter(filter.id)}
-                  >
-                    {filter.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Resultados de búsqueda */}
               <div className="search-results">
                 {searchResults.length === 0 && searchQuery && (
                   <p style={{ color: "black", padding: "8px 16px" }}>
@@ -228,7 +264,7 @@ const Header: React.FC = () => {
               </li>
               <li
                 onClick={() => {
-                  setWishlistPopoverOpen(true);
+                  handleWishlistClick();
                   setMenuOpen(false);
                 }}
               >

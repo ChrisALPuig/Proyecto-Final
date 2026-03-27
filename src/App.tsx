@@ -4,7 +4,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/home/Home.tsx';
 import Carrito from './pages/carrito/carrito.tsx';
 import carritojuego from './pages/carrito/carrito-juego.tsx';
-import payment from './pages/payment/payment.tsx';
+import Payment from './pages/payment/payment.tsx';
 import SupportPage from './pages/support/SupportPage.tsx';
 import OrderPayments from './pages/support/OrderPayments.tsx';
 import SignIn from './pages/auth/SignIn.tsx';
@@ -12,44 +12,34 @@ import SignUp from './pages/auth/SignUp.tsx';
 import Confirmation from './pages/support/Confirmacion.tsx';
 import Success from './pages/payment/success.tsx';
 import HowToPay from './pages/support/HowToPay.tsx';
+import Form from './pages/support/FormSupport.tsx';
+import GameDynamicPage from './pages/juegos/GameDynamicPage.tsx';
 
-/* Core CSS required for Ionic components to work properly */
+/* Ionic CSS */
 import '@ionic/react/css/core.css';
-
-/* Basic CSS for apps built with Ionic */
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
-
-/* Optional CSS utils that can be commented out */
 import '@ionic/react/css/padding.css';
 import '@ionic/react/css/float-elements.css';
 import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* import '@ionic/react/css/palettes/dark.always.css'; */
-/* import '@ionic/react/css/palettes/dark.class.css'; */
 import '@ionic/react/css/palettes/dark.system.css';
-
-/* Theme variables */
 import './theme/variables.css';
+
+/* Context Providers */
 import { AuthProvider } from './contexts/AuthContext.tsx';
-import Form from './pages/support/FormSupport.tsx';
 import { WishlistProvider } from './contexts/WishlistContext.tsx';
 import { CartProvider } from './contexts/useCart.tsx';
-import GameDynamicPage from './pages/juegos/GameDynamicPage.tsx';
 
+/* Stripe */
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
-
+/* Clave pública de Stripe */
+const stripePromise = loadStripe('pk_test_51SQ4n0EJyxBaZfwsZ5SnvsnQVwTfSXhrIzqLbwLlKRkVdTtaqdgn8RFQBH3FTVQzO8dO1dTZD9ggTsGoKJk3FdDv00fL1mnJ6w');
 
 setupIonicReact();
 
@@ -64,7 +54,14 @@ const App: React.FC = () => (
               <Route exact path="/game/:gameId" component={GameDynamicPage} />
               <Route exact path="/carrito" component={Carrito} />
               <Route exact path="/carrito-juego" component={carritojuego} />
-              <Route exact path="/payment" component={payment} />
+
+              {/* 🔥 Ruta de Stripe envuelta en Elements */}
+              <Route exact path="/payment" render={() => (
+                <Elements stripe={stripePromise}>
+                  <Payment />
+                </Elements>
+              )} />
+
               <Route exact path="/support" component={SupportPage} />
               <Route exact path="/orders-payments" component={OrderPayments} />
               <Route exact path="/login" component={SignIn} />

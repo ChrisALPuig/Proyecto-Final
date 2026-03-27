@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "../../contexts/useCart.tsx";
 import ImagenToggle from "../carrito/fav.tsx";
 import CartPopover from "../carrito/CartPopover.tsx";
+import { useHistory } from "react-router";
 import './css/doomContainer.css';
 
 interface Game {
@@ -35,6 +36,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
   const [imagesPerPage, setImagesPerPage] = useState(4);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCartOpen, setIsCartOpen] = useState(false); // controla popover
+  const history = useHistory(); 
 
   // Traer datos del juego
   useEffect(() => {
@@ -86,6 +88,18 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
     });
     setIsCartOpen(true); // abre el popover
   };
+
+  const handleBuyNow = () => {
+  addToCart({
+    id: game.id.toString(),
+    name: game.title,
+    price: game.price,
+    image: game.coverImage,
+    quantity: 1,
+  });
+
+  history.push("/carrito-juego"); // redirección automática
+};
 
   return (
     <div className="doom-hero">
@@ -143,9 +157,9 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
 
         <div className="botones">
           <button className="add-to-cart" onClick={handleAddToCart}>Añadir al carrito</button>
-          <IonRouterLink routerLink="/carrito-juego">
-            <button className="buy-now">Comprar ahora</button>
-          </IonRouterLink>
+          <button className="buy-now" onClick={handleBuyNow}>
+            Comprar ahora
+          </button>
         </div>
 
         <div className="wishlist-section">
