@@ -31,6 +31,7 @@
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: visible !important;
 
   /* altura del header */
   height: 60px;  /* Cambia este valor a la altura deseada */
@@ -98,6 +99,83 @@
   display: flex;
   align-items: center;
 }
+
+/* Contenedor del menú de usuario */
+.user-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 10000;
+}
+
+.user-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border-radius: 6px;
+  z-index: 10001;
+  width: 150px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.user-menu li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.user-menu li:last-child {
+  border-bottom: none;
+}
+
+.user-menu li:hover {
+  background-color: #f5f5f5;
+}
+
+.hover-user-menu {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  width: 220px;
+  background: #191b1f;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  z-index: 11000;
+  color: #fff;
+  padding: 10px;
+}
+
+.hover-user-menu-header {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #d1d5db;
+}
+
+.hover-user-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hover-user-menu li {
+  padding: 8px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.hover-user-menu li:hover {
+  background: rgba(255,255,255,0.12);
+}
+
 
 /* Dropdown del carrito */
 .cart-dropdown {

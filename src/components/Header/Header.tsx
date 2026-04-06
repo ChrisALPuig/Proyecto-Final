@@ -1,8 +1,11 @@
 import { IonHeader, IonToolbar, IonImg, IonText } from "@ionic/react";
 import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useHistory } from "react-router-dom";
 import { Search, ShoppingCart, Menu, X, User } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext.tsx";
+
+type MenuCoords = { top: number; left: number; };
 import CartPopover, { CartItem } from "../carrito/CartPopover.tsx";
 import WishlistPopover from "../carrito/WishlistPopover.tsx";
 import "./Header.css";
@@ -19,11 +22,36 @@ const Header: React.FC = () => {
   const [wishlistPopoverOpen, setWishlistPopoverOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-
+  const [menuCoords, setMenuCoords] = useState<MenuCoords>({ top: 0, left: 0 });
+  const userIconRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
   const { isAuthenticated, logout } = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const openUserMenu = () => {
+    if (closeTimeoutRef.current) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+
+    const rect = userIconRef.current?.getBoundingClientRect();
+    if (rect) {
+      setMenuCoords({ top: rect.bottom + 8, left: rect.left });
+    }
+    setUserMenuOpen(true);
+  };
+
+  const closeUserMenu = () => {
+    if (closeTimeoutRef.current) {
+      window.clearTimeout(closeTimeoutRef.current);
+    }
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setUserMenuOpen(false);
+      closeTimeoutRef.current = null;
+    }, 180);
+  };
 
   const closeSearch = () => {
     setSearchOpen(false);
@@ -82,7 +110,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <IonHeader>
+      <IonHeader className="header-fixed">
         <IonToolbar className="toolbar">
           <div className="header-container">
             <img src="/logo.png" alt="Logo" className="logo" />
@@ -131,55 +159,46 @@ const Header: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <div style={{ position: "relative" }}>
+                <div
+                  className="user-menu-container"
+                  ref={userIconRef}
+                  onMouseEnter={openUserMenu}
+                  onMouseLeave={closeUserMenu}
+                >
                   <User
                     className="icon user-icon"
                     style={{ cursor: "pointer" }}
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
                   />
-                  {userMenuOpen && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "40px",
-                        right: 0,
-                        background: "white",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                        borderRadius: "6px",
-                        zIndex: 1000,
-                        width: "150px",
-                      }}
-                    >
-                      <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                        <li
-                          style={{
-                            padding: "10px",
-                            cursor: "pointer",
-                            borderBottom: "1px solid #eee",
-                          }}
-                          onClick={() => {
-                            history.push("/profile");
-                            setUserMenuOpen(false);
-                          }}
-                        >
-                          Mi perfil
-                        </li>
-                        <li
-                          style={{
-                            padding: "10px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            logout();
-                            history.push("/home");
-                            setUserMenuOpen(false);
-                          }}
-                        >
-                          Cerrar sesión
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+                  {userMenuOpen &&
+                    createPortal(
+                      <div
+                        className="hover-user-menu"
+                        style={{
+                          position: "fixed",
+                          top: menuCoords.top,
+                          left: menuCoords.left,
+                          zIndex: 99999,
+                        }}
+                        onMouseEnter={openUserMenu}
+                        onMouseLeave={closeUserMenu}
+                      >
+                        <div className="hover-user-menu-header">Your account</div>
+                        <ul>
+                          <li>Your profile</li>
+                          <li>Orders &amp; settings</li>
+                          <li
+                            onClick={() => {
+                              logout();
+                              history.push("/home");
+                              setUserMenuOpen(false);
+                            }}
+                          >
+                            Sign out
+                          </li>
+                        </ul>
+                      </div>,
+                      document.body
+                    )}
                 </div>
               )}
             </div>

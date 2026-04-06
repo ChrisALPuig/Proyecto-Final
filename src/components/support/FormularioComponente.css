@@ -113,8 +113,29 @@
 .support-content {
   background-color: #ffffff;
   min-height: 100vh;
-  padding: 220px 190px 0; /* match support page width on desktop */
+  padding: 220px 20px 40px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.support-grid {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.contact {
+  width: 100%;
+  max-width: 720px;
+  background-color: #bc93e8;
+  border: 1px solid #000000;
+  margin: 24px auto 60px auto;
+  display: block;
+  padding: 24px;
+  box-sizing: border-box;
+  border-radius: 8px;
 }
 
 /* GRID */
@@ -187,11 +208,40 @@
 }
 
 .p-form{
-  margin-top: 10px;
-  margin-left: 0;
+  margin: 10px auto 0;
   width: 100%;
-  max-width: 700px;
+  max-width: 680px;
   color: #000000;
+  text-align: left;
+}
+
+.form-label {
+  text-align: left;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #000;
+  margin: 0 0 8px;
+}
+
+.p-form-1,
+.p-form-2,
+.p-form-3,
+.p-form-4 {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.inputs-form,
+.inputs-form-1,
+.inputs-form-2,
+.inputs-form-3,
+.inputs-form-4 {
+  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
 }
 
 .inputs-form,
@@ -212,6 +262,93 @@
 .inputs-form-4{
   min-height: 100px;
 }
+
+.attachment-zone {
+  position: relative;
+  border: 2px dashed #4a2ca6;
+  background: rgba(255,255,255,0.8);
+  border-radius: 10px;
+  min-height: 140px;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 15px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.p-form-4 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.attachment-zone.drag-active {
+  border-color: #8f0cff;
+  background: rgba(159,86,255,0.15);
+}
+
+.attachment-zone p {
+  margin: 0;
+  text-align: center;
+  color: #2b2b2b;
+}
+
+.attachment-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.attachment-error {
+  margin-top: 6px;
+  color: #b00020;
+}
+
+.attachment-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.attachment-preview {
+  border: 1px solid #999;
+  border-radius: 8px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  gap: 4px;
+}
+
+.attachment-thumb {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.attachment-remove {
+  border: none;
+  background-color: #dc3545;
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
 
 .p-form-1,
 .p-form-2,

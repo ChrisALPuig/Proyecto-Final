@@ -5,10 +5,8 @@ import HomeBien from '../../components/home/home.tsx';
 const Home: React.FC = () => {
   return (
     <IonPage>
+      <Header />
       <IonContent fullscreen>
-        <IonHeader className="header-fixed">
-        <Header />
-        </IonHeader>
         <HomeBien />
       </IonContent>
     </IonPage>

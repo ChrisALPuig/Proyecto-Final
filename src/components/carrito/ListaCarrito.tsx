@@ -65,10 +65,11 @@ const ListaCarrito = () => {
 
   return (
     <IonContent>
-      <div className="lista-carrito">
-        <div className="item-carrito">
-          <div className="circulo">1</div>
-          <span className="texto-carrito">Your Cart</span>
+      <div className="lista-carrito-page">
+        <div className="lista-carrito">
+          <div className="item-carrito">
+            <div className="circulo">1</div>
+            <span className="texto-carrito">Your Cart</span>
           <div className="circulo2">2</div>
           <span className="texto-carrito2">Payment</span>
         </div>
@@ -131,12 +132,15 @@ const ListaCarrito = () => {
         </div>
       </div>
 
-      <IonImg
-        src="/assets/images/back-home.png"
+      <button
         className="boton-home"
         onClick={() => history.push('/home')}
-        alt="Back to home"
-      />
+        type="button"
+      >
+        <span className="boton-home-arrow">←</span>
+        Back to home
+      </button>
+      </div>
     </IonContent>
   );
 };

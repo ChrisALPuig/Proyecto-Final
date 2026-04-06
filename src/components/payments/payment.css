@@ -279,6 +279,56 @@
   background-color: #807f7f;
 }
 
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.payment-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: #f8fafc;
+  color: #111827;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.payment-form input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.stripe-card-element {
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+.stripe-card-element .StripeElement {
+  background: transparent;
+}
+
+.payments-page {
+  padding-top: 90px; /* evita superposición con header fijo */
+}
+
+@media (max-width: 992px) {
+  .payments-page {
+    padding-top: 110px;
+  }
+}
+
+
 .payment-option.active {
   border-color: #667eea;
   background-color: #667eea;
