@@ -67,8 +67,20 @@ export default function App() {
       <main className="main-content">
         <div className="header">
           <h1>Admin Dashboard</h1>
-          <span>Bienvenido, {user.username}</span>
-          <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
+        </div>
+        <div className="profile-avatar">
+          <div className="avatar-icon">👤</div>
+          <div className="avatar-info">
+            <span>Bienvenido, {user.username}</span>
+            <button className="logout-btn" onClick={handleLogout} aria-label="Cerrar sesión">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: 'black' }}>
+                <path d="M4 21V3H14V9" stroke="black" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M14 14H20" stroke="black" strokeWidth="1.8" strokeLinecap="round" />
+                <path d="M17 11L20 14L17 17" stroke="black" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M10 12.5C10.8284 12.5 11.5 11.8284 11.5 11C11.5 10.1716 10.8284 9.5 10 9.5C9.17157 9.5 8.5 10.1716 8.5 11C8.5 11.8284 9.17157 12.5 10 12.5Z" fill="black" />
+              </svg>
+            </button>
+          </div>
         </div>
         <div className="tab-content">
           {activeTab === "payments" && <PaymentsTable />}

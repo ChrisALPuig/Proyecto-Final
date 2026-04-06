@@ -7,6 +7,47 @@
 .main-content {
   flex: 1;
   padding: 20px;
+  position: relative;
+}
+
+.profile-avatar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: white;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  z-index: 1000;
+}
+
+.avatar-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  font-size: 18px;
+}
+
+.avatar-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-info span {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .tab-buttons {
@@ -34,14 +75,14 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 20px;
 }
 
 .logout-btn {
   padding: 8px 15px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
   background-color: #dc2626;
   color: white;

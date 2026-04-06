@@ -1,13 +1,31 @@
-// src/components/SupportModal.jsx
-import { useState } from "react";
-import { updateSupportStatus } from "../services/supportService";
+import { useState, useEffect } from "react";
+import {
+  updateSupportStatus,
+  replyToSupport,
+  getMessages,
+} from "../services/supportService";
 import toast from "react-hot-toast";
 import "./SupportModal.css";
 
 export default function SupportModal({ request, onClose }) {
   const [responseText, setResponseText] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [lightbox, setLightbox] = useState({ open: false, src: "" });
+  const [loading, setLoading] = useState(false);
 
-  if (!request) return null;
+  useEffect(() => {
+    loadMessages();
+  }, [request.id]);
+
+  const loadMessages = async () => {
+    try {
+      const data = await getMessages(request.id);
+      setMessages(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Error cargando mensajes");
+    }
+  };
 
   const handleSubmit = async () => {
     if (!responseText.trim()) {
@@ -15,72 +33,108 @@ export default function SupportModal({ request, onClose }) {
       return;
     }
 
+    setLoading(true);
+
     try {
-      await updateSupportStatus(request.id, "RESOLVED");
-      toast.success("Solicitud marcada como resuelta");
-      onClose();
+      // Primero enviamos la respuesta
+      await replyToSupport(request.id, responseText);
+
+      // Luego cerramos el ticket
+      await updateSupportStatus(request.id, "CLOSED");
+
+      toast.success("Respuesta enviada y ticket cerrado");
+      setResponseText("");
+      loadMessages();
+      onClose(); // Cerramos el modal
+
     } catch (err) {
-      toast.error("Error al actualizar estado");
+      console.error(err);
+      toast.error(err.message || "Error al responder y cerrar ticket");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCancel = async () => {
-    try {
-      await updateSupportStatus(request.id, "CANCELLED");
-      toast.success("Solicitud cancelada");
-      onClose();
-    } catch (err) {
-      toast.error("Error al cancelar solicitud");
-    }
+  const renderAttachment = (att, idx) => {
+    const isImage = att.type.startsWith("image/");
+    const isPDF = att.type === "application/pdf";
+
+    return (
+      <div key={idx} className="attachment-item">
+        {isImage ? (
+          <img
+            src={`data:${att.type};base64,${att.data}`}
+            alt={att.name}
+            className="attachment-thumb"
+            onClick={() =>
+              setLightbox({ open: true, src: `data:${att.type};base64,${att.data}` })
+            }
+          />
+        ) : isPDF ? (
+          <a
+            href={`data:${att.type};base64,${att.data}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {att.name}
+          </a>
+        ) : (
+          <span>{att.name}</span>
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={onClose}>✖</button>
 
-        <h3>Solicitud #{request.id}</h3>
+        <h3>Ticket #{request.id}</h3>
         <p><strong>Email:</strong> {request.email}</p>
-        <p><strong>Order ID:</strong> {request.orderId}</p>
+        <p><strong>Order:</strong> {request.orderId}</p>
         <p><strong>Asunto:</strong> {request.subject}</p>
-        <p><strong>Descripción:</strong> {request.description}</p>
+        {request.description && (
+          <p className="request-description"><strong>Descripción:</strong> {request.description}</p>
+        )}
 
-        {request.attachments && request.attachments.length > 0 && (
-          <div>
+        {request.attachments?.length > 0 && (
+          <div className="attachments-section">
             <strong>Adjuntos:</strong>
-            <ul>
-              {request.attachments.map((att, idx) => (
-                <li key={idx}>
-                  <a
-                    href={`data:application/octet-stream;base64,${att}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Archivo {idx + 1}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div className="attachments-grid">{request.attachments.map(renderAttachment)}</div>
           </div>
         )}
 
-        <div className="response-section">
-          <textarea
-            placeholder="Escribe tu respuesta..."
-            value={responseText}
-            onChange={(e) => setResponseText(e.target.value)}
-          ></textarea>
+        <div className="chat">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={msg.sender === "ADMIN" ? "admin-msg" : "user-msg"}
+            >
+              <strong>{msg.sender}:</strong> {msg.message}
+            </div>
+          ))}
+        </div>
 
-          <div className="modal-actions">
-            <button className="resolve-btn" onClick={handleSubmit}>
-              Responder y marcar como resuelto
-            </button>
-            <button className="cancel-btn" onClick={handleCancel}>
-              Cancelar solicitud
-            </button>
-          </div>
+        <textarea
+          placeholder="Escribe tu respuesta..."
+          value={responseText}
+          onChange={(e) => setResponseText(e.target.value)}
+          disabled={loading}
+        />
+
+        <div className="modal-actions">
+          <button onClick={handleSubmit} disabled={loading}>
+            {loading ? "Procesando..." : "Responder y cerrar"}
+          </button>
         </div>
       </div>
+
+      {lightbox.open && (
+        <div className="lightbox" onClick={() => setLightbox({ open: false, src: "" })}>
+          <img src={lightbox.src} alt="Preview" className="lightbox-img" />
+        </div>
+      )}
     </div>
   );
 }

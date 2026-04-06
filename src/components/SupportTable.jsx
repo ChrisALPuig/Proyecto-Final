@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { getAllSupportRequests, updateSupportStatus } from "../services/supportService";
+import {
+  getAllSupportRequests,
+  updateSupportStatus,
+  deleteSupport
+} from "../services/supportService";
 import SupportModal from "./SupportModal";
 import toast from "react-hot-toast";
 import "./SupportTable.css";
@@ -20,13 +24,21 @@ export default function SupportTable() {
 
   useEffect(() => {
     let data = [...requests];
-    if (filterStatus !== "ALL") data = data.filter(r => r.status === filterStatus);
+
+    // Solo mostrar tickets no eliminados
+    data = data.filter(r => !r.deleted);
+
+    if (filterStatus !== "ALL") {
+      data = data.filter(r => r.status === filterStatus);
+    }
+
     if (search.trim() !== "") {
       data = data.filter(r =>
         r.email.toLowerCase().includes(search.toLowerCase()) ||
         r.orderId.toLowerCase().includes(search.toLowerCase())
       );
     }
+
     setFiltered(data);
     setCurrentPage(1);
   }, [requests, search, filterStatus]);
@@ -43,7 +55,17 @@ export default function SupportTable() {
   const handleUpdateStatus = async (id, status) => {
     try {
       await updateSupportStatus(id, status);
-      toast.success(`Solicitud ${status}`);
+      toast.success(`Estado actualizado a ${status}`);
+      fetchRequests();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteSupport(id);
+      toast.success("Solicitud eliminada");
       fetchRequests();
     } catch (err) {
       toast.error(err.message);
@@ -64,11 +86,12 @@ export default function SupportTable() {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
           <option value="ALL">Todos</option>
           <option value="OPEN">Abiertos</option>
-          <option value="RESOLVED">Resueltos</option>
-          <option value="CANCELLED">Cancelados</option>
+          <option value="IN_PROGRESS">En progreso</option>
+          <option value="CLOSED">Cerrados</option>
         </select>
       </div>
 
@@ -83,6 +106,7 @@ export default function SupportTable() {
             <th>Acciones</th>
           </tr>
         </thead>
+
         <tbody>
           {displayed.map(r => (
             <tr key={r.id}>
@@ -93,8 +117,12 @@ export default function SupportTable() {
               <td>{r.status}</td>
               <td>
                 <button onClick={() => setSelectedRequest(r)}>Ver</button>
-                <button onClick={() => handleUpdateStatus(r.id, "RESOLVED")}>Resuelto</button>
-                <button onClick={() => handleUpdateStatus(r.id, "CANCELLED")}>Cancelar</button>
+                <button onClick={() => handleUpdateStatus(r.id, "IN_PROGRESS")}>
+                  En progreso
+                </button>
+                <button onClick={() => handleDelete(r.id)}>
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}
@@ -114,7 +142,13 @@ export default function SupportTable() {
       </div>
 
       {selectedRequest && (
-        <SupportModal request={selectedRequest} onClose={() => setSelectedRequest(null)} />
+        <SupportModal
+          request={selectedRequest}
+          onClose={() => {
+            setSelectedRequest(null);
+            fetchRequests();
+          }}
+        />
       )}
     </div>
   );
