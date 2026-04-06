@@ -8,11 +8,11 @@ public class FormSupportDTO {
     private String orderId;
     private String subject;
     private String description;
-    private List<String> attachments;
+    private List<AttachmentDTO> attachments;
 
     // getters & setters
-    public List<String> getAttachments() { return attachments; }
-    public void setAttachments(List<String> attachments) { this.attachments = attachments; }
+    public List<AttachmentDTO> getAttachments() { return attachments; }
+    public void setAttachments(List<AttachmentDTO> attachments) { this.attachments = attachments; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

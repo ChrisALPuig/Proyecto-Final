@@ -1,8 +1,6 @@
 package com.ecommerce.chestgames.entity;
 
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,22 +15,27 @@ public class SupportRequest {
     private String orderId;
     private String subject;
 
-    @Column(length = 1000)
+    @Column(length = 2000)
     private String description;
 
     @Enumerated(EnumType.STRING)
     private SupportStatus status;
 
-    @ElementCollection
-    @CollectionTable(name = "support_attachments", joinColumns = @JoinColumn(name = "support_id"))
-    @Column(name = "file_data", columnDefinition = "LONGTEXT")
-    private List<String> attachments = new ArrayList<>();
+    private boolean deleted = false;
 
-    // getters & setters
-    public List<String> getAttachments() { return attachments; }
-    public void setAttachments(List<String> attachments) { this.attachments = attachments; }
+    @OneToMany(mappedBy = "supportRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SupportMessage> messages;
 
+    @OneToMany(mappedBy = "supportRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    // Getters y Setters
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -46,12 +49,18 @@ public class SupportRequest {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public SupportStatus getStatus() {
-        return status;
-    }
+    public SupportStatus getStatus() { return status; }
+    public void setStatus(SupportStatus status) { this.status = status; }
 
-    public void setStatus(SupportStatus status) {
-        this.status = status;
-    }
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 
+    public List<SupportMessage> getMessages() { return messages; }
+    public void setMessages(List<SupportMessage> messages) { this.messages = messages; }
+
+    public List<Attachment> getAttachments() { return attachments; }
+    public void setAttachments(List<Attachment> attachments) { this.attachments = attachments; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }
