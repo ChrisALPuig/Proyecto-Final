@@ -1,7 +1,7 @@
 import { IonPage } from "@ionic/react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext.tsx";
 import "./login.css";
 
 const Login: React.FC = () => {
@@ -12,12 +12,12 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [fieldsError, setFieldsError] = useState({ username: false, password: false });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    // Validación de campos vacíos
     const newFieldsError = { username: !username, password: !password };
     setFieldsError(newFieldsError);
 
@@ -25,6 +25,8 @@ const Login: React.FC = () => {
       setError("Por favor, completa todos los campos.");
       return;
     }
+
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:8080/auth/login", {
@@ -42,7 +44,6 @@ const Login: React.FC = () => {
         } else if (res.status === 500) {
           friendlyMessage = "Error del servidor, inténtalo más tarde.";
         }
-
         throw new Error(friendlyMessage);
       }
 
@@ -51,6 +52,8 @@ const Login: React.FC = () => {
       history.push("/home");
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,6 +72,7 @@ const Login: React.FC = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className={fieldsError.username ? "input-error" : ""}
+            disabled={loading}
           />
 
           <label>Password</label>
@@ -77,9 +81,12 @@ const Login: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={fieldsError.password ? "input-error" : ""}
+            disabled={loading}
           />
 
-          <button type="submit">Login</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
 
           <p className="signup-link">
             Don't have an account? <a href="/register">Sign Up</a>

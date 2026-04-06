@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import SupportHeader from "./SupportHeader.tsx";
 import "./FormularioComponente.css";
+import TicketView from "../../pages/support/ticketview.tsx";
+import { useAuth } from "../../contexts/AuthContext.tsx";
 
 const FormularioComponente: React.FC = () => {
 
@@ -16,6 +18,7 @@ const FormularioComponente: React.FC = () => {
   const [attachments, setAttachments] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [attachmentError, setAttachmentError] = useState("");
+  const [submittedTicket, setSubmittedTicket] = useState<any>(null);
 
   const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
@@ -61,62 +64,63 @@ const FormularioComponente: React.FC = () => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const readFileAsBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result;
-        if (typeof result === "string") resolve(result);
-        else reject(new Error("Error al leer la imagen"));
-      };
-      reader.onerror = (err) => reject(err);
-      reader.readAsDataURL(file);
-    });
-  };
-
-  // Enviar formulario
-  const handleSubmit = async () => {
-    let attachmentData: string[] = [];
-
-    try {
-      attachmentData = await Promise.all(attachments.map((file) => readFileAsBase64(file)));
-    } catch (readError) {
-      console.error(readError);
-      alert("Error al procesar los archivos adjuntos");
-      return;
-    }
-
-    const data = {
-      email,
-      orderId,
-      subject,
-      description,
-      attachments: attachmentData
+  const readFileAsBase64 = (file: File): Promise<{name:string,type:string,data:string}> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        // separar el prefijo data:...;base64,
+        const base64Data = result.split(",")[1];
+        resolve({ name: file.name, type: file.type, data: base64Data });
+      } else reject(new Error("Error al leer la imagen"));
     };
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+};
 
-    try {
-      const response = await fetch("http://localhost:8080/api/support", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
+const { token } = useAuth(); // usar el contexto de AuthContext que guardamos antes
 
-      if (!response.ok) {
-        throw new Error("Error al enviar");
-      }
+const handleSubmit = async () => {
+  let attachmentData: {name:string,type:string,data:string}[] = [];
 
-      alert("Solicitud enviada correctamente");
+  try {
+    attachmentData = await Promise.all(attachments.map((file) => readFileAsBase64(file)));
+  } catch (readError) {
+    console.error(readError);
+    alert("Error al procesar los archivos adjuntos");
+    return;
+  }
 
-      // Redirigir
-      history.push("/confirmacion");
-
-    } catch (error) {
-      console.error(error);
-      alert("Error al enviar la solicitud");
-    }
+  const data = {
+    email,
+    orderId,
+    subject,
+    description,
+    attachments: attachmentData
   };
+
+  try {
+    const response = await fetch("http://localhost:8080/api/support", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // <-- esto es clave
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) throw new Error("Error al enviar");
+
+    const ticket = await response.json();
+    setSubmittedTicket(ticket);
+
+  } catch (error) {
+    console.error(error);
+    alert("Error al enviar la solicitud");
+  }
+};
 
   return (
     <>
@@ -162,7 +166,8 @@ const FormularioComponente: React.FC = () => {
           </p>
         </div>
 
-        <div className="contact">
+         {!submittedTicket ? (
+          <div className="contact">
           <div className="p-form">
 
             <p className="form-label">Your email address *</p>
@@ -250,7 +255,6 @@ const FormularioComponente: React.FC = () => {
                 </div>
               )}
             </div>
-
           </div>
 
           <div className="mover-boton">
@@ -263,6 +267,9 @@ const FormularioComponente: React.FC = () => {
           </div>
 
         </div>
+       ) : (
+    <TicketView ticketData={submittedTicket} />
+       )}
       </div>
     </>
   );
