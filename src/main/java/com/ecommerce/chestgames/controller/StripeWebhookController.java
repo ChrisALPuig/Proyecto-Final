@@ -21,31 +21,56 @@ public class StripeWebhookController {
     private String endpointSecret;
 
     @PostMapping("/webhook")
-    public String handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
-        Event event;
+    public String handleWebhook(@RequestBody String payload,
+                                @RequestHeader("Stripe-Signature") String sigHeader) {
 
         try {
             // Verifica la firma del webhook
-            event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
-        } catch (SignatureVerificationException e) {
-            // Firma inválida
-            return "Webhook error: " + e.getMessage();
-        }
+            Event event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
 
-        // Manejar PaymentIntentSucceeded
-        if ("payment_intent.succeeded".equals(event.getType())) {
-            PaymentIntent intent = (PaymentIntent) event.getDataObjectDeserializer()
-                    .getObject().orElse(null);
-            if (intent != null) {
-                // Buscar pago en la DB y actualizar
-                Payment payment = paymentRepository.findByPaymentId(intent.getId());
-                if (payment != null) {
-                    payment.setStatus("success");
-                    paymentRepository.save(payment);
+            if ("payment_intent.succeeded".equals(event.getType())) {
+                PaymentIntent intent = (PaymentIntent) event.getDataObjectDeserializer()
+                        .getObject().orElse(null);
+
+                if (intent != null) {
+                    String orderId = intent.getMetadata().get("orderId");
+
+                    Payment payment = null;
+
+                    // Buscar por orderId primero
+                    if (orderId != null) {
+                        payment = paymentRepository.findByOrderId(orderId);
+                    }
+
+                    // Fallback: buscar por paymentId
+                    if (payment == null) {
+                        payment = paymentRepository.findByPaymentId(intent.getId());
+                    }
+
+                    if (payment != null) {
+                        // ⚡ Solo actualizar paymentId y status si aún no es "success"
+                        if (!"success".equals(payment.getStatus())) {
+                            payment.setStatus("success");
+                        }
+
+                        payment.setPaymentId(intent.getId()); // actualizar paymentId si hace falta
+
+                        // ⚡ No modificar amount (ya está en euros)
+                        paymentRepository.save(payment);
+
+                        System.out.println("Pago completado: orderId=" + orderId + ", paymentId=" + intent.getId());
+                    } else {
+                        System.err.println("Pago no encontrado para PaymentIntent: " + intent.getId());
+                    }
                 }
             }
-        }
 
-        return "";
+            return "success"; // Stripe espera 2xx
+
+        } catch (SignatureVerificationException e) {
+            return "Webhook signature verification failed: " + e.getMessage();
+        } catch (Exception e) {
+            return "Webhook processing error: " + e.getMessage();
+        }
     }
 }

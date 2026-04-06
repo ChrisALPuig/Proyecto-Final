@@ -6,6 +6,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,77 +20,64 @@ public class PaymentController {
     @Autowired
     private PaymentRepository paymentRepository;
 
-    /**
-     * Crea un PaymentIntent para un carrito completo
-     */
     @PostMapping("/create-intent")
     public Map<String, String> createPaymentIntent(@RequestBody Map<String, Object> payload) {
         Map<String, String> response = new HashMap<>();
 
         try {
-            // Obtener items desde el payload
             List<Map<String, Object>> items = (List<Map<String, Object>>) payload.get("items");
+            String orderId = payload.get("orderId").toString();
 
-            // Calcular el total en centavos
-            long amount = items.stream()
-                    .mapToLong(item -> {
+            // Calcular total en euros
+            double totalEuros = items.stream()
+                    .mapToDouble(item -> {
                         double price = Double.parseDouble(item.get("price").toString());
                         int quantity = Integer.parseInt(item.get("quantity").toString());
-                        return Math.round(price * 100) * quantity; // Convertir a centavos
+                        return price * quantity; // en euros
                     })
                     .sum();
 
-            // Crear PaymentIntent
+            // Convertir a centavos para Stripe
+            long amountInCents = Math.round(totalEuros * 100);
+
+            // Crear PaymentIntent en Stripe con metadata orderId
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(amount)
+                    .setAmount(amountInCents)
                     .setCurrency("eur")
+                    .putMetadata("orderId", orderId)
                     .build();
 
             PaymentIntent intent = PaymentIntent.create(params);
 
-            // Guardar en la base de datos si quieres (opcional)
-            Payment payment = new Payment();
-            payment.setPaymentId(intent.getId());
-            payment.setAmount(amount);
-            payment.setStatus("created");
-            paymentRepository.save(payment);
+            // Actualizar registro existente en BD
+            Payment payment = paymentRepository.findByOrderId(orderId);
+            if (payment != null) {
+                payment.setPaymentId(intent.getId());
+                payment.setAmount((long) totalEuros); // ⚡ guardar en euros
+                payment.setStatus("success");         // ⚡ status final
+                paymentRepository.save(payment);
+            }
 
-            // Devolver clientSecret al frontend
+            // Devolver clientSecret y paymentId al frontend
             response.put("clientSecret", intent.getClientSecret());
+            response.put("paymentId", intent.getId());
+
+            System.out.println("PaymentIntent creado: " + intent.getId() + ", total: " + totalEuros + "€");
 
         } catch (StripeException e) {
             response.put("error", e.getMessage());
+            System.err.println("StripeException: " + e.getMessage());
         } catch (Exception e) {
             response.put("error", e.getMessage());
+            System.err.println("Exception: " + e.getMessage());
         }
 
         return response;
     }
 
-    @PostMapping("/update/{paymentId}")
-    public Map<String, String> updatePayment(
-            @PathVariable String paymentId,
-            @RequestBody Map<String, String> payload) {
-
-        Map<String, String> response = new HashMap<>();
-        try {
-            Payment payment = paymentRepository.findByPaymentId(paymentId);
-            if (payment != null) {
-                if (payload.containsKey("status")) {
-                    payment.setStatus(payload.get("status"));
-                }
-                if (payload.containsKey("stripePaymentId")) {
-                    payment.setPaymentId(payload.get("stripePaymentId"));
-                }
-                paymentRepository.save(payment);
-                response.put("status", "success");
-            } else {
-                response.put("status", "not_found");
-            }
-        } catch (Exception e) {
-            response.put("status", "error");
-            response.put("message", e.getMessage());
-        }
-        return response;
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Payment> getAllPayments() {
+        return paymentRepository.findAll();
     }
 }

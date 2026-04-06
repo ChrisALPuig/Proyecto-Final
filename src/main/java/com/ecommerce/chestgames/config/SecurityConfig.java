@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/cart/**").permitAll()
 
                         // Endpoints que requieren autenticación
-                        .requestMatchers("/admin/**").authenticated()
+                        .requestMatchers("/api/payments").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/products/**").authenticated() // Solo POST, PUT, DELETE
                         .anyRequest().permitAll()
                 )
