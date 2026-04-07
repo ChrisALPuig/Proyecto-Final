@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   updateSupportStatus,
   replyToSupport,
@@ -12,6 +12,7 @@ export default function SupportModal({ request, onClose }) {
   const [messages, setMessages] = useState([]);
   const [lightbox, setLightbox] = useState({ open: false, src: "" });
   const [loading, setLoading] = useState(false);
+  const chatRef = useRef(null);
 
   useEffect(() => {
     loadMessages();
@@ -20,12 +21,28 @@ export default function SupportModal({ request, onClose }) {
   const loadMessages = async () => {
     try {
       const data = await getMessages(request.id);
-      setMessages(data);
+
+      // Agregamos el mensaje inicial del usuario
+      const initialMsg = {
+        id: 0,
+        sender: "USER",
+        message: request.description,
+        attachments: request.attachments || [],
+        createdAt: request.createdAt
+      };
+
+      setMessages([initialMsg, ...data]);
     } catch (err) {
       console.error(err);
       toast.error("Error cargando mensajes");
     }
   };
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const handleSubmit = async () => {
     if (!responseText.trim()) {
@@ -36,50 +53,37 @@ export default function SupportModal({ request, onClose }) {
     setLoading(true);
 
     try {
-      // Primero enviamos la respuesta
       await replyToSupport(request.id, responseText);
-
-      // Luego cerramos el ticket
-      await updateSupportStatus(request.id, "CLOSED");
-
-      toast.success("Respuesta enviada y ticket cerrado");
+      toast.success("Respuesta enviada");
       setResponseText("");
-      loadMessages();
-      onClose(); // Cerramos el modal
-
+      await loadMessages();
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "Error al responder y cerrar ticket");
+      toast.error(err.message || "Error al enviar respuesta");
     } finally {
       setLoading(false);
     }
   };
 
   const renderAttachment = (att, idx) => {
-    const isImage = att.type.startsWith("image/");
-    const isPDF = att.type === "application/pdf";
+    const isImage = att.fileType.startsWith("image/");
+    const isPDF = att.fileType === "application/pdf";
 
     return (
       <div key={idx} className="attachment-item">
         {isImage ? (
           <img
-            src={`data:${att.type};base64,${att.data}`}
-            alt={att.name}
+            src={att.filePath} // <-- URL directa
+            alt={att.fileName}
             className="attachment-thumb"
-            onClick={() =>
-              setLightbox({ open: true, src: `data:${att.type};base64,${att.data}` })
-            }
+            onClick={() => setLightbox({ open: true, src: att.filePath })}
           />
         ) : isPDF ? (
-          <a
-            href={`data:${att.type};base64,${att.data}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {att.name}
+          <a href={att.filePath} target="_blank" rel="noopener noreferrer">
+            {att.fileName}
           </a>
         ) : (
-          <span>{att.name}</span>
+          <span>{att.fileName}</span>
         )}
       </div>
     );
@@ -94,24 +98,29 @@ export default function SupportModal({ request, onClose }) {
         <p><strong>Email:</strong> {request.email}</p>
         <p><strong>Order:</strong> {request.orderId}</p>
         <p><strong>Asunto:</strong> {request.subject}</p>
-        {request.description && (
-          <p className="request-description"><strong>Descripción:</strong> {request.description}</p>
-        )}
 
         {request.attachments?.length > 0 && (
           <div className="attachments-section">
             <strong>Adjuntos:</strong>
-            <div className="attachments-grid">{request.attachments.map(renderAttachment)}</div>
+            <div className="attachments-grid">
+              {request.attachments.map(renderAttachment)}
+            </div>
           </div>
         )}
 
-        <div className="chat">
+        <div className="chat" ref={chatRef}>
           {messages.map((msg) => (
             <div
               key={msg.id}
               className={msg.sender === "ADMIN" ? "admin-msg" : "user-msg"}
             >
               <strong>{msg.sender}:</strong> {msg.message}
+
+              {msg.attachments?.map((att, idx) => renderAttachment(att, idx))}
+
+              <div style={{ fontSize: "0.75rem", color: "#666", marginTop: "2px" }}>
+                {new Date(msg.createdAt).toLocaleString()}
+              </div>
             </div>
           ))}
         </div>
@@ -125,7 +134,16 @@ export default function SupportModal({ request, onClose }) {
 
         <div className="modal-actions">
           <button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Procesando..." : "Responder y cerrar"}
+            {loading ? "Procesando..." : "Responder"}
+          </button>
+          <button
+            onClick={async () => {
+              await updateSupportStatus(request.id, "CLOSED");
+              toast.success("Ticket cerrado");
+              onClose();
+            }}
+          >
+            Cerrar ticket
           </button>
         </div>
       </div>

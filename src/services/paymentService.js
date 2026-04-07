@@ -1,4 +1,5 @@
 // src/services/paymentService.js
+import { parseJsonResponse } from "./fetchUtils";
 const API_URL = "http://localhost:8080/api/payments";
 
 export const getAllPayments = async () => {
@@ -16,8 +17,7 @@ export const getAllPayments = async () => {
       throw new Error(`Error al cargar pagos: ${res.status}`);
     }
 
-    const data = await res.json();
-    return data;
+    return await parseJsonResponse(res);
   } catch (err) {
     console.error(err);
     throw err;

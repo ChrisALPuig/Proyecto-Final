@@ -1,3 +1,5 @@
+import { parseJsonResponse } from "./fetchUtils";
+
 const API_URL = "http://localhost:8080/auth";
 
 export async function loginAdmin({ username, password }) {
@@ -8,5 +10,5 @@ export async function loginAdmin({ username, password }) {
   });
 
   if (!res.ok) throw new Error("Login failed");
-  return res.json(); // Devuelve { token, username, roles }
+  return parseJsonResponse(res); // Devuelve { token, username, roles }
 }
