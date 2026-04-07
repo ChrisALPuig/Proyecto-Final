@@ -37,6 +37,7 @@ import { CartProvider } from './contexts/useCart.tsx';
 /* Stripe */
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import TicketView from './pages/support/TicketView.tsx';
 
 /* Clave pública de Stripe */
 const stripePromise = loadStripe('pk_test_51SQ4n0EJyxBaZfwsZ5SnvsnQVwTfSXhrIzqLbwLlKRkVdTtaqdgn8RFQBH3FTVQzO8dO1dTZD9ggTsGoKJk3FdDv00fL1mnJ6w');
@@ -54,6 +55,7 @@ const App: React.FC = () => (
               <Route exact path="/game/:gameId" component={GameDynamicPage} />
               <Route exact path="/carrito" component={Carrito} />
               <Route exact path="/carrito-juego" component={carritojuego} />
+              <Route path="/ticket/:id" component={TicketView} exact />
 
               {/* 🔥 Ruta de Stripe envuelta en Elements */}
               <Route exact path="/payment" render={() => (

@@ -1,78 +1,140 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SupportHeader from "../../components/support/SupportHeader.tsx";
 import "../../components/support/FormularioComponente.css";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext.tsx";
+
+interface Attachment {
+  name: string;
+  type: string;
+  filePath: string;
+}
 
 interface Message {
   sender: "user" | "admin";
   message: string;
-  attachments?: { name: string; type: string; data: string }[];
+  attachments?: Attachment[];
   createdAt: string;
 }
 
-interface TicketViewProps {
-  ticketData: {
+interface Ticket {
+  id: number;
+  email: string;
+  orderId: string;
+  subject: string;
+  description: string;
+  attachments: Attachment[];
+  responses: {
     id: number;
-    email: string;
-    subject: string;
-    description: string;
-    attachments: { name: string; type: string; data: string }[];
-  };
+    message: string;
+    responder: "user" | "admin";
+    respondedAt: string;
+    attachments?: Attachment[];
+  }[];
+  createdAt: string;
 }
 
-const TicketView: React.FC<TicketViewProps> = ({ ticketData }) => {
+const TicketView: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const { token } = useAuth();
+  const [ticket, setTicket] = useState<Ticket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    const fetchTicket = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/support/${ticketData.id}/messages`);
-        if (!res.ok) throw new Error("Error al obtener mensajes");
-        const data: Message[] = await res.json();
-        setMessages([
+        const res = await fetch(`http://localhost:8080/api/tickets/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Error cargando ticket");
+
+        const ticketData: Ticket = await res.json();
+        setTicket(ticketData);
+
+        // Formatear mensajes
+        const formattedMessages: Message[] = [
           {
             sender: "user",
             message: ticketData.description,
             attachments: ticketData.attachments,
-            createdAt: new Date().toISOString(),
+            createdAt: ticketData.createdAt,
           },
-          ...data
-        ]);
+          ...ticketData.responses.map((resp) => ({
+            sender: (resp.responder === "admin" ? "admin" : "user") as "user" | "admin",
+            message: resp.message,
+            attachments: resp.attachments || [],
+            createdAt: resp.respondedAt,
+          })),
+        ];
+
+        setMessages(formattedMessages);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-    fetchMessages();
-  }, [ticketData]);
+
+    fetchTicket();
+  }, [id, token]);
+
+  // Auto scroll hacia abajo
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   if (loading) return <p style={{ textAlign: "center" }}>Loading...</p>;
+  if (!ticket) return <p>Error cargando ticket</p>;
 
   return (
     <>
       <SupportHeader />
       <div className="support-content">
-        <h1 className="title-contact-uno">{ticketData.subject}</h1>
+        <h1 className="title-contact-uno">{ticket.subject}</h1>
 
-        <div className="chat" style={{ maxHeight: "400px", overflowY: "auto" }}>
+        <div
+          className="chat"
+          ref={chatRef}
+          style={{ maxHeight: "400px", overflowY: "auto", padding: "10px" }}
+        >
           {messages.map((msg, i) => (
             <div
               key={i}
               className={msg.sender === "user" ? "user-msg" : "admin-msg"}
+              style={{
+                marginBottom: "16px",
+                background: msg.sender === "user" ? "#e1f5fe" : "#fff3e0",
+                padding: "10px",
+                borderRadius: "8px",
+              }}
             >
-              <p>{msg.message}</p>
+              <p style={{ margin: "0 0 5px 0" }}>{msg.message}</p>
+
               {msg.attachments &&
                 msg.attachments.map((att, idx) => (
                   <img
                     key={idx}
-                    src={`data:${att.type};base64,${att.data}`}
+                    src={att.filePath}
                     alt={att.name}
                     className="attachment-thumb"
-                    style={{ marginTop: "6px", maxHeight: "100px", cursor: "pointer" }}
-                    onClick={() => window.open(`data:${att.type};base64,${att.data}`, "_blank")}
+                    style={{
+                      marginTop: "6px",
+                      maxHeight: "100px",
+                      cursor: "pointer",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => window.open(att.filePath, "_blank")}
                   />
                 ))}
+
+              <div style={{ fontSize: "0.8rem", color: "#666", marginTop: "4px" }}>
+                {new Date(msg.createdAt).toLocaleString()}
+              </div>
             </div>
           ))}
         </div>
