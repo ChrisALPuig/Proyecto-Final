@@ -1,4 +1,4 @@
-﻿import { IonRouterLink } from "@ionic/react";
+import { IonRouterLink } from "@ionic/react";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./HowToPayComponente.css"; // <-- nuevo CSS
 import SupportHeader from "./SupportHeader.tsx";
