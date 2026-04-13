@@ -38,6 +38,8 @@ public class SecurityConfig {
 
                         // Endpoints que requieren autenticación
                         .requestMatchers("/api/payments").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/payments/**").authenticated()
+                        .requestMatchers("/api/orders/**").authenticated()
                         .requestMatchers("/api/user/**").authenticated()
                         .requestMatchers("/products/**").authenticated() // Solo POST, PUT, DELETE
                         .anyRequest().permitAll()

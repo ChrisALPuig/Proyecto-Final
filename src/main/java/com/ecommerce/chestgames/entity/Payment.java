@@ -1,6 +1,7 @@
 package com.ecommerce.chestgames.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,8 +13,12 @@ public class Payment {
 
     private String paymentId;
     private String productName;
+    private String gameImage;
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String items;
     private String orderId;
-    private Long amount; // en euros
+    private BigDecimal amount; // en euros con decimales
     private String status;
 
     private LocalDateTime createdAt;
@@ -32,11 +37,17 @@ public class Payment {
     public String getProductName() { return productName; }
     public void setProductName(String productName) { this.productName = productName; }
 
+    public String getGameImage() { return gameImage; }
+    public void setGameImage(String gameImage) { this.gameImage = gameImage; }
+
+    public String getItems() { return items; }
+    public void setItems(String items) { this.items = items; }
+
     public String getOrderId() { return orderId; }
     public void setOrderId(String orderId) { this.orderId = orderId; }
 
-    public Long getAmount() { return amount; }
-    public void setAmount(Long amount) { this.amount = amount; }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

@@ -37,9 +37,9 @@ public class StripeWebhookController {
 
                     Payment payment = null;
 
-                    // Buscar por orderId primero
+                    // Buscar por orderId primero (tomar el más reciente si hay múltiples)
                     if (orderId != null) {
-                        payment = paymentRepository.findByOrderId(orderId);
+                        payment = paymentRepository.findFirstByOrderIdOrderByCreatedAtDesc(orderId);
                     }
 
                     // Fallback: buscar por paymentId
