@@ -26,6 +26,8 @@ interface Payment {
   amount: number;
   status: string;
   createdAt: string;
+  gameImage?: string;
+  items?: string;
 }
 
 const defaultProfile = {
@@ -61,6 +63,14 @@ const OrderSettings: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("ordersHistory");
   const [message, setMessage] = useState("");
+  const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
+
+  const toggleOrderDetails = (orderId: number) => {
+    setExpandedOrders((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
+  };
   
   // Email/Password change modals
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -337,28 +347,63 @@ const OrderSettings: React.FC = () => {
               ) : filteredPayments.length === 0 ? (
                 <div className="orders-empty">{t("noPaymentsFound")}</div>
               ) : (
-                filteredPayments.map((payment) => (
-                  <article key={payment.id} className="order-card">
-                    <div className="order-card-header">
-                      <div className="order-card-header-left">
-                        <p className="order-number">ORDER #{payment.orderId}</p>
-                        <span className="order-date">{new Date(payment.createdAt).toLocaleDateString()}</span>
-                      </div>
-                      <span className="order-price">€{payment.amount.toFixed(2)}</span>
-                    </div>
+                filteredPayments.map((payment) => {
+                  let paymentItems: { id: number; name: string; quantity: number; price: number; image: string; }[] = [];
+                  if (payment.items) {
+                    try {
+                      paymentItems = JSON.parse(payment.items);
+                    } catch (error) {
+                      console.error('Error parsing order items:', error);
+                    }
+                  }
 
-                    <div className="order-card-body">
-                      <div className="order-thumb">{payment.productName?.charAt(0) || "#"}</div>
-                      <div className="order-details">
-                        <p className="order-product">{payment.productName}</p>
-                        <div className="order-meta">
-                          <span className="order-subtitle">{payment.status}</span>
-                          <span className="order-amount-tag">{payment.paymentId}</span>
+                  return (
+                    <article key={payment.id} className="order-card">
+                      <div className="order-card-header">
+                        <div className="order-card-header-left">
+                          <p className="order-number">ORDER #{payment.orderId}</p>
+                          <span className="order-date">{new Date(payment.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <span className="order-price">€{Number(payment.amount).toFixed(2)}</span>
+                      </div>
+
+                      <div className="order-card-body">
+                        <div className="order-thumb">{payment.productName?.charAt(0) || "#"}</div>
+                        <div className="order-details">
+                          <p className="order-product">{payment.productName}</p>
+                          <div className="order-meta">
+                            <span className="order-subtitle">{payment.status}</span>
+                            <span className="order-amount-tag">{payment.paymentId}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </article>
-                ))
+
+                      <button type="button" className="order-details-btn" onClick={() => toggleOrderDetails(payment.id)}>
+                        {expandedOrders[payment.id] ? 'Ocultar detalles' : 'Ver detalles'}
+                      </button>
+
+                      {expandedOrders[payment.id] && (
+                        <div className="order-items-details">
+                          <h4>Items comprados:</h4>
+                          {paymentItems.length > 0 ? (
+                            paymentItems.map((item) => (
+                              <div key={item.id} className="order-item-row">
+                                <img src={item.image} alt={item.name} className="order-item-image" />
+                                <div className="order-item-info">
+                                  <p className="order-item-name">{item.name}</p>
+                                  <p className="order-item-qty">Cantidad: {item.quantity}</p>
+                                </div>
+                                <span className="order-item-price">€{Number(item.price).toFixed(2)}</span>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="order-item-empty">No se encontraron los productos de esta orden.</p>
+                          )}
+                        </div>
+                      )}
+                    </article>
+                  );
+                })
               )}
             </div>
           ) : activeSection === "accountAndLocale" ? (

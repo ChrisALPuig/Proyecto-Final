@@ -1,12 +1,16 @@
 import { IonContent, IonImg } from '@ionic/react';
 import { useState } from 'react';
 import { useCart } from '../../contexts/useCart.tsx';
+import { useAuth } from '../../contexts/AuthContext.tsx';
+import { useNotification } from '../../contexts/NotificationContext.tsx';
 import { useHistory } from 'react-router';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import './payment.css';
 
 const Payments = () => {
-  const { cartItems } = useCart();
+  const { cartItems, clearCart } = useCart();
+  const { token, isAuthenticated } = useAuth();
+  const { addNotification } = useNotification();
   const history = useHistory();
   const stripe = useStripe();
   const elements = useElements();
@@ -34,6 +38,7 @@ const Payments = () => {
     bankCode: '',
     bankHolder: '',
   });
+  const [saveCardData, setSaveCardData] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const orderId = localStorage.getItem('orderId');
@@ -45,7 +50,20 @@ const Payments = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const clearCardDetails = async () => {
+    const cardElement = elements?.getElement(CardElement);
+    if (cardElement && cardElement.clear) {
+      cardElement.clear();
+    }
+    setFormData(prev => ({ ...prev, cardName: '' }));
+  };
+
   const handleSubmit = async () => {
+    if (!isAuthenticated || !token) {
+      alert('Debes iniciar sesión para completar el pago.');
+      history.push('/login');
+      return;
+    }
     if (!orderId) { alert('No hay pedido creado'); return; }
     if (!paymentMethod) { alert('Selecciona un método de pago'); return; }
 
@@ -57,7 +75,10 @@ const Payments = () => {
         // 1️⃣ Crear PaymentIntent en backend
         const res = await fetch('http://localhost:8080/api/payments/create-intent', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ items, orderId }),
         });
 
@@ -87,8 +108,26 @@ const Payments = () => {
           // 3️⃣ Actualizar paymentId en backend (opcional)
           await fetch(`http://localhost:8080/api/payments/update/${paymentId}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({ stripePaymentId: result.paymentIntent.id }),
+          });
+
+          if (!saveCardData) {
+            await clearCardDetails();
+          }
+
+          await clearCart();
+
+          addNotification({
+            id: `payment-success-${Date.now()}`,
+            title: 'Pago Completado',
+            message: `Tu pago de ${total.toFixed(2)}€ ha sido procesado exitosamente.`,
+            createdAt: new Date().toISOString(),
+            read: false,
+            link: '/orders-settings',
           });
 
           history.push('/success');
@@ -96,14 +135,36 @@ const Payments = () => {
 
       } else if (paymentMethod === 'paypal') {
         if (!formData.paypalEmail) { alert('Ingresa tu email de PayPal'); setLoading(false); return; }
-        alert('PayPal aún no implementado, pago simulado');
+        
+        await clearCart();
+
+        addNotification({
+          id: `payment-paypal-${Date.now()}`,
+          title: 'Pago PayPal Registrado',
+          message: `Tu pago de ${total.toFixed(2)}€ vía PayPal ha sido registrado.`,
+          createdAt: new Date().toISOString(),
+          read: false,
+          link: '/orders-settings',
+        });
+        
         history.push('/success');
 
       } else if (paymentMethod === 'bank') {
         if (!formData.bankHolder || !formData.bankAccount || !formData.bankCode) {
           alert('Completa todos los datos bancarios'); setLoading(false); return;
         }
-        alert('Transferencia bancaria registrada (simulado)');
+        
+        await clearCart();
+
+        addNotification({
+          id: `payment-bank-${Date.now()}`,
+          title: 'Transferencia Bancaria Registrada',
+          message: `Tu transferencia de ${total.toFixed(2)}€ ha sido registrada. Ref: ${orderId}`,
+          createdAt: new Date().toISOString(),
+          read: false,
+          link: '/orders-settings',
+        });
+        
         history.push('/success');
       }
 
@@ -139,7 +200,7 @@ const Payments = () => {
               >
                 💳 Credit/Debit Card
               </button>
-              {paymentMethod === 'card' && (
+                  {paymentMethod === 'card' && (
                 <div className='payment-form card-form'>
                   <input
                     name="cardName"
@@ -150,6 +211,14 @@ const Payments = () => {
                   <div className="stripe-card-element">
                     <CardElement options={cardElementOptions} />
                   </div>
+                  <label className="save-card-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={saveCardData}
+                      onChange={() => setSaveCardData(prev => !prev)}
+                    />
+                    Guardar datos de tarjeta para futuros pagos
+                  </label>
                 </div>
               )}
 

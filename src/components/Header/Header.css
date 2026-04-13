@@ -167,9 +167,10 @@
 }
 
 .notification-item {
+  position: relative;
   cursor: pointer;
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 16px 12px 12px;
   margin-bottom: 8px;
   background: rgba(255, 255, 255, 0.04);
   transition: background 0.2s ease;
@@ -181,6 +182,33 @@
 
 .notification-item.unread {
   border: 1px solid rgba(59, 130, 246, 0.6);
+}
+
+.notification-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.notification-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 999px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.notification-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .notification-item strong {

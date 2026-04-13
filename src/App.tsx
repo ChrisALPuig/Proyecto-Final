@@ -7,22 +7,14 @@ import carritojuego from './pages/carrito/carrito-juego.tsx';
 import Payment from './pages/payment/payment.tsx';
 import SupportPage from './pages/support/SupportPage.tsx';
 import OrderPayments from './pages/support/OrderPayments.tsx';
-<<<<<<< HEAD
-=======
-import SignIn from './pages/auth/SignIn.tsx';
-import SignUp from './pages/auth/SignUp.tsx';
->>>>>>> d4ae5e8475a07c89e6062f17bd69d2da114542a3
 import Confirmation from './pages/support/Confirmacion.tsx';
 import Success from './pages/payment/success.tsx';
 import HowToPay from './pages/support/HowToPay.tsx';
 import Form from './pages/support/FormSupport.tsx';
 import GameDynamicPage from './pages/juegos/GameDynamicPage.tsx';
-<<<<<<< HEAD
 import MyTickets from './pages/support/MyTickets.tsx';
 import OrdersSettingsPage from './pages/support/OrdersSettingsPage.tsx';
 import UserOrders from './pages/orders/UserOrders';
-=======
->>>>>>> d4ae5e8475a07c89e6062f17bd69d2da114542a3
 
 /* Ionic CSS */
 import '@ionic/react/css/core.css';
@@ -42,11 +34,8 @@ import './theme/variables.css';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { WishlistProvider } from './contexts/WishlistContext.tsx';
 import { CartProvider } from './contexts/useCart.tsx';
-<<<<<<< HEAD
 import { NotificationProvider } from './contexts/NotificationContext.tsx';
 import { LanguageProvider } from './contexts/LanguageContext.tsx';
-=======
->>>>>>> d4ae5e8475a07c89e6062f17bd69d2da114542a3
 
 /* Stripe */
 import { Elements } from '@stripe/react-stripe-js';
@@ -63,7 +52,6 @@ const App: React.FC = () => (
     <AuthProvider>
       <WishlistProvider>
         <CartProvider>
-<<<<<<< HEAD
           <LanguageProvider>
             <NotificationProvider>
               <IonReactRouter>
@@ -75,11 +63,6 @@ const App: React.FC = () => (
                   <Home initialAuthMode={(props.location.state as any)?.authMode || null} />
                 )}
               />
-=======
-          <IonReactRouter>
-            <IonRouterOutlet>
-              <Route exact path="/home" component={Home} />
->>>>>>> d4ae5e8475a07c89e6062f17bd69d2da114542a3
               <Route exact path="/game/:gameId" component={GameDynamicPage} />
               <Route exact path="/carrito" component={Carrito} />
               <Route exact path="/carrito-juego" component={carritojuego} />
@@ -93,7 +76,6 @@ const App: React.FC = () => (
               )} />
 
               <Route exact path="/support" component={SupportPage} />
-<<<<<<< HEAD
               <Route exact path="/my-tickets" component={MyTickets} />
               <Route exact path="/orders-payments" component={OrderPayments} />
               <Route exact path="/orders-settings" component={OrdersSettingsPage} />
@@ -108,24 +90,15 @@ const App: React.FC = () => (
                 path="/register"
                 render={() => <Home initialAuthMode="register" />}
               />
-=======
-              <Route exact path="/orders-payments" component={OrderPayments} />
-              <Route exact path="/login" component={SignIn} />
-              <Route exact path="/register" component={SignUp} />
->>>>>>> d4ae5e8475a07c89e6062f17bd69d2da114542a3
               <Route exact path="/confirmacion" component={Confirmation} />
               <Route exact path="/success" component={Success} />
               <Route exact path="/howtopay" component={HowToPay} />
               <Route exact path="/form" component={Form} />
               <Redirect exact from="/" to="/home" />
             </IonRouterOutlet>
-<<<<<<< HEAD
               </IonReactRouter>
             </NotificationProvider>
           </LanguageProvider>
-=======
-          </IonReactRouter>
->>>>>>> d4ae5e8475a07c89e6062f17bd69d2da114542a3
         </CartProvider>
       </WishlistProvider>
     </AuthProvider>

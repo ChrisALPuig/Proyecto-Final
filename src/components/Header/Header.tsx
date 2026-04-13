@@ -34,7 +34,7 @@ const Header: React.FC = () => {
   const closeTimeoutRef = useRef<number | null>(null);
   const { isAuthenticated, logout, avatar, token, setAvatar } = useAuth();
   const { t } = useLanguage();
-  const { notifications, unreadCount, markAllRead, markAsRead } = useNotification();
+  const { notifications, unreadCount, markAllRead, markAsRead, removeNotification } = useNotification();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
@@ -345,10 +345,23 @@ const Header: React.FC = () => {
                               history.push(notification.link);
                             }
                             markAsRead(notification.id);
+                            removeNotification(notification.id);
                             setNotificationMenuOpen(false);
                           }}
                         >
-                          <strong>{notification.title}</strong>
+                          <div className="notification-item-top">
+                            <strong>{notification.title}</strong>
+                            <button
+                              type="button"
+                              className="notification-close"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                removeNotification(notification.id);
+                              }}
+                            >
+                              ×
+                            </button>
+                          </div>
                           <p>{notification.message}</p>
                         </div>
                       ))

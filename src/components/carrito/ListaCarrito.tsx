@@ -1,11 +1,13 @@
 import { IonContent, IonImg } from '@ionic/react';
 import ImagenToggle from './fav.tsx';
 import { useCart } from '../../contexts/useCart.tsx';
+import { useAuth } from '../../contexts/AuthContext.tsx';
 import { useHistory } from 'react-router';
 import './ListaCarrito.css';
 
 const ListaCarrito = () => {
   const { cartItems, removeFromCart } = useCart();
+  const { token, isAuthenticated } = useAuth();
   const history = useHistory();
 
   const subtotal = cartItems.reduce(
@@ -24,42 +26,68 @@ const ListaCarrito = () => {
       return;
     }
 
+    if (!isAuthenticated || !token) {
+      alert('Debes iniciar sesión para continuar con el pago.');
+      history.push('/login');
+      return;
+    }
+
     const orderId = generateOrderId();
 
     try {
-      // Por cada producto, crear un registro Payment en backend
-      for (const item of cartItems) {
-        const payload = {
-          orderId,
-          productName: item.name,
-          amount: Math.round(item.price * item.quantity), // en euros
-        };
+      // Calcular monto total del carrito
+      const totalAmount = Number(cartItems
+      .reduce((acc, item) => acc + item.price * item.quantity, 0)
+      .toFixed(2));
+      
+      // Crear nombre del producto (si es 1, el nombre; si son varios, indicar múltiples)
+      const productName = cartItems.length === 1 ? cartItems[0].name : `${cartItems.length} items`;
+      
+      // Tomar la primera imagen para la tarjeta (o combinar)
+      const gameImage = cartItems.length > 0 ? cartItems[0].image : null;
 
-        const res = await fetch('http://localhost:8080/api/orders/continue-to-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+      const items = cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: Number(item.price.toFixed(2)),
+        quantity: item.quantity,
+        image: item.image,
+      }));
 
-        const data = await res.json();
+      // Crear UN SOLO Payment consolidado
+      const payload = {
+        orderId,
+        productName,
+        amount: totalAmount,
+        gameImage,
+        items,
+      };
 
-        if (data.status !== 'success') {
-          alert(`Error creando el pago: ${data.message || data.status}`);
-          return;
-        }
+      const res = await fetch('http://localhost:8080/api/orders/continue-to-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-        // Guardar paymentId en localStorage para usarlo en Payment.tsx
-        localStorage.setItem('paymentId', data.paymentId);
+      const data = await res.json();
+
+      if (data.status !== 'success') {
+        alert(`Error creando el pago: ${data.message || data.status}`);
+        return;
       }
 
-      // Guardar orderId en localStorage para usarlo en Payment.tsx
+      // Guardar paymentId y orderId en localStorage
+      localStorage.setItem('paymentId', data.paymentId);
       localStorage.setItem('orderId', orderId);
 
       // Redirigir a la página de pago
       history.push('/payment');
     } catch (err) {
-      console.error('Error creando los pagos:', err);
-      alert('Error creando los pagos. Intenta nuevamente.');
+      console.error('Error creando el pago:', err);
+      alert('Error creando el pago. Intenta nuevamente.');
     }
   };
 
