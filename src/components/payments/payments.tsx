@@ -1,6 +1,7 @@
 import { IonContent, IonImg } from '@ionic/react';
 import { useState } from 'react';
 import { useCart } from '../../contexts/useCart.tsx';
+import { useLanguage } from '../../contexts/LanguageContext.tsx';
 import { useAuth } from '../../contexts/AuthContext.tsx';
 import { useNotification } from '../../contexts/NotificationContext.tsx';
 import { useHistory } from 'react-router';
@@ -9,6 +10,7 @@ import './payment.css';
 
 const Payments = () => {
   const { cartItems, clearCart } = useCart();
+  const { t } = useLanguage();
   const { token, isAuthenticated } = useAuth();
   const { addNotification } = useNotification();
   const history = useHistory();
@@ -182,9 +184,9 @@ const Payments = () => {
         <div className="lista-carrito">
           <div className="item-carrito">
             <div className="circulo-payment">1</div>
-            <span className="texto-carrito-payment">Your Cart</span>
+            <span className="texto-carrito-payment">{t('yourCart')}</span>
             <div className="circulo2-payment">2</div>
-            <span className="texto-carrito2-payment">Payment</span>
+            <span className="texto-carrito2-payment">{t('payment')}</span>
           </div>
         </div>
 

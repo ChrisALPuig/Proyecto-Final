@@ -2,6 +2,7 @@ import { IonPopover, IonButton, IonIcon } from "@ionic/react";
 import { close, add, remove } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import { useCart } from "../../contexts/useCart.tsx";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./CartPopover.css";
 
 interface CartPopoverProps {
@@ -13,6 +14,7 @@ interface CartPopoverProps {
 const CartPopover: React.FC<CartPopoverProps> = ({ isOpen, onClose }) => {
   const history = useHistory();
   const { cartItems, updateQuantity, removeFromCart, getSubtotal } = useCart();
+  const { t } = useLanguage();
 
   const subtotal = getSubtotal();
 
@@ -39,7 +41,7 @@ const CartPopover: React.FC<CartPopoverProps> = ({ isOpen, onClose }) => {
       <div className="cart-popover-container">
         {/* Header */}
         <div className="cart-popover-header">
-          <h2>Your Cart</h2>
+          <h2>{t("yourCart")}</h2>
           <button className="cart-popover-close" onClick={onClose}>
             <IonIcon icon={close} />
           </button>
@@ -48,7 +50,7 @@ const CartPopover: React.FC<CartPopoverProps> = ({ isOpen, onClose }) => {
         {/* Cart Items */}
         <div className="cart-popover-items">
           {cartItems.length === 0 ? (
-            <div className="cart-popover-empty">Your cart is empty</div>
+            <div className="cart-popover-empty">{t("yourCartEmpty")}</div>
           ) : (
             cartItems.map(item => (
               <div key={item.id} className="cart-popover-item">
@@ -113,7 +115,7 @@ const CartPopover: React.FC<CartPopoverProps> = ({ isOpen, onClose }) => {
               className="cart-btn-secondary"
               onClick={handleViewCart}
             >
-              View Cart
+              {t("viewCart")}
             </IonButton>
             <IonButton
               expand="block"
@@ -121,7 +123,7 @@ const CartPopover: React.FC<CartPopoverProps> = ({ isOpen, onClose }) => {
               className="cart-btn-primary"
               onClick={handleProceedPayment}
             >
-              Proceed to Payment
+              {t("proceedToPayment")}
             </IonButton>
           </div>
         )}

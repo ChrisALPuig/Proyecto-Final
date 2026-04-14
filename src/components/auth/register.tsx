@@ -1,7 +1,15 @@
 import { IonPage } from "@ionic/react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
+import Setup2FA from "./Setup2FA";
 import "./register.css";
+
+interface RegisterResponse {
+  token: string;
+  username: string;
+  roles: string[];
+  user: { id: number; email: string; username: string };
+}
 
 const Register: React.FC = () => {
   const history = useHistory();
@@ -11,6 +19,9 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [fieldsError, setFieldsError] = useState({ email: false, username: false, password: false });
+  const [showSetup2FA, setShowSetup2FA] = useState(false);
+  const [token, setToken] = useState("");
+  const [registeredEmail, setRegisteredEmail] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,12 +58,39 @@ const Register: React.FC = () => {
         throw new Error(friendlyMessage);
       }
 
-      await res.text();
-      history.push("/login");
+      const data: RegisterResponse = await res.json();
+      console.log("Registro exitoso:", data);
+      
+      // Guardar el token y email en el estado
+      setToken(data.token);
+      setRegisteredEmail(data.user.email);
+      
+      // Mostrar Setup2FA
+      setShowSetup2FA(true);
     } catch (err: any) {
+      console.error("Error en registro:", err);
       setError(err.message);
     }
   };
+
+  const handleSetup2FAComplete = () => {
+    history.push("/login");
+  };
+
+  const handleSetup2FASkip = () => {
+    history.push("/login");
+  };
+
+  if (showSetup2FA) {
+    return (
+      <Setup2FA
+        token={token}
+        email={registeredEmail}
+        onComplete={handleSetup2FAComplete}
+        onSkip={handleSetup2FASkip}
+      />
+    );
+  }
 
   return (
     <IonPage>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useNotification } from "../../contexts/NotificationContext.tsx";
 import { replyToTicket } from "../../services/ticketService.ts";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./TicketModal.css";
 
 interface Ticket {
@@ -35,6 +36,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
 }) => {
   const { token } = useAuth();
   const { addNotification } = useNotification();
+  const { t } = useLanguage();
   const [responseText, setResponseText] = useState("");
   const [loading, setLoading] = useState(false);
   const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
@@ -48,7 +50,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
 
   const handleSubmitResponse = async () => {
     if (!responseText.trim()) {
-      alert("La respuesta no puede estar vacía");
+      alert(t("replyCannotBeEmpty"));
       return;
     }
 
@@ -56,12 +58,12 @@ const TicketModal: React.FC<TicketModalProps> = ({
 
     try {
       await replyToTicket(ticket.id, responseText, token!);
-      alert("Respuesta enviada");
+      alert(t("replySent"));
       setResponseText("");
       onTicketUpdated?.();
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Error al enviar respuesta");
+      alert(err.message || t("replySendError"));
     } finally {
       setLoading(false);
     }
@@ -83,11 +85,11 @@ const TicketModal: React.FC<TicketModalProps> = ({
         body: "status=CLOSED",
       });
 
-      if (!res.ok) throw new Error("Error al cerrar ticket");
+      if (!res.ok) throw new Error(t("ticketCloseError"));
       addNotification({
         id: `support-ticket-closed-${ticket.id}-${Date.now()}`,
-        title: "Ticket cerrado",
-        message: `Tu ticket #${ticket.id} ha sido cerrado.`,
+        title: t("ticketClosedNotificationTitle"),
+        message: t("ticketClosedNotificationMessage").replace("{id}", ticket.id.toString()),
         createdAt: new Date().toISOString(),
         read: false,
         link: `/ticket/${ticket.id}`,
@@ -96,7 +98,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
       setConfirmCloseOpen(false);
       onClose();
     } catch (err: any) {
-      alert(err.message || "Error al cerrar ticket");
+      alert(err.message || t("ticketCloseError"));
     } finally {
       setLoading(false);
     }
@@ -109,13 +111,13 @@ const TicketModal: React.FC<TicketModalProps> = ({
       <div className="ticket-modal" onClick={(e) => e.stopPropagation()}>
         <div className="ticket-modal-header">
           <div className="header-top">
-            <h2>Ticket #{ticket.id}</h2>
+            <h2>{t("myTicketsTitle")} #{ticket.id}</h2>
             <div className="header-right">
               <button className="ticket-modal-close" onClick={onClose}>
                 ✖
               </button>
               <span className={`ticket-modal-status ${ticket.status.toLowerCase()}`}>
-                {ticket.status === "OPEN" ? "Abierto" : "Cerrado"}
+                {ticket.status === "OPEN" ? t("ticketStatusOpen") : t("ticketStatusClosed")}
               </span>
             </div>
           </div>
@@ -123,13 +125,13 @@ const TicketModal: React.FC<TicketModalProps> = ({
 
         <div className="ticket-modal-info">
           <p>
-            <strong>Email:</strong> {ticket.email}
+            <strong>{t("ticketEmailLabel")}</strong> {ticket.email}
           </p>
           <p>
-            <strong>Orden:</strong> {ticket.orderId || "N/A"}
+            <strong>{t("ticketOrderLabel")}</strong> {ticket.orderId || "N/A"}
           </p>
           <p>
-            <strong>Asunto:</strong> {ticket.subject}
+            <strong>{t("ticketSubjectLabel")}</strong> {ticket.subject}
           </p>
         </div>
 
@@ -137,7 +139,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
           {/* Mensaje inicial del usuario */}
           <div className="modal-message user-message">
             <div className="message-header">
-              <strong>usuario</strong>
+              <strong>{t("userLabel")}</strong>
               <span className="message-time">
                 {new Date(ticket.createdAt).toLocaleString()}
               </span>
@@ -157,7 +159,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
                   }`}
                 >
                   <div className="message-header">
-                    <strong>{isAdminResponse ? "admin" : "usuario"}</strong>
+                    <strong>{isAdminResponse ? t("adminLabel") : t("userLabel")}</strong>
                     <span className="message-time">
                       {new Date(resp.respondedAt).toLocaleString()}
                     </span>
@@ -168,7 +170,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
             })
           ) : (
             <div className="no-responses">
-              <p>Sin respuestas aún</p>
+              <p>{t("noResponsesYet")}</p>
             </div>
           )}
         </div>
@@ -177,7 +179,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
           <>
             <div className="ticket-modal-response">
               <textarea
-                placeholder="Escribe tu respuesta..."
+                placeholder={t("replyPlaceholder")}
                 value={responseText}
                 onChange={(e) => setResponseText(e.target.value)}
                 disabled={loading}
@@ -191,14 +193,14 @@ const TicketModal: React.FC<TicketModalProps> = ({
                 onClick={handleSubmitResponse}
                 disabled={loading}
               >
-                {loading ? "Procesando..." : "Responder"}
+                {loading ? t("responding") : t("replyButton")}
               </button>
               <button
                 className="btn-close-ticket"
                 onClick={handleCloseTicket}
                 disabled={loading}
               >
-                Cerrar ticket
+                {t("closeTicketButton")}
               </button>
             </div>
           </>
@@ -207,8 +209,8 @@ const TicketModal: React.FC<TicketModalProps> = ({
         {confirmCloseOpen && (
           <div className="confirm-overlay" onClick={() => setConfirmCloseOpen(false)}>
             <div className="confirm-popup" onClick={(e) => e.stopPropagation()}>
-              <h3>¿Estás seguro?</h3>
-              <p>¿Deseas cerrar este ticket?</p>
+              <h3>{t("confirmCloseTitle")}</h3>
+              <p>{t("confirmCloseMessage")}</p>
               <div className="confirm-actions">
                 <button
                   className="btn-cancel"
@@ -216,7 +218,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
                   onClick={() => setConfirmCloseOpen(false)}
                   disabled={loading}
                 >
-                  Cancelar
+                  {t("cancelButton")}
                 </button>
                 <button
                   className="btn-confirm"
@@ -224,7 +226,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
                   onClick={submitCloseTicket}
                   disabled={loading}
                 >
-                  {loading ? "Cerrando..." : "Confirmar cierre"}
+                  {loading ? t("closing") : t("confirmCloseButton")}
                 </button>
               </div>
             </div>

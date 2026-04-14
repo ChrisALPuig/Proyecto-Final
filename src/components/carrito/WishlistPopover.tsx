@@ -3,6 +3,7 @@ import { close, cart } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import { useWishlist } from "../../contexts/useWishlist.ts";
 import { useCart } from "../../contexts/useCart.tsx";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./WishlistPopover.css";
 
 interface WishlistPopoverProps {
@@ -15,6 +16,7 @@ const WishlistPopover: React.FC<WishlistPopoverProps> = ({ isOpen, onClose }) =>
   const history = useHistory();
   const { wishlistItems, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { t } = useLanguage();
 
  const handleRemove = async (itemId: string) => {
   await removeFromWishlist(itemId);
@@ -47,7 +49,7 @@ const handleAddToCart = async (itemId: string) => {
       <div className="wishlist-popover-container">
         {/* Header */}
         <div className="wishlist-popover-header">
-          <h2>Wishlist</h2>
+          <h2>{t("wishlist")}</h2>
           <button className="wishlist-popover-close" onClick={onClose}>
             <IonIcon icon={close} />
           </button>
@@ -57,7 +59,7 @@ const handleAddToCart = async (itemId: string) => {
         <div className="wishlist-popover-items">
           {wishlistItems.length === 0 ? (
             <div className="wishlist-popover-empty">
-              <p>Your wishlist is empty</p>
+              <p>{t("wishlistEmpty")}</p>
             </div>
           ) : (
             wishlistItems.map((item) => (
@@ -88,7 +90,7 @@ const handleAddToCart = async (itemId: string) => {
                     onClick={() => handleAddToCart(item.id)}
                   >
                     <IonIcon icon={cart} />
-                    Add to Cart
+                    {t("addToCart")}
                   </button>
                 </div>
               </div>

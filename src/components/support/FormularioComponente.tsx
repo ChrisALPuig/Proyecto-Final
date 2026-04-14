@@ -6,15 +6,18 @@ import SupportHeader from "./SupportHeader.tsx";
 import "./FormularioComponente.css";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useNotification } from "../../contexts/NotificationContext.tsx";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import { getUserProfile } from "../../services/userService.ts";
 
 const FormularioComponente: React.FC = () => {
   const history = useHistory();
   const { token } = useAuth();
   const { addNotification } = useNotification();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
+  const [profileId, setProfileId] = useState<number | null>(null);
   const [orderId, setOrderId] = useState("");
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
@@ -31,7 +34,7 @@ const FormularioComponente: React.FC = () => {
     const validFiles = fileArr.filter(file => allowedImageTypes.includes(file.type));
     const invalidFiles = fileArr.filter(file => !allowedImageTypes.includes(file.type));
 
-    if (invalidFiles.length > 0) setAttachmentError("Solo se permiten imágenes (jpeg, png, gif, webp).");
+    if (invalidFiles.length > 0) setAttachmentError(t("ticketFormAttachmentInvalid"));
     else setAttachmentError("");
 
     if (validFiles.length > 0) {
@@ -70,6 +73,7 @@ const FormularioComponente: React.FC = () => {
         const profile = await getUserProfile(token);
         setProfileEmail(profile.email);
         setEmail(profile.email);
+        setProfileId(profile.id);
       } catch (error) {
         console.error("No se pudo cargar el email de usuario:", error);
       }
@@ -79,61 +83,63 @@ const FormularioComponente: React.FC = () => {
   }, [token]);
 
   const handleSubmit = async () => {
-  if (!token) {
-    alert("No estás autenticado. Por favor haz login primero.");
-    return;
-  }
-
-  if (!email || !subject || !description) {
-    alert("Por favor completa los campos obligatorios: Email, Subject y Description");
-    return;
-  }
-
-  const formData = new FormData();
-  const emailToUse = profileEmail || email;
-  formData.append("email", emailToUse);
-  formData.append("orderId", orderId);
-  formData.append("subject", subject);
-  formData.append("description", description);
-
-  attachments.forEach(file => formData.append("attachments", file));
-
-  try {
-    const response = await fetch("http://localhost:8080/api/tickets/create", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    // No necesitamos la respuesta del ticket, solo confirmamos que se guardó
-    if (response.ok) {
-      addNotification({
-        id: `support-request-${Date.now()}`,
-        title: "Soporte enviado",
-        message: "Tu solicitud se ha enviado correctamente a soporte.",
-        createdAt: new Date().toISOString(),
-        read: false,
-        link: "/my-tickets",
-      });
-      
-      // Limpiar formulario si quieres
-      setEmail("");
-      setOrderId("");
-      setSubject("");
-      setDescription("");
-      setAttachments([]);
-      setAttachmentError("");
-    } else {
-      const data = await response.json();
-      alert(data.message || "Error al guardar el ticket");
+    if (!token) {
+      alert(t("ticketFormAuthError"));
+      return;
     }
-  } catch (error) {
-    console.error("Error submit:", error);
-    alert("No se pudo guardar el ticket. Intenta nuevamente.");
-  }
-};
+
+    if (!email || !subject || !description) {
+      alert(t("ticketFormRequiredFields"));
+      return;
+    }
+
+    const formData = new FormData();
+    const emailToUse = profileEmail || email;
+    formData.append("email", emailToUse);
+    if (profileId !== null) {
+      formData.append("userId", profileId.toString());
+    }
+    formData.append("orderId", orderId);
+    formData.append("subject", subject);
+    formData.append("description", description);
+
+    attachments.forEach(file => formData.append("attachments", file));
+    try {
+      const response = await fetch("http://localhost:8080/api/tickets/create", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      // No necesitamos la respuesta del ticket, solo confirmamos que se guardó
+      if (response.ok) {
+        addNotification({
+          id: `support-request-${Date.now()}`,
+          title: t("ticketFormSubmittedTitle"),
+          message: t("ticketFormSubmittedMessage"),
+          createdAt: new Date().toISOString(),
+          read: false,
+          link: "/my-tickets",
+        });
+        
+        // Limpiar formulario si quieres
+        setEmail("");
+        setOrderId("");
+        setSubject("");
+        setDescription("");
+        setAttachments([]);
+        setAttachmentError("");
+      } else {
+        const data = await response.json();
+        alert(data.message || t("ticketFormSaveError"));
+      }
+    } catch (error) {
+      console.error("Error submit:", error);
+      alert(t("ticketFormSaveError"));
+    }
+  };
 
   return (
     <>
@@ -141,12 +147,12 @@ const FormularioComponente: React.FC = () => {
 
       <div className="support-content">
         <div className="title-contact">
-          <h1 className="title-contact-uno">Submit a request</h1>
+          <h1 className="title-contact-uno">{t("ticketFormTitle")}</h1>
         </div>
 
         <div className="contact">
           <div className="p-form">
-            <p className="form-label">Your email address *</p>
+            <p className="form-label">{t("ticketFormEmailLabel")}</p>
             <input
               type="text"
               className="inputs-form"
@@ -154,25 +160,25 @@ const FormularioComponente: React.FC = () => {
               onChange={e => setEmail(e.target.value)}
               readOnly={!!profileEmail}
             />
-            {profileEmail && <p className="form-note">Se usará el email de tu cuenta para asociar el ticket.</p>}
+            {profileEmail && <p className="form-note">{t("ticketFormProfileNote")}</p>}
 
-            <p className="form-label">Order ID</p>
+            <p className="form-label">{t("ticketFormOrderLabel")}</p>
             <input type="text" className="inputs-form-1" value={orderId} onChange={e => setOrderId(e.target.value)} />
 
-            <p className="form-label">Subject *</p>
+            <p className="form-label">{t("ticketFormSubjectLabel")}</p>
             <input type="text" className="inputs-form-2" value={subject} onChange={e => setSubject(e.target.value)} />
 
-            <p className="form-label">Description *</p>
+            <p className="form-label">{t("ticketFormDescriptionLabel")}</p>
             <input type="text" className="inputs-form-3" value={description} onChange={e => setDescription(e.target.value)} />
 
-            <p className="form-label">Attachments</p>
+            <p className="form-label">{t("ticketFormAttachmentsLabel")}</p>
             <div
               className={`attachment-zone ${dragActive ? "drag-active" : ""}`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <p>Arrastra y suelta imágenes aquí o haz clic para seleccionar</p>
+              <p>{t("ticketFormDropHint")}</p>
               <input type="file" accept="image/*" multiple className="attachment-input" onChange={e => handleFiles(e.target.files)} />
             </div>
 
@@ -184,7 +190,7 @@ const FormularioComponente: React.FC = () => {
                   <div className="attachment-preview" key={index}>
                     <img src={URL.createObjectURL(file)} alt={file.name} className="attachment-thumb" />
                     <span>{file.name}</span>
-                    <button type="button" className="attachment-remove" onClick={() => removeAttachment(index)}>Eliminar</button>
+                    <button type="button" className="attachment-remove" onClick={() => removeAttachment(index)}>{t("ticketFormAttachmentRemove")}</button>
                   </div>
                 ))}
               </div>
@@ -194,9 +200,9 @@ const FormularioComponente: React.FC = () => {
           <div className="contact-footer">
             <button className="contact-boton-secondary" onClick={() => history.push('/support')}>
               <ArrowLeft size={16} style={{ marginRight: 8 }} />
-              Support Home
+              {t("ticketFormSupportHome")}
             </button>
-            <button className="contact-boton-dos" onClick={handleSubmit}>SEND</button>
+            <button className="contact-boton-dos" onClick={handleSubmit}>{t("ticketFormSendButton")}</button>
           </div>
         </div>
       </div>

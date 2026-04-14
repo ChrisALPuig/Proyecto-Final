@@ -15,6 +15,7 @@ import {
   Search,
 } from "lucide-react";
 import { getUserProfile, updateUserProfile, UserProfile, changeEmail, changePassword, deleteAccount, DeleteAccountRequest } from "../../services/userService.ts";
+import { generate2FAQR, verify2FACode, disable2FA, get2FAStatus } from "../../services/twoFactorService.ts";
 import "./OrderSettings.css";
 import "./DeleteAccount.css";
 
@@ -49,6 +50,7 @@ const OrderSettings: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileSaving, setProfileSaving] = useState(false);
+  const [phoneSaving, setPhoneSaving] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [accountForm, setAccountForm] = useState({
@@ -81,6 +83,16 @@ const OrderSettings: React.FC = () => {
   const [passwordError, setPasswordError] = useState("");
   const [isSavingEmail, setIsSavingEmail] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+  const [twoFAEnabled, setTwoFAEnabled] = useState(false);
+  const [twoFAStatusLoading, setTwoFAStatusLoading] = useState(true);
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [showDisable2FAModal, setShowDisable2FAModal] = useState(false);
+  const [twoFAQR, setTwoFAQR] = useState("");
+  const [twoFASecret, setTwoFASecret] = useState("");
+  const [twoFACode, setTwoFACode] = useState("");
+  const [twoFAError, setTwoFAError] = useState("");
+  const [twoFALoading, setTwoFALoading] = useState(false);
   
   // Delete account
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -151,6 +163,23 @@ const OrderSettings: React.FC = () => {
 
     fetchPayments();
     fetchProfile();
+    const fetch2FAStatus = async () => {
+      if (!token) {
+        setTwoFAStatusLoading(false);
+        return;
+      }
+
+      try {
+        const data = await get2FAStatus(token);
+        setTwoFAEnabled(data.enabled);
+      } catch (error) {
+        console.error("Error fetching 2FA status:", error);
+      } finally {
+        setTwoFAStatusLoading(false);
+      }
+    };
+
+    fetch2FAStatus();
   }, [token]);
 
   const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -177,6 +206,10 @@ const OrderSettings: React.FC = () => {
       const result = reader.result as string;
       setAvatarPreview(result);
       setAccountForm((prev) => ({ ...prev, avatar: result }));
+      setMessage(t("avatarChangedSuccess"));
+    };
+    reader.onerror = () => {
+      setMessage(t("avatarChangeError"));
     };
     reader.readAsDataURL(file);
   };
@@ -211,12 +244,106 @@ const OrderSettings: React.FC = () => {
         login(updated.token, updated.username, roles, updated.avatar || null);
       }
 
-      setMessage("Profile updated successfully.");
+      setMessage(t("profileUpdatedSuccess"));
     } catch (error) {
       console.error("Error updating profile:", error);
-      setMessage("Failed to save changes. Please try again.");
+      setMessage(t("profileUpdatedError"));
     } finally {
       setProfileSaving(false);
+    }
+  };
+
+  const handleAddPhone = async () => {
+    if (!token) return;
+    if (!accountForm.phoneNumber?.trim()) {
+      setMessage(t("enterPhoneNumber"));
+      return;
+    }
+
+    setPhoneSaving(true);
+    setMessage("");
+
+    try {
+      const updatePayload = {
+        username: accountForm.username,
+        phoneNumber: accountForm.phoneNumber,
+        birthDate: accountForm.birthDate,
+        country: accountForm.country,
+        currency: accountForm.currency,
+        language: accountForm.language,
+        ...(accountForm.avatar ? { avatar: accountForm.avatar } : {}),
+      };
+
+      const updated = await updateUserProfile(token, updatePayload);
+      setProfile(updated);
+      setAccountForm((prev) => ({ ...prev, phoneNumber: updated.phoneNumber || prev.phoneNumber }));
+      setMessage(t("phoneAddedSuccess"));
+    } catch (error) {
+      console.error("Error updating phone number:", error);
+      setMessage(t("phoneAddError"));
+    } finally {
+      setPhoneSaving(false);
+    }
+  };
+
+  const handleActivate2FA = async () => {
+    if (!token) return;
+
+    setTwoFALoading(true);
+    setTwoFAError("");
+    try {
+      const data = await generate2FAQR(token);
+      // Agregar el prefijo data URI si el QR es base64
+      const qrWithPrefix = data.qr.startsWith('data:') ? data.qr : `data:image/png;base64,${data.qr}`;
+      setTwoFAQR(qrWithPrefix);
+      setTwoFASecret(data.secret);
+      setShow2FAModal(true);
+    } catch (error: any) {
+      setTwoFAError(error.message || "Error generando 2FA");
+    } finally {
+      setTwoFALoading(false);
+    }
+  };
+
+  const handleVerify2FACode = async () => {
+    if (!token || !twoFACode.trim()) {
+      setTwoFAError(t("enter2FACode"));
+      return;
+    }
+
+    setTwoFALoading(true);
+    setTwoFAError("");
+    try {
+      await verify2FACode(token, twoFACode);
+      setTwoFAEnabled(true);
+      setShow2FAModal(false);
+      setTwoFACode("");
+      setMessage(t("twoFAActivatedSuccess"));
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error: any) {
+      setTwoFAError(error.message || t("twoFAVerifyError"));
+    } finally {
+      setTwoFALoading(false);
+    }
+  };
+
+  const handleDisable2FA = async (): Promise<boolean> => {
+    if (!token) return false;
+
+    setTwoFALoading(true);
+    setTwoFAError("");
+    try {
+      await disable2FA(token, twoFACode || "");
+      setTwoFAEnabled(false);
+      setTwoFACode("");
+      setMessage(t("twoFADisabledSuccess"));
+      setTimeout(() => setMessage(""), 3000);
+      return true;
+    } catch (error: any) {
+      setTwoFAError(error.message || t("twoFADisableError"));
+      return false;
+    } finally {
+      setTwoFALoading(false);
     }
   };
 
@@ -231,10 +358,10 @@ const OrderSettings: React.FC = () => {
       setProfile(updated);
       setShowEmailModal(false);
       setEmailForm({ currentPassword: "", newEmail: "" });
-      setMessage("Email changed successfully.");
+      setMessage(t("emailChangedSuccess"));
       setTimeout(() => setMessage(""), 3000);
     } catch (error: any) {
-      setEmailError(error.message || "Failed to change email");
+      setEmailError(error.message || t("emailChangeError"));
     } finally {
       setIsSavingEmail(false);
     }
@@ -250,10 +377,10 @@ const OrderSettings: React.FC = () => {
       await changePassword(token, passwordForm);
       setShowPasswordModal(false);
       setPasswordForm({ currentPassword: "", newPassword: "" });
-      setMessage("Password changed successfully.");
+      setMessage(t("passwordChangedSuccess"));
       setTimeout(() => setMessage(""), 3000);
     } catch (error: any) {
-      setPasswordError(error.message || "Failed to change password");
+      setPasswordError(error.message || t("passwordChangeError"));
     } finally {
       setIsSavingPassword(false);
     }
@@ -373,31 +500,29 @@ const OrderSettings: React.FC = () => {
                           <p className="order-product">{payment.productName}</p>
                           <div className="order-meta">
                             <span className="order-subtitle">{payment.status}</span>
-                            <span className="order-amount-tag">{payment.paymentId}</span>
                           </div>
+                          <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
+                            {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
+                          </button>
                         </div>
                       </div>
 
-                      <button type="button" className="order-details-btn" onClick={() => toggleOrderDetails(payment.id)}>
-                        {expandedOrders[payment.id] ? 'Ocultar detalles' : 'Ver detalles'}
-                      </button>
-
                       {expandedOrders[payment.id] && (
                         <div className="order-items-details">
-                          <h4>Items comprados:</h4>
+                          <h4>{t('orderItemsTitle')}</h4>
                           {paymentItems.length > 0 ? (
                             paymentItems.map((item) => (
                               <div key={item.id} className="order-item-row">
                                 <img src={item.image} alt={item.name} className="order-item-image" />
                                 <div className="order-item-info">
                                   <p className="order-item-name">{item.name}</p>
-                                  <p className="order-item-qty">Cantidad: {item.quantity}</p>
+                                  <p className="order-item-qty">{t('orderItemsQuantity').replace('{count}', item.quantity.toString())}</p>
                                 </div>
                                 <span className="order-item-price">€{Number(item.price).toFixed(2)}</span>
                               </div>
                             ))
                           ) : (
-                            <p className="order-item-empty">No se encontraron los productos de esta orden.</p>
+                            <p className="order-item-empty">{t('orderItemsEmpty')}</p>
                           )}
                         </div>
                       )}
@@ -410,6 +535,7 @@ const OrderSettings: React.FC = () => {
             <div className="account-content">
               <div className="account-section">
                 <h3>{t("myIdentity")}</h3>
+                {message && <div className="account-message account-message-above-section">{message}</div>}
                 {profileLoading ? (
                   <div className="orders-empty">{t("loadingProfile")}</div>
                 ) : (
@@ -460,7 +586,14 @@ const OrderSettings: React.FC = () => {
                         className="account-input"
                         placeholder={t("addPhoneNumber")}
                       />
-                      <button className="button-primary">{t("add")}</button>
+                      <button
+                        type="button"
+                        className="button-primary"
+                        onClick={handleAddPhone}
+                        disabled={phoneSaving || profileLoading || !isAuthenticated}
+                      >
+                        {phoneSaving ? t("saving") : t("add")}
+                      </button>
                     </div>
                     <div className="account-row">
                       <span>{t("birthday")}</span>
@@ -524,7 +657,6 @@ const OrderSettings: React.FC = () => {
               </div>
 
               <div className="account-footer">
-                {message && <div className="account-message">{message}</div>}
                 <button
                   onClick={handleProfileSave}
                   className="button-primary"
@@ -536,6 +668,7 @@ const OrderSettings: React.FC = () => {
             </div>
           ) : activeSection === "loginAndSecurity" ? (
             <div className="account-content">
+              {message && <div className="account-message account-message-above-section">{message}</div>}
               <div className="account-section login-security-card">
                 <div className="login-card-header">
                   <h3>{t("accountLogin")}</h3>
@@ -572,6 +705,34 @@ const OrderSettings: React.FC = () => {
                         {t("change")}
                       </button>
                     </div>
+                    <div className="login-row">
+                      <span>{t("twoFactorAuthentication")}</span>
+                      <span className="login-value">
+                        {twoFAStatusLoading ? t("loading") : twoFAEnabled ? t("enabled") : t("disabled")}
+                      </span>
+                      {!twoFAStatusLoading && !twoFAEnabled && (
+                        <button
+                          className="button-secondary"
+                          onClick={handleActivate2FA}
+                          disabled={twoFALoading}
+                        >
+                          {t("activate2FA")}
+                        </button>
+                      )}
+                      {!twoFAStatusLoading && twoFAEnabled && (
+                        <button
+                          className="button-secondary"
+                          onClick={() => {
+                            setTwoFACode("");
+                            setTwoFAError("");
+                            setShowDisable2FAModal(true);
+                          }}
+                          disabled={twoFALoading}
+                        >
+                          {t("disable")}
+                        </button>
+                      )}
+                    </div>
                   </>
                 )}
               </div>
@@ -583,7 +744,7 @@ const OrderSettings: React.FC = () => {
                   <p>{t("thisActionCannotBeUndone")}</p>
                 </div>
                 <button 
-                  className="button-danger"
+                  className="button-danger delete-account-button"
                   onClick={() => {
                     setDeletionPassword("");
                     setDeletionError("");
@@ -684,6 +845,90 @@ const OrderSettings: React.FC = () => {
                 disabled={isSavingPassword || !passwordForm.currentPassword || !passwordForm.newPassword}
               >
                 {isSavingPassword ? t("saving") : t("changePasswordButton")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {show2FAModal && (
+        <div className="modal-overlay" onClick={() => setShow2FAModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>{t("setup2FATitle")}</h3>
+            {twoFAError && <div className="modal-error">{twoFAError}</div>}
+            <div className="modal-form-group">
+              <label>{t("scanTheQRCode")}</label>
+              {twoFAQR ? (
+                <img src={twoFAQR} alt="2FA QR" className="twofa-qr" />
+              ) : (
+                <p>{t("loading")}</p>
+              )}
+            </div>
+            <div className="modal-form-group">
+              <label>{t("enter2FACode")}</label>
+              <input
+                type="text"
+                placeholder={t("codePlaceholder")}
+                value={twoFACode}
+                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="modal-input"
+              />
+            </div>
+            <div className="modal-buttons">
+              <button
+                className="button-secondary"
+                onClick={() => setShow2FAModal(false)}
+              >
+                {t("cancel")}
+              </button>
+              <button
+                className="button-primary"
+                onClick={handleVerify2FACode}
+                disabled={twoFALoading || twoFACode.length !== 6}
+              >
+                {twoFALoading ? t("processing") : t("activate2FA")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDisable2FAModal && (
+        <div className="modal-overlay" onClick={() => setShowDisable2FAModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>{t("twoFactorAuthentication")}</h3>
+            {twoFAError && <div className="modal-error">{twoFAError}</div>}
+            <div className="modal-form-group">
+              <label>{t("enter2FACode")}</label>
+              <input
+                type="text"
+                placeholder={t("codePlaceholder")}
+                value={twoFACode}
+                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="modal-input"
+              />
+              <p style={{ fontSize: "0.9em", color: "#999", marginTop: "8px" }}>
+                {t("enterYourAuthenticatorCode")}
+              </p>
+            </div>
+            <div className="modal-buttons">
+              <button
+                className="button-secondary"
+                onClick={() => setShowDisable2FAModal(false)}
+              >
+                {t("cancel")}
+              </button>
+              <button
+                className="button-primary"
+                onClick={async () => {
+                  const success = await handleDisable2FA();
+                  if (success) {
+                    setShowDisable2FAModal(false);
+                  }
+                }}
+                disabled={twoFALoading || twoFACode.length !== 6}
+              >
+                {twoFALoading ? t("processing") : t("disable")}
               </button>
             </div>
           </div>

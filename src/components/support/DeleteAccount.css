@@ -47,6 +47,13 @@
   font-weight: 600;
 }
 
+.delete-account-button {
+  width: fit-content;
+  min-width: 180px;
+  padding: 10px 16px;
+  align-self: start;
+}
+
 .button-danger:hover:not(:disabled) {
   background: #dc2626;
 }

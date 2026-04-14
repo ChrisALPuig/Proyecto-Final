@@ -3,12 +3,14 @@ import ImagenToggle from './fav.tsx';
 import { useCart } from '../../contexts/useCart.tsx';
 import { useAuth } from '../../contexts/AuthContext.tsx';
 import { useHistory } from 'react-router';
+import { useLanguage } from '../../contexts/LanguageContext.tsx';
 import './ListaCarrito.css';
 
 const ListaCarrito = () => {
   const { cartItems, removeFromCart } = useCart();
   const { token, isAuthenticated } = useAuth();
   const history = useHistory();
+  const { t } = useLanguage();
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -22,12 +24,12 @@ const ListaCarrito = () => {
 
   const handleProceedToPayment = async () => {
     if (cartItems.length === 0) {
-      alert('El carrito está vacío');
+      alert(t('yourCartEmpty'));
       return;
     }
 
     if (!isAuthenticated || !token) {
-      alert('Debes iniciar sesión para continuar con el pago.');
+      alert(t('loginRequiredForPayment'));
       history.push('/login');
       return;
     }
@@ -97,20 +99,21 @@ const ListaCarrito = () => {
         <div className="lista-carrito">
           <div className="item-carrito">
             <div className="circulo">1</div>
-            <span className="texto-carrito">Your Cart</span>
+            <span className="texto-carrito">{t('yourCart')}</span>
           <div className="circulo2">2</div>
-          <span className="texto-carrito2">Payment</span>
+          <span className="texto-carrito2">{t('payment')}</span>
         </div>
       </div>
 
       <div className="layout-carrito">
         <div className='caja-juego'>
           <span className='titulo-juego'>
-            {cartItems.length} Item{cartItems.length !== 1 ? 's' : ''} in the cart
+              {cartItems.length === 1
+                ? t('itemsInCartSingle')
+                : t('itemsInCartMultiple').replace('{count}', cartItems.length.toString())}
           </span>
-
           {cartItems.length === 0 ? (
-            <p>Your cart is empty</p>
+            <p>{t('yourCartEmpty')}</p>
           ) : (
             cartItems.map((item) => (
               <div key={item.id} className='contenido-juego'>
@@ -142,7 +145,7 @@ const ListaCarrito = () => {
         </div>
 
         <div className="caja-resumen">
-          <h2>Order Summary</h2>
+          <h2>{t('orderSummary')}</h2>
 
           <div className="linea-resumen">
             <span>Subtotal</span>
@@ -155,7 +158,7 @@ const ListaCarrito = () => {
           </div>
 
           <button className="boton-pago" onClick={handleProceedToPayment}>
-            Continue to Payment
+            {t('continueToPayment')}
           </button>
         </div>
       </div>
@@ -166,7 +169,7 @@ const ListaCarrito = () => {
         type="button"
       >
         <span className="boton-home-arrow">←</span>
-        Back to home
+        {t('backToHome')}
       </button>
       </div>
     </IonContent>

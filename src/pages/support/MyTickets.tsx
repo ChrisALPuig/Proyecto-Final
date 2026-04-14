@@ -6,6 +6,7 @@ import { IonPage, IonContent } from "@ionic/react";
 import SupportHeader from "../../components/support/SupportHeader.tsx";
 import TicketModal from "../../components/support/TicketModal.tsx";
 import { useNotification } from "../../contexts/NotificationContext.tsx";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./MyTickets.css";
 
 interface Ticket {
@@ -21,6 +22,7 @@ interface Ticket {
 
 const MyTickets: React.FC = () => {
   const { token, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,7 @@ const MyTickets: React.FC = () => {
     const fetchTickets = async () => {
       try {
         if (!isAuthenticated || !token) {
-          setError("Debes estar autenticado para ver tus tickets");
+          setError(t("ticketsAuthRequired"));
           setLoading(false);
           return;
         }
@@ -42,7 +44,7 @@ const MyTickets: React.FC = () => {
         setTickets(data);
       } catch (err) {
         console.error(err);
-        setError("Error al cargar tus tickets");
+        setError(t("ticketsLoadError"));
       } finally {
         setLoading(false);
       }
@@ -83,7 +85,7 @@ const MyTickets: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="my-tickets-container"><p>Cargando tus tickets...</p></div>;
+    return <div className="my-tickets-container"><p>{t("ticketsLoading")}</p></div>;
   }
 
   if (error) {
@@ -95,14 +97,12 @@ const MyTickets: React.FC = () => {
       <SupportHeader />
       <IonContent fullscreen>
         <div className="my-tickets-container">
-      <h1>Mis Tickets</h1>
+      <h1>{t("myTicketsTitle")}</h1>
 
       {tickets.length === 0 ? (
         <div className="no-tickets">
-          <p>No tienes tickets abiertos.</p>
-          <button className="btn-create-ticket" onClick={() => history.push("/form")}>
-            Crear nuevo ticket
-          </button>
+          <p>{t("noOpenTickets")}</p>
+          <button className="btn-create-ticket" onClick={() => history.push("/form")}>{t("createNewTicket")}</button>
         </div>
       ) : (
         <div className="tickets-list">
@@ -110,11 +110,11 @@ const MyTickets: React.FC = () => {
             <div key={ticket.id} className="ticket-card">
               <div className="ticket-header">
                 <div className="ticket-info">
-                  <h3>Ticket #{ticket.id}</h3>
+                  <h3>{t("myTicketsTitle")} #{ticket.id}</h3>
                   <p className="ticket-subject">{ticket.subject}</p>
                 </div>
                 <span className={`status ${ticket.status.toLowerCase()}`}>
-                  {ticket.status === "OPEN" ? "Abierto" : "Cerrado"}
+                  {ticket.status === "OPEN" ? t("ticketStatusOpen") : t("ticketStatusClosed")}
                 </span>
               </div>
 
@@ -122,7 +122,7 @@ const MyTickets: React.FC = () => {
                 <p className="ticket-description">{ticket.description}</p>
                 <div className="ticket-meta">
                   <span>📧 {ticket.email}</span>
-                  <span>📦 Orden: {ticket.orderId || "N/A"}</span>
+                  <span>📦 {t("ticketOrderLabel")} {ticket.orderId || "N/A"}</span>
                   <span>
                     📅 {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : "N/A"}
                   </span>
@@ -132,10 +132,12 @@ const MyTickets: React.FC = () => {
               <div className="ticket-responses">
                 {ticket.responses && ticket.responses.length > 0 ? (
                   <p className="response-count">
-                    ✓ {ticket.responses.length} respuesta{ticket.responses.length > 1 ? "s" : ""}
+                    ✓ {t("ticketResponseCount")
+                      .replace("{count}", ticket.responses.length.toString())
+                      .replace("{plural}", ticket.responses.length > 1 ? "s" : "")}
                   </p>
                 ) : (
-                  <p className="no-response">Sin respuestas aún</p>
+                  <p className="no-response">{t("noResponsesYet")}</p>
                 )}
               </div>
 
@@ -143,7 +145,7 @@ const MyTickets: React.FC = () => {
                 className="btn-view-ticket"
                 onClick={() => handleViewTicket(ticket.id)}
               >
-                Ver detalles
+                {t("viewDetails")}
               </button>
             </div>
           ))}

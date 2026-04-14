@@ -241,13 +241,14 @@
 }
 
 .order-details-btn {
-  margin-top: 12px;
-  padding: 10px 16px;
+  margin-top: 8px;
+  padding: 8px 14px;
   border: none;
   border-radius: 999px;
   background: #3b82f6;
   color: #ffffff;
-  font-size: 0.95rem;
+  font-size: 0.86rem;
+  width: fit-content;
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -255,6 +256,11 @@
 .order-details-btn:hover {
   background: #2563eb;
 }
+
+.order-details-btn-small {
+  align-self: flex-start;
+}
+
 
 .order-items-details {
   margin-top: 14px;
@@ -430,6 +436,10 @@
 .account-message {
   color: #a5f3fc;
   font-size: 0.95rem;
+}
+
+.account-message-above-section {
+  margin: 12px 0 18px;
 }
 
 .login-security-card {

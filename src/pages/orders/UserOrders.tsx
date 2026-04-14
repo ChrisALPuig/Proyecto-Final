@@ -2,6 +2,7 @@ import { IonContent, IonPage, IonText } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header/Header.tsx';
 import { useAuth } from '../../contexts/AuthContext.tsx';
+import { useLanguage } from '../../contexts/LanguageContext.tsx';
 import './UserOrders.css';
 
 interface PaymentItem {
@@ -29,6 +30,7 @@ const UserOrders: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
   const { token } = useAuth();
+  const { t } = useLanguage();
 
   const toggleOrderDetails = (orderId: number) => {
     setExpandedOrders(prev => ({
@@ -100,38 +102,37 @@ const UserOrders: React.FC = () => {
                       </div>
                       <div className="order-info">
                         <div className="order-header">
-                          <div>
+                          <div className="order-header-left">
                             <p className="order-date">{new Date(payment.createdAt).toLocaleDateString()}</p>
                             <IonText className="order-id">{payment.productName}</IonText>
+                            <button className="toggle-details-btn toggle-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
+                              {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
+                            </button>
                           </div>
                           <IonText className={`order-status ${payment.status}`}>
                             {payment.status}
                           </IonText>
                         </div>
                         <div className="order-details">
-                          <p><strong>Order ID:</strong> {payment.orderId}</p>
-                          <p><strong>Amount:</strong> €{Number(payment.amount).toFixed(2)}</p>
-                          <p className="payment-id-small"><strong>Payment:</strong> {payment.paymentId}</p>
+                          <p><strong>{t('orderIdLabel')}</strong> {payment.orderId}</p>
+                          <p><strong>{t('amountLabel')}</strong> €{Number(payment.amount).toFixed(2)}</p>
                         </div>
-                        <button className="toggle-details-btn" onClick={() => toggleOrderDetails(payment.id)}>
-                          {expandedOrders[payment.id] ? 'Ocultar detalles' : 'Ver detalles'}
-                        </button>
                         {expandedOrders[payment.id] && (
                           <div className="order-items">
-                            <h4>Items comprados:</h4>
+                            <h4>{t('orderItemsTitle')}</h4>
                             {paymentItems.length > 0 ? (
                               paymentItems.map((item) => (
                                 <div key={item.id} className="order-item-row">
                                   <img src={item.image} alt={item.name} className="order-item-image" />
                                   <div className="order-item-info">
                                     <p className="order-item-name">{item.name}</p>
-                                    <p className="order-item-qty">Cantidad: {item.quantity}</p>
+                                    <p className="order-item-qty">{t('orderItemsQuantity').replace('{count}', item.quantity.toString())}</p>
                                   </div>
                                   <p className="order-item-price">€{Number(item.price).toFixed(2)}</p>
                                 </div>
                               ))
                             ) : (
-                              <p className="order-item-empty">Detalle de los productos no disponible para esta orden.</p>
+                              <p className="order-item-empty">{t('orderItemsEmpty')}</p>
                             )}
                           </div>
                         )}
