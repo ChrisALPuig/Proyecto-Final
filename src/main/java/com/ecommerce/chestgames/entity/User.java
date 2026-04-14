@@ -44,6 +44,14 @@ public class User {
     private String currency;
     private String language;
 
+    private boolean twoFactorEnabled = false;
+
+    @Column(length = 255)
+    private String twoFactorSecret;
+
+    @Column(length = 255)
+    private String twoFactorTempSecret;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

@@ -8,6 +8,7 @@ import com.ecommerce.chestgames.entity.Role;
 import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.repository.RoleRepository;
 import com.ecommerce.chestgames.repository.UserRepository;
+import com.ecommerce.chestgames.security.CustomUserDetails;
 import com.ecommerce.chestgames.utils.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,14 +39,14 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().body("Username already exists");
+            return ResponseEntity.badRequest().build();
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity.badRequest().body("Email already exists");
+            return ResponseEntity.badRequest().build();
         }
 
         Role userRole = roleRepository.findByName("ROLE_USER")
@@ -59,7 +60,17 @@ public class AuthController {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok("User registered successfully");
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        String token = jwtUtils.generateToken(userDetails);
+
+        List<String> roles = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return ResponseEntity.ok(
+                new AuthResponse(token, user.getUsername(), roles, user)
+        );
     }
 
     @PostMapping("/login")
@@ -89,8 +100,10 @@ public class AuthController {
                     .map(GrantedAuthority::getAuthority)
                     .toList();
 
+            User loggedUser = ((CustomUserDetails) userDetails).getUser();
+
             return ResponseEntity.ok(
-                    new AuthResponse(token, userDetails.getUsername(), roles)
+                    new AuthResponse(token, userDetails.getUsername(), roles, loggedUser)
             );
         } catch (org.springframework.security.core.AuthenticationException ex) {
             return ResponseEntity.status(401).build();

@@ -29,6 +29,7 @@ public class TicketController {
 
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> createTicket(
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam String email,
             @RequestParam(required = false) String orderId,
             @RequestParam String subject,
@@ -36,7 +37,17 @@ public class TicketController {
             @RequestParam(required = false) List<MultipartFile> attachments
     ) {
         try {
-            Ticket ticket = ticketService.createTicket(email, orderId, subject, description, attachments);
+            if (userDetails == null) {
+                return ResponseEntity.status(401).body(Map.of(
+                        "success", false,
+                        "message", "No autorizado"
+                ));
+            }
+
+            User user = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            Ticket ticket = ticketService.createTicket(user.getId(), email, orderId, subject, description, attachments);
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "ticket", ticket
@@ -75,9 +86,9 @@ public class TicketController {
 
             List<Ticket> tickets;
             if (orderId != null && !orderId.isEmpty()) {
-                tickets = ticketService.getTicketsByEmailAndOrderId(user.getEmail(), orderId);
+                tickets = ticketService.getTicketsByUserIdAndOrderId(user.getId(), orderId);
             } else {
-                tickets = ticketService.getTicketsByEmail(user.getEmail());
+                tickets = ticketService.getTicketsByUserId(user.getId());
             }
 
             return ResponseEntity.ok(tickets);

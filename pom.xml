@@ -90,6 +90,24 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- TOTP -->
+		<dependency>
+			<groupId>dev.samstevens.totp</groupId>
+			<artifactId>totp</artifactId>
+			<version>1.7.1</version>
+		</dependency>
+
+		<!-- QR -->
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.5.1</version>
+		</dependency>
 		<!-- Stripe -->
 		<dependency>
 			<groupId>com.stripe</groupId>
