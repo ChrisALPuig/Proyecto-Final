@@ -2,7 +2,7 @@ import { IonPage, IonRouterLink } from "@ionic/react";
 import "./HowToPayComponente.css";
 import SupportHeader from "./SupportHeader.tsx";
 
-const HowToBuyGif: React.FC = () => {
+const HowToChangeCurrency: React.FC = () => {
   
   return (
     <>
@@ -12,17 +12,15 @@ const HowToBuyGif: React.FC = () => {
 
       {/* CONTENIDO BLANCO */}
       <div className="orders-content">
-        <h1 className="orders-titles">How do I buy a gift?</h1>
+        <h1 className="orders-titles"> How can I change my currency? </h1>
         <div className="divider"></div>
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
           <p className="how-to-buy-text">
-            To purchase a gift, follow the steps described in the "How do I buy a game" article. However, before clicking "Pay for your order now" during checkout, make sure to tick the "Gift this order" option located just below the payment methods. You will also need to provide the recipient's email address.
+            You can modify your currency here, as well as through your account settings or by using the option located in the bottom-right corner of the main page, catalog pages, and product pages on GOG. Keep in mind that only currencies available in your region can be selected.
 
-            <p>After that, continue with the purchase as usual.</p>
-
-            If you're unable to complete your gift purchase, please refer to this support article.
+            <p>You can also update your currency through the GOG GALAXY app. To do this, click on your avatar in the top-left corner, then go to “Account and Locale” and choose your preferred currency.</p>
           </p>
         </div>
 
@@ -53,4 +51,4 @@ const HowToBuyGif: React.FC = () => {
   );
 };
 
-export default HowToBuyGif;
+export default HowToChangeCurrency;

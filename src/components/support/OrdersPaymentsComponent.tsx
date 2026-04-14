@@ -33,14 +33,14 @@ const OrdersPayments: React.FC = () => {
           {/* DERECHA */}
           <table className="orders-table">
             <tbody>
-              <tr><td><img src="/public/start.png" alt="star" className="orders-table-images"/>I tried to make a payment and 
-              it didn’t work</td></tr>
-              <tr><td><img src="/public/start.png" alt="star" className="orders-table-images"/>I got charged and did not get 
-              my game</td></tr>
-              <tr><td>I got charged but did not order 
-              the game</td></tr>
-              <tr><td>Paid in local currency, but got
-              charged an additional fee</td></tr>
+              <tr><td><IonRouterLink routerLink="/i-tried-to-make-a-payment" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>I tried to make a payment and 
+              it didn’t work</IonRouterLink></td></tr>
+              <tr><td> <IonRouterLink routerLink="/i-got-charged-and-did-not-get-my-game" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>I got charged and did not get 
+              my game</IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/i-got-charged-but-did-not-order-the-game" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>I got charged but did not order 
+              the game</IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/paid-in-local-currency-but-got-charged-an-additional-fee" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>Paid in local currency, but got
+              charged an additional fee</IonRouterLink></td></tr>
             </tbody>
           </table>
         </div>

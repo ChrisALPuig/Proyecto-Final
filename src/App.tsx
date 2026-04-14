@@ -77,6 +77,10 @@ const App: React.FC = () => (
         <Route exact path="/howtobuygif" component={HowToBuyGif} />
         <Route exact path="/howtochangecurrency" component={HowToChangeCurrency} />
         <Route exact path="/howtoredeemcode" component={HowToRedeemCode} />
+        <Route exact path="/i-tried-to-make-a-payment" component={OrderPayments} />
+        <Route exact path="/i-got-charged-and-did-not-get-my-game" component={OrderPayments} />
+        <Route exact path="/i-got-charged-but-did-not-order-the-game" component={OrderPayments} />
+        <Route exact path="/paid-in-local-currency-but-got-charged-an-additional-fee" component={OrderPayments} />
         <Route exact path="/form" component={Form} /> 
         <Redirect exact from="/" to="/home" />
         <Route exact path="/games" component={Store} />

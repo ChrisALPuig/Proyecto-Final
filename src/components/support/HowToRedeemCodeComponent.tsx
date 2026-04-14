@@ -2,7 +2,7 @@ import { IonPage, IonRouterLink } from "@ionic/react";
 import "./HowToPayComponente.css";
 import SupportHeader from "./SupportHeader.tsx";
 
-const HowToBuyGif: React.FC = () => {
+const HowToRedeemCodePageComponent: React.FC = () => {
   
   return (
     <>
@@ -12,17 +12,19 @@ const HowToBuyGif: React.FC = () => {
 
       {/* CONTENIDO BLANCO */}
       <div className="orders-content">
-        <h1 className="orders-titles">How do I buy a gift?</h1>
+        <h1 className="orders-titles"> How do I redeem a code? </h1>
         <div className="divider"></div>
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
           <p className="how-to-buy-text">
-            To purchase a gift, follow the steps described in the "How do I buy a game" article. However, before clicking "Pay for your order now" during checkout, make sure to tick the "Gift this order" option located just below the payment methods. You will also need to provide the recipient's email address.
+            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
 
-            <p>After that, continue with the purchase as usual.</p>
+            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
+            
+            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
 
-            If you're unable to complete your gift purchase, please refer to this support article.
+            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
           </p>
         </div>
 
@@ -53,4 +55,4 @@ const HowToBuyGif: React.FC = () => {
   );
 };
 
-export default HowToBuyGif;
+export default HowToRedeemCodePageComponent;
