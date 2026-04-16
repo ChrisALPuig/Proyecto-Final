@@ -29,14 +29,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
+        System.out.println("JwtAuthFilter Authorization header: " + header);
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            String username = jwtUtils.getUsernameFromToken(token);
+            String username = null;
+            try {
+                username = jwtUtils.getUsernameFromToken(token);
+            } catch (Exception ex) {
+                System.out.println("JwtAuthFilter token parse failed: " + ex.getMessage());
+            }
 
+            System.out.println("JwtAuthFilter token username: " + username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                boolean valid = jwtUtils.validateToken(token, userDetails);
+                System.out.println("JwtAuthFilter token valid: " + valid);
 
-                if (jwtUtils.validateToken(token, userDetails)) {
+                if (valid) {
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,

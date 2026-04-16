@@ -8,7 +8,9 @@ import com.ecommerce.chestgames.entity.Cart;
 import com.ecommerce.chestgames.repository.CartRepository;
 import com.ecommerce.chestgames.repository.GameRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ public class CartService {
         this.gameRepository = gameRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<CartItemDTO> getCart(User user) {
         Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> {
@@ -32,6 +35,10 @@ public class CartService {
                     newCart.setItems(new HashSet<>());
                     return cartRepository.save(newCart);
                 });
+
+        if (cart.getItems() == null || cart.getItems().isEmpty()) {
+            return new ArrayList<>();
+        }
 
         return cart.getItems().stream()
                 .map(item -> new CartItemDTO(
@@ -44,6 +51,7 @@ public class CartService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addGameToCart(User user, Long gameId, int quantity) {
         Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> {
@@ -73,6 +81,7 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    @Transactional
     public void updateGameQuantity(User user, Long gameId, int quantity) {
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
@@ -85,6 +94,7 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    @Transactional
     public void removeGameFromCart(User user, Long gameId) {
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
@@ -94,6 +104,7 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    @Transactional
     public void clearCart(User user) {
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));

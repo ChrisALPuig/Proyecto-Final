@@ -7,6 +7,7 @@ import com.ecommerce.chestgames.entity.Wishlist;
 import com.ecommerce.chestgames.repository.GameRepository;
 import com.ecommerce.chestgames.repository.WishlistRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,7 @@ public class WishlistService {
     }
 
     // Devuelve la wishlist como lista de DTO para el frontend
+    @Transactional(readOnly = true)
     public List<WishlistItemDTO> getWishlist(User user) {
         Wishlist wishlist = wishlistRepository.findByUser(user)
                 .orElseGet(() -> {
@@ -43,6 +45,7 @@ public class WishlistService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addGameToWishlist(User user, Long gameId) {
         Wishlist wishlist = wishlistRepository.findByUser(user)
                 .orElseGet(() -> {
@@ -59,6 +62,7 @@ public class WishlistService {
         wishlistRepository.save(wishlist);
     }
 
+    @Transactional
     public void removeGameFromWishlist(User user, Long gameId) {
         Wishlist wishlist = wishlistRepository.findByUser(user)
                 .orElseGet(() -> {

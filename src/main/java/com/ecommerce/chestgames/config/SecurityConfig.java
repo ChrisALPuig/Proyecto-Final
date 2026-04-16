@@ -34,9 +34,9 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/products", "/products/platform/**", "/products/category/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/cart/**").permitAll()
 
                         // Endpoints que requieren autenticación
+                        .requestMatchers("/api/cart/**", "/api/wishlist/**").authenticated()
                         .requestMatchers("/api/payments").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/payments/**").authenticated()
                         .requestMatchers("/api/orders/**").authenticated()
