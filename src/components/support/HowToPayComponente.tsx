@@ -17,19 +17,18 @@ const HowToPay: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            It's super-easy. First, you need to add the game to your cart. You can do it in two places:  
-          </p>
-          <p className="how-to-buy-text2">
-            - the catalog page, by clicking on the game's price, or
-          </p>
-          <p className="how-to-buy-text">
-            - the product page (like this one), by clicking on the "Add to Cart" button.
-          </p>
-            <p className="how-to-buy-text">
-            Once you've got one or more items in your Cart, click on the Cart icon in the upper-right corner of the screen, and select "Checkout Now". You can also do this from the product page (where the "Add to Cart" button will be replaced by "Checkout Now").
-            Once in Checkout, you will have to select your payment method (credit card, PayPal etc.) and, after all data is entered, click on "Pay for your order now".
-          </p>
+  <div className="how-to-buy-text">
+    <p>It's super-easy! First, you need to add a game to your cart, which you can do from two different places:</p>
+    
+    <p>
+      • The catalog page, by clicking on the game's price.<br />
+      • The product page, by clicking the "Add to Cart" button.
+    </p>
+
+    <p>Once you have one or more items in your cart, click the Cart icon in the upper-right corner of the screen and select "Checkout Now". You can also do this directly from any product page, where the "Add to Cart" button will be replaced by "Checkout Now" once the item is added.</p>
+
+    <p>In the Checkout section, you will need to select your preferred payment method (such as credit card or PayPal). After entering all the required data, simply click "Pay for your order now" to complete your purchase.</p>
+  </div>
             <div className="how-to-buy-gif-container">
             <img src="/game_buy.gif" alt="How to buy tutorial" className="how-to-buy-gif"/>
         </div>

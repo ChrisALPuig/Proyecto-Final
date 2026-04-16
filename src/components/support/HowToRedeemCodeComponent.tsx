@@ -17,16 +17,24 @@ const HowToRedeemCodePageComponent: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
+  <div className="how-to-buy-text">
+    <p>
+      If you have a retail code or one purchased from an authorized platform, you can claim it by visiting the <strong>redeem page</strong>.
+    </p>
 
-            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
-            
-            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
+    <p>
+      Once there, enter your code, complete the “I’m not a robot” verification, and click “Continue.” If the code is valid, the game details will appear. After clicking “Continue” again, the game will be permanently added to your library. 
+    </p>
+    
+    <p>
+      <strong>Note:</strong> When you process a code, it is temporarily reserved for your account for a few minutes. If you wish to let someone else use it instead, make sure to click “Cancel” during this window.
+    </p>
 
-            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
-          </p>
-        </div>
+    <p>
+      If the code fails, please double-check that every character was entered correctly. Be aware that codes purchased from <strong>unauthorized key resellers</strong> may have been blocked or previously redeemed by another user.
+    </p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">

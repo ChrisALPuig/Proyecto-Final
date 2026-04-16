@@ -22,25 +22,21 @@ const Policies_GeneralnfoComponent: React.FC = () => {
           <table className="orders-table">
             <tbody>
               
-              <tr><td><IonRouterLink routerLink="/howtopay" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>How do I buy a game?</IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/cg-voluntary-refund-policy" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>CG Voluntary Refund Policy </IonRouterLink></td></tr>
               
-              <tr><td><img src="/public/start.png" alt="star" className="orders-table-images"/>How do I buy a gif?</td></tr>
-              <tr><td><img src="/public/start.png" alt="star" className="orders-table-images"/>How can I change my currency?</td></tr>
-              <tr><td><img src="/public/start.png" alt="star" className="orders-table-images"/>How do I redeem a code?</td></tr>
+              <tr><td><IonRouterLink routerLink="/faq-shopping-experience" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>FAQ: Shopping experience </IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/faq-website-and-accounts" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>FAQ: Website and accounts</IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/cg-user-agreement" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>CG User Agreement</IonRouterLink></td></tr>
             </tbody>
           </table>
 
           {/* DERECHA */}
           <table className="orders-table">
             <tbody>
-              <tr><td><img src="/public/start.png" alt="star" className="orders-table-images"/>I tried to make a payment and 
-              it didn’t work</td></tr>
-              <tr><td><img src="/public/start.png" alt="star" className="orders-table-images"/>I got charged and did not get 
-              my game</td></tr>
-              <tr><td>I got charged but did not order 
-              the game</td></tr>
-              <tr><td>Paid in local currency, but got
-              charged an additional fee</td></tr>
+              <tr><td><IonRouterLink routerLink="/faq-gift-codes" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>FAQ: Gift codes</IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/faq-downloads-and-streaming" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>FAQ: Downloads and streaming</IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/privacy-policy" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>Privacy Policy</IonRouterLink></td></tr>
+              <tr><td><IonRouterLink routerLink="/email-from-cg-looks-suspicious-phishing" className="table-link"><img src="/public/start.png" alt="star" className="orders-table-images"/>Email from CG looks suspicious / Phishing</IonRouterLink></td></tr>
             </tbody>
           </table>
         </div>

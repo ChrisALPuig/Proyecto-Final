@@ -10,10 +10,17 @@ const AdditionalFeeComponent: React.FC = () => {
         <h1 className="orders-titles"> Paid in local currency, but got charged an additional fee </h1>
         <div className="divider"></div>
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            GOG only charges the exact amount displayed in your cart and does not add any extra fees. If you notice a higher charge on your payment statement after completing your purchase, please reach out to your payment provider (such as your bank or PayPal) for further clarification.
-          </p>
-        </div>
+  <div className="how-to-buy-text">
+    <p><strong>Information regarding transaction fees</strong></p>
+    <p>
+      CG only charges the exact amount displayed in your shopping cart at the time of purchase; we do not apply any additional or hidden fees. 
+    </p>
+
+    <p>
+      If you notice a higher amount on your bank or PayPal statement than what was shown during checkout, we recommend contacting your payment provider for further clarification. These discrepancies are typically due to external factors, such as currency conversion rates or international transaction fees applied by your financial institution.
+    </p>
+  </div>
+</div>
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">
           <div className="more-questions-box-image">

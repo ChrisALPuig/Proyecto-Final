@@ -10,12 +10,21 @@ const NotOrderTheGameComponent: React.FC = () => {
         <h1 className="orders-titles"> I got charged but did not order the game </h1>
         <div className="divider"></div>
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            If you think you were charged for a game you didn’t mean to buy, please contact us directly so we can look into the situation and clarify what happened.</p>
+  <div className="how-to-buy-text">
+    <p>
+      If you believe you have been charged for a game you did not intend to purchase, please contact us directly. Our team will look into the transaction and help clarify the situation for you.
+    </p>
 
-            <p>If you got an order confirmation email for Fahrenheit: Indigo Prophecy Remastered but didn’t actually purchase it, you can safely disregard it. The game was automatically granted for free to all owners of the original Fahrenheit, and those confirmation emails were sent due to a technical error. We apologize for any confusion caused.
-            </p>
-        </div>
+    <p><strong>Note regarding Fahrenheit: Indigo Prophecy Remastered</strong></p>
+    <p>
+      If you received an order confirmation for <em>Fahrenheit: Indigo Prophecy Remastered</em> without having bought it, you can safely ignore the email. This game was automatically added for free to the libraries of everyone who owned the original version of <em>Fahrenheit</em>. 
+    </p>
+
+    <p>
+      Due to a technical error, confirmation emails were sent out during this process. We sincerely apologize for any confusion or concern this may have caused.
+    </p>
+  </div>
+</div>
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">
           <div className="more-questions-box-image">

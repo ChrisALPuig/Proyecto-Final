@@ -17,20 +17,20 @@ const TriedToMakePaymentComponent: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            <p>Although we strive to make our payment systems as reliable as possible, there are situations beyond our control that may cause a payment to fail.</p>
+  <div className="how-to-buy-text">
+    <p>Although we strive to make our payment systems as reliable as possible, certain situations beyond our control can occasionally cause a transaction to fail.</p>
 
-            <p>If you haven’t received confirmation that the money was taken from your account, you should try making the payment again. It’s possible that there was an error when entering your card details.</p>
+    <p>If you haven’t received a confirmation and no funds have been deducted from your account, we recommend trying the payment again. It is possible that an error occurred while entering your card details.</p>
 
-            <p>If you’re certain your payment information was correct, your bank may have declined the transaction for some reason. Keep in mind that we operate from Europe, so your card must allow international payments (for example, many prepaid cards issued in the United States do not support them).</p>
+    <p>If you are certain your information is correct but the payment still fails, your bank may have declined the transaction. Please keep in mind that CG operates from Europe; therefore, your card must be authorized for <strong>international payments</strong> (some prepaid cards, particularly those issued in the U.S., may not support this).</p>
 
-            <p>You may need to contact your bank for further assistance, as most payment-related issues are outside our control. If your bank confirms that everything is fine on their side or that they don’t see any payment attempts from us (“GOG.COM” or “GOG Ltd”), please reach out to us through the support form.</p>
+    <p>Since most payment issues are handled externally, you may need to contact your bank for further assistance. If they confirm that everything is correct on their end or if they don't see any attempts from <strong>"CG.COM"</strong> or <strong>"CG Ltd"</strong>, please reach out to us via our support form.</p>
 
-            <p>Most importantly, if it appears that you were charged but didn’t receive your game, contact us right away.</p>
+    <p><strong>Important:</strong> If it appears that you were charged but the game has not been added to your library, please contact us immediately so we can investigate.</p>
 
-            <p>Also remember that banks often place temporary holds on funds before completing a transaction, which can be mistaken for an actual charge. Be sure to verify whether the payment was truly processed.</p>
-          </p>
-        </div>
+    <p>Also, keep in mind that banks often place a <strong>temporary hold</strong> on funds during a transaction attempt, which can sometimes be mistaken for an actual charge. We recommend verifying with your bank whether the payment was fully processed or just reserved.</p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">

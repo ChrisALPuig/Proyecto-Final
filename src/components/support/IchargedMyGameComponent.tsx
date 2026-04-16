@@ -7,26 +7,35 @@ const IchargedMyGameComponent: React.FC = () => {
     <>
       <SupportHeader />
       <div className="orders-content">
-        <h1 className="orders-titles"> I got charged and did not get my game </h1>
-        <div className="divider"></div>
-        <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            Keep in mind that banks may place a temporary hold on funds before a transaction goes through, which can make it seem like you’ve been charged when you actually haven’t. Be sure to verify whether the payment was truly completed.</p>
+  <h1 className="orders-titles">I got charged and did not get my game</h1>
+  <div className="divider"></div>
+  <div className="how-to-buy-container">
+  <div className="how-to-buy-text">
+    <p>
+      Please keep in mind that banks often "block" or reserve funds before a transaction is fully processed. It is easy to mistake these pending authorizations for actual charges, so we recommend double-checking your bank statement to confirm if the payment was truly completed.
+    </p>
 
-            <p>If, after two hours, your order still appears incomplete and you can’t access the games you purchased—even though the payment was successful—please contact us directly so we can help resolve the issue.</p>
+    <p>
+      If your order has not been processed after two hours and you still cannot access your games—despite a successful payment—please contact us directly so we can investigate and resolve the issue for you.
+    </p>
 
-            <p>If you bought a DLC or expansion, note that these don’t show up as separate items in your library. To download a DLC:</p>
+    <p>
+      <strong>How to find your DLCs and Expansions:</strong><br />
+      Note that these items are not listed as separate entries in your library. To download a DLC using <strong>CG GALAXY</strong>, follow these steps:
+    </p>
 
-            <p>-select the base game in GOG GALAXY
-            <p>-click the customization icon (next to PLAY)</p>
-            <p>-go to “Manage installation”</p>
-            <p></p>-then “Configure”</p>
-            <p>-choose the DLC and confirm with OK</p>
+    <p>
+      • Select the main game in you CG GALAXY library.<br />
+      • Click the customization icon (located next to the PLAY button).<br />
+      • Navigate to "Manage installation" and then select "Configure".<br />
+      • Mark the checkbox for your DLC and confirm with "OK".
+    </p>
 
-            <p>If you prefer to install DLCs without using the app:</p>
-            <p>Open a browser and go to your GOG account library (https://www.gog.com/account
-            ). Select the base game, click “DOWNLOAD OFFLINE BACKUP GAME INSTALLERS,” scroll down to “DLC installers,” and download the appropriate setup file.</p>
-        </div>
+    <p>
+      If you prefer to install your DLCs manually without using the app, open your browser and access your <a href="https://www.cg.com/account" target="_blank" rel="noopener noreferrer">CG account library</a>. Select the main game, click on "DOWNLOAD OFFLINE BACKUP GAME INSTALLERS", scroll down to the "DLC installers" section, and download the corresponding setup files.
+    </p>
+  </div>
+  </div>
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">
           <div className="more-questions-box-image">

@@ -17,12 +17,16 @@ const HowToChangeCurrency: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            You can modify your currency here, as well as through your account settings or by using the option located in the bottom-right corner of the main page, catalog pages, and product pages on GOG. Keep in mind that only currencies available in your region can be selected.
+  <div className="how-to-buy-text">
+    <p>
+      You can modify your currency through your <strong>account settings</strong> or by using the selector located in the bottom-right corner of the store pages (including the main page, catalog, and product pages). Please keep in mind that you can only select currencies that are available in your specific region.
+    </p>
 
-            <p>You can also update your currency through the GOG GALAXY app. To do this, click on your avatar in the top-left corner, then go to “Account and Locale” and choose your preferred currency.</p>
-          </p>
-        </div>
+    <p>
+      Additionally, you can update your currency using the <strong>CG GALAXY app</strong>. To do this, click on your avatar in the top-left corner, navigate to the “Account and Locale” section, and choose your preferred currency from the list.
+    </p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">

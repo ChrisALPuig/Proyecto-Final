@@ -18,8 +18,22 @@ import HowToChangeCurrency from './pages/HowToChangeCurrency.tsx';
 import IchargedMyGame from './pages/support/IchargedMyGame.tsx';
 import NotOrderTheGame from './pages/support/NotOrderTheGame.tsx';
 import AdditionalFee from './pages/support/AdditionalFee.tsx';
-/*import HowToRedeemCode from './pages/support/HowToRedeemCode.tsx';
-/* Core CSS required for Ionic components to work properly */
+import IcannotLogin from './pages/support/IcannotLogin.tsx';
+import HowDeleteAccount from './pages/support/HowDeleteAccount.tsx';
+import IamNotReceivingEmail from './pages/support/IamNotReceivingEmail.tsx';
+import HowCanIRecoverAccess from './pages/support/HowCanIRecoverAccess.tsx';
+import HowResetPassword from './pages/support/HowResetPassword.tsx';
+import HowChangeEmail from './pages/support/HowChangeEmail.tsx';
+import WhatIsTwoStepLogin from './pages/support/WhatIsTwoStepLogin.tsx';
+import HowChangeUsername from './pages/support/HowChangeUsername.tsx';
+import CgVoluntaryRefundPolicy from './pages/support/StarcgVoluntaryRefundPolicy.tsx';
+import FaqShoppingExperience from './pages/support/StarfaqShoppingExperience.tsx';
+import FaqWebsiteAndAccounts from './pages/support/StarfaqWebsiteAndAccounts.tsx';
+import CgUserAgreement from './pages/support/StarcgUserAgreement.tsx';
+import FaqGiftCodes from './pages/support/StarfaqGiftCodes.tsx';
+import FaqDownloadsAndStreaming from './pages/support/StarfaqDownloadsAndStreaming.tsx';
+import PrivacyPolicy from './pages/support/StarprivacyPolicy.tsx';
+import EmailFromCgLooksSuspiciousPhishing from './pages/support/StaremailFromCgLooksSuspiciousPhishing.tsx';
 import '@ionic/react/css/core.css';
 
 /* Basic CSS for apps built with Ionic */
@@ -53,6 +67,8 @@ import Form from './pages/support/FormSupport.tsx';
 import Store from './pages/store/store.tsx';
 import AccountStoreComponent from './components/support/AccountStoreComponent.tsx';
 import Policies_GeneralnfoComponent from './components/support/Policies _GeneralnfoComponent.tsx';
+import AccountStore from './pages/support/AccountStore.tsx';
+import Policies_Generalnfo from './pages/support/Policies _Generalnfo.tsx';
 import HowToRedeemCode from './pages/HowToRedeemCode.tsx';
 import TriedToMakePayment from './pages/support/TriedToMakePayment.tsx';
 
@@ -85,11 +101,27 @@ const App: React.FC = () => (
         <Route exact path="/i-got-charged-and-did-not-get-my-game" component={IchargedMyGame} />
         <Route exact path="/i-got-charged-but-did-not-order-the-game" component={NotOrderTheGame} />
         <Route exact path="/paid-in-local-currency-but-got-charged-an-additional-fee" component={AdditionalFee} />
+        <Route exact path="/i-cannot-log-in-what-can-i-do" component ={IcannotLogin} />
+        <Route exact path="/how-do-i-delete-my-account" component ={HowDeleteAccount} />
+        <Route exact path="/i-am-not-receiving-the-two-step-authentication-email" component ={IamNotReceivingEmail} />
+        <Route exact path="/how-can-i-recover-access-to-my-lost-cg-account" component ={HowCanIRecoverAccess} />
+        <Route exact path="/how-do-i-reset-my-password" component ={HowResetPassword} />
+        <Route exact path="/how-do-i-change-my-email-address" component ={HowChangeEmail} />
+        <Route exact path="/what-is-two-step-login-and-how-does-it-work" component ={WhatIsTwoStepLogin} />
+        <Route exact path="/how-do-i-change-my-username" component ={HowChangeUsername} />
+        <Route exact path="/cg-voluntary-refund-policy" component ={CgVoluntaryRefundPolicy} />
+        <Route exact path="/faq-shopping-experience" component ={FaqShoppingExperience} />
+        <Route exact path="/faq-website-and-accounts" component ={FaqWebsiteAndAccounts} />
+        <Route exact path="/cg-user-agreement" component ={CgUserAgreement} />
+        <Route exact path="/faq-gift-codes" component ={FaqGiftCodes} />
+        <Route exact path="/faq-downloads-and-streaming" component ={FaqDownloadsAndStreaming} />
+        <Route exact path="/privacy-policy" component ={PrivacyPolicy} />
+        <Route exact path="/email-from-cg-looks-suspicious-phishing" component ={EmailFromCgLooksSuspiciousPhishing} />
         <Route exact path="/form" component={Form} /> 
         <Redirect exact from="/" to="/home" />
         <Route exact path="/games" component={Store} />
-        <Route exact path="/account-store" component={AccountStoreComponent} />
-        <Route exact path="/policies_general" component={Policies_GeneralnfoComponent} />
+        <Route exact path="/account-store" component={AccountStore} />
+        <Route exact path="/policies_general" component={Policies_Generalnfo} />
 
       </IonRouterOutlet>
       </IonReactRouter>

@@ -17,14 +17,15 @@ const HowToBuyGif: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            To purchase a gift, follow the steps described in the "How do I buy a game" article. However, before clicking "Pay for your order now" during checkout, make sure to tick the "Gift this order" option located just below the payment methods. You will also need to provide the recipient's email address.
+  <div className="how-to-buy-text">
+    <p><strong>Buying a game as a gift</strong></p>
+    <p>To purchase a gift, follow the same steps as a standard purchase. However, before you click "Pay for your order now" during the checkout process, make sure to check the "Gift this order" box located right below the payment methods.</p>
 
-            <p>After that, continue with the purchase as usual.</p>
+    <p>You will also be asked to enter the recipient's email address. Once provided, you can proceed with the purchase as usual.</p>
 
-            If you're unable to complete your gift purchase, please refer to this support article.
-          </p>
-        </div>
+    <p>If you encounter any issues or are unable to complete the gift transaction, please refer to our support articles for further assistance.</p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">
