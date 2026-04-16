@@ -15,6 +15,9 @@ import Success from './pages/payment/success.tsx';
 import HowToPay from './pages/support/HowToPay.tsx';
 import HowToBuyGif from './pages/support/HowToBuyGif.tsx';
 import HowToChangeCurrency from './pages/HowToChangeCurrency.tsx';
+import IchargedMyGame from './pages/support/IchargedMyGame.tsx';
+import NotOrderTheGame from './pages/support/NotOrderTheGame.tsx';
+import AdditionalFee from './pages/support/AdditionalFee.tsx';
 /*import HowToRedeemCode from './pages/support/HowToRedeemCode.tsx';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -51,6 +54,7 @@ import Store from './pages/store/store.tsx';
 import AccountStoreComponent from './components/support/AccountStoreComponent.tsx';
 import Policies_GeneralnfoComponent from './components/support/Policies _GeneralnfoComponent.tsx';
 import HowToRedeemCode from './pages/HowToRedeemCode.tsx';
+import TriedToMakePayment from './pages/support/TriedToMakePayment.tsx';
 
 
 
@@ -77,15 +81,16 @@ const App: React.FC = () => (
         <Route exact path="/howtobuygif" component={HowToBuyGif} />
         <Route exact path="/howtochangecurrency" component={HowToChangeCurrency} />
         <Route exact path="/howtoredeemcode" component={HowToRedeemCode} />
-        <Route exact path="/i-tried-to-make-a-payment" component={OrderPayments} />
-        <Route exact path="/i-got-charged-and-did-not-get-my-game" component={OrderPayments} />
-        <Route exact path="/i-got-charged-but-did-not-order-the-game" component={OrderPayments} />
-        <Route exact path="/paid-in-local-currency-but-got-charged-an-additional-fee" component={OrderPayments} />
+        <Route exact path="/i-tried-to-make-a-payment" component={TriedToMakePayment} />
+        <Route exact path="/i-got-charged-and-did-not-get-my-game" component={IchargedMyGame} />
+        <Route exact path="/i-got-charged-but-did-not-order-the-game" component={NotOrderTheGame} />
+        <Route exact path="/paid-in-local-currency-but-got-charged-an-additional-fee" component={AdditionalFee} />
         <Route exact path="/form" component={Form} /> 
         <Redirect exact from="/" to="/home" />
         <Route exact path="/games" component={Store} />
         <Route exact path="/account-store" component={AccountStoreComponent} />
         <Route exact path="/policies_general" component={Policies_GeneralnfoComponent} />
+
       </IonRouterOutlet>
       </IonReactRouter>
     </AuthProvider>

@@ -2,7 +2,7 @@ import { IonRouterLink } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { User } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from '../../contexts/AuthContext.js';
 import "./SupportHeader.css";
 
 const SupportHeader: React.FC = () => {
