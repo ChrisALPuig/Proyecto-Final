@@ -17,16 +17,46 @@ const FaqGiftCodesComponent: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
+  <div className="how-to-buy-text">
+    <h2>Gifting on GOG</h2>
+    <p>
+      Gifting allows you to purchase one or multiple games for your friends. It’s a great way to share your favorite titles!
+    </p>
 
-            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
-            
-            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
+    <h3>How to buy and send a gift</h3>
+    <p>
+      1. Add the game(s) to your cart as usual.<br />
+      2. In the checkout screen, check the <strong>"GIFT THIS ORDER"</strong> box below the payment methods.<br />
+      3. Enter the recipient's email address and complete the purchase.
+    </p>
+    <p>
+      <strong>Pro Tip:</strong> Gifts are delivered immediately. If you want to send it later (like on a birthday), enter <em>your own email</em> as the recipient. You'll receive the code and can forward it whenever you like.
+    </p>
 
-            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
-          </p>
-        </div>
+    <h3>Redeeming a Gift</h3>
+    <p>
+      To redeem a code, open <strong>GOG GALAXY</strong>, click the cogwheel icon → "Add games & friends" → <strong>"Redeem a GOG code"</strong>. You can also redeem it directly on our website.
+    </p>
+
+    <h3>Managing your Gifts</h3>
+    <p>
+      • <strong>Check Status:</strong> In your Order History, use the filters "Redeemed" or "Unredeemed" to see if your friend has claimed the game.<br />
+      • <strong>Fix Errors:</strong> If you made a mistake in the email address, go to your Order History, find the gift, and select <strong>"RESEND GIFT CODE"</strong> to send it to a new address.
+    </p>
+
+    <h3>Frequently Asked Questions</h3>
+    <p>
+      • <strong>Global Access:</strong> All gifts purchased on GOG can be redeemed globally, regardless of your friend's region.<br />
+      • <strong>Expiration:</strong> Gift codes purchased on GOG.COM <strong>never expire</strong>.<br />
+      • <strong>Pricing:</strong> Gifts use a region-free price to prevent abuse of regional pricing, so the cost might vary slightly from your local price.<br />
+      • <strong>Wallet Funds:</strong> You cannot gift Wallet funds directly, but you can use your own Wallet funds to buy a game as a gift.
+    </p>
+
+    <p>
+      <em>Note: If you need separate codes for multiple games, please purchase them in separate orders, as one order generates one unique gift code.</em>
+    </p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">

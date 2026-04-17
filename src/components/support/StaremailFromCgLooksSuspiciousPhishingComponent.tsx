@@ -17,16 +17,44 @@ const EmailFromCgLooksSuspiciousPhishingComponent: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
+  <div className="how-to-buy-text">
+    <h2>Online Safety & Phishing Protection</h2>
+    <p>
+      At GOG, we strive to maintain a safe and trustworthy environment. Protecting our users from online harm is a top priority, and we want you to have fun without worrying about security threats.
+    </p>
 
-            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
-            
-            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
+    <h3>Is this email really from GOG?</h3>
+    <p>
+      If you receive a suspicious marketing email, always verify the sender's address. Our official newsletter offers are exclusively sent from:
+    </p>
+    <p>
+      • <strong>newsletter@email3.gog.com</strong>
+    </p>
+    <p>
+      If you're ever unsure about an offer, feel free to confirm its validity with our <strong>Support Team</strong> or our Community before clicking any links.
+    </p>
 
-            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
-          </p>
-        </div>
+    <h3>Official GOG Email Addresses</h3>
+    <p>
+      Sometimes, legitimate emails are flagged as spam by your provider. To ensure your account's safety, please verify that communications come from these official addresses:
+    </p>
+    <ul>
+      <li><strong>no-reply@email.gog.com</strong> – Used for password resets and email change notifications.</li>
+      <li><strong>do-not-reply@email.gog.com</strong> – Used for order confirmations and gift codes.</li>
+    </ul>
+    <p>
+      <em>Always verify the sender before marking a flagged message as safe!</em>
+    </p>
+
+    <h3>Reporting Suspicious Activity</h3>
+    <p>
+      If you find a website posing as GOG.COM or any other content that infringes on copyright or security policies, please <strong>report it to us immediately</strong>. 
+    </p>
+    <p>
+      You can use our official reporting form to help us take down malicious sites and protect the rest of the community. For more details on how we protect you, check out our moderation and security articles.
+    </p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">

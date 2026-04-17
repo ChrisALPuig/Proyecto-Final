@@ -16,18 +16,45 @@ const CgVoluntaryRefundPolicyComponent: React.FC = () => {
         <div className="divider"></div>
 
         {/* CONTENEDOR DE RESPUESTA */}
-        <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
+            <div className="how-to-buy-container">
+  <div className="how-to-buy-text">
+    <p><strong>Our Voluntary Refund Policy</strong></p>
+    <p>
+      Our updated policy allows you to request a refund for a product up to <strong>30 days after purchase</strong>, even if it has been downloaded, launched, and played. To apply, simply go to your "Order History" page, find the order, and click "Ask for a refund."
+    </p>
 
-            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
-            
-            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
+    <p>
+      <strong>Important:</strong> If you're seeking a refund because the game isn't working, please consider contacting our Technical Support first. We’ll do our best to help you get it running!
+    </p>
 
-            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
-          </p>
-        </div>
+    <p><strong>Refund Options & Processing Times</strong></p>
+    <p>
+      You can choose between <strong>CG Wallet funds</strong> (processed almost instantly once approved) or a <strong>cash refund</strong> to your original payment method. Cash refunds may take a few business days depending on your bank. Note that methods like paysafecard or SOFORT may take up to a few weeks due to technical processing.
+    </p>
 
+    <p><strong>Specific Cases: Pre-orders, DLCs, and Packs</strong></p>
+    <p>
+      • <strong>Pre-orders:</strong> Refundable throughout the pre-order period and for 30 days after release.<br />
+      • <strong>Game Packs:</strong> We cannot divide packs (like Season Passes). Refunding a pack removes the entire collection from your account.<br />
+      • <strong>DLCs:</strong> If purchased separately, they can be refunded individually. If you refund a base game, the linked DLCs will also be refunded.
+    </p>
+
+    <p><strong>Gifts and Early Access</strong></p>
+    <p>
+      For <strong>Gifts</strong>, only the original purchaser can request a refund. <strong>Early Access</strong> titles follow the same 30-day rule as any other game.
+    </p>
+
+    <p><strong>Fair Use & Limits</strong></p>
+    <p>
+      We trust you to use this policy fairly. Please remember that <strong>refunds are not reviews</strong>. If you finished a game but didn't like it, we encourage you to share your opinion in a review instead. We reserve the right to refuse refunds in individual cases of policy abuse. Don't be "that person"—no one likes that person!
+    </p>
+
+    <p>
+      <em>For regional laws or additional rights, please refer to sections 7.1 and 7.2 of our User Agreement.</em>
+    </p>
+  </div>
+</div>
+    
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">
         <div className="more-questions-box-image">

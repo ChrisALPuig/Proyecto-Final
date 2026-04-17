@@ -17,16 +17,35 @@ const FaqWebsiteAndAccountsComponent: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
+  <div className="how-to-buy-text">
+    <p><strong>Do I need a user account?</strong></p>
+    <p>
+      Yes, while you can browse the catalog and forums without one, a <strong>user account is required</strong> to purchase and download games. Having an account allows you to manage your library and access all site functionalities.
+    </p>
 
-            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
-            
-            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
+    <p><strong>How to create and manage your account</strong></p>
+    <p>
+      Simply click the <strong>"Sign up"</strong> button in the top menu, fill in your details, and confirm. Once logged in, you will see an "Account" button instead of the login options. To log out, hover over the "Account" button and select "Logout" from the dropdown menu.
+    </p>
 
-            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
-          </p>
-        </div>
+    <p><strong>Browser Recommendations</strong></p>
+    <p>
+      For the best experience, we recommend using the latest versions of <strong>Google Chrome</strong> or <strong>Mozilla Firefox</strong>. Our site is also compatible with Safari and Opera, provided they are kept up to date.
+    </p>
+
+    <p><strong>Troubleshooting Website Issues</strong></p>
+    <p>If you experience any technical problems while browsing, please try the following steps:</p>
+    <p>
+      • Ensure your browser is updated to the latest stable version.<br />
+      • Disable any <strong>extensions or plugins</strong> (like ad-blockers) that might interfere with the site.<br />
+      • Try accessing the site from a different browser or an incognito window.
+    </p>
+
+    <p>
+      If the issue persists, contact our support team with details about your operating system and browser version. <strong>Screenshots</strong> of the error are always very helpful!
+    </p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">

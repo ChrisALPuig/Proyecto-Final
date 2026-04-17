@@ -17,16 +17,43 @@ const FaqDownloadsAndStreamingComponent: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
+  <div className="how-to-buy-text">
+    <h2>Downloads and Installation</h2>
+    <p>
+      Once your purchase is complete, you can access your games and movies immediately through the <strong>"My Account"</strong> section or the <strong>GOG GALAXY</strong> app.
+    </p>
 
-            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
-            
-            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
+    <h3>Limits and Re-downloads</h3>
+    <p>
+      There is <strong>no limit</strong> to how many times you can re-download your purchased items. You are also free to install your games on multiple computers in your household (laptop, desktop, etc.). However, remember that your account is personal; sharing your login information or games with people outside your household is not permitted.
+    </p>
 
-            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
-          </p>
-        </div>
+    <h3>Do I need a launcher to play?</h3>
+    <p>
+      <strong>No.</strong> One of the best things about GOG is that all our games are <strong>DRM-free</strong>. You can download standalone, self-executable (.exe) installers that don't require any internet connection or launcher to work. 
+    </p>
+    <p>
+      If you prefer convenience, you can use <strong>GOG GALAXY</strong> for automatic updates, achievements, and cloud saves, but it is 100% optional.
+    </p>
+
+    <h3>Bonus Content & Movies</h3>
+    <p>
+      • <strong>Bonuses:</strong> Wallpapers, soundtracks, and manuals can be found in your library. Just click on the game's box art in "My Account" to see all available downloads.<br />
+      • <strong>Movies:</strong> You can stream them directly from your browser for instant viewing or download them as .mp4 files for the highest quality.
+    </p>
+
+    <h3>Troubleshooting</h3>
+    <p>
+      • <strong>Game not in library?</strong> If you have the confirmation email but don't see the game, try refreshing your account library.<br />
+      • <strong>Payment issues?</strong> If you weren't redirected to the success screen and have no email, check if you were actually charged before contacting support.<br />
+      • <strong>Technical bugs?</strong> For crashes or installation errors, visit our Support section or the community forums, where each game has its own dedicated space for fans to help each other.
+    </p>
+
+    <p>
+      <em>Tip: For movies, we recommend using a reliable player like VLC or Media Player Classic to ensure smooth playback.</em>
+    </p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">

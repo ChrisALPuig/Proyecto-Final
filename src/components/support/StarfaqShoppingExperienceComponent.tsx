@@ -17,16 +17,31 @@ const FaqShoppingExperienceComponent: React.FC = () => {
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            By default, if you have a retail code or one purchased from an authorized platform, you’ll need to visit the redeem page.
+  <div className="how-to-buy-text">
+    <p><strong>Security & Payment Protection</strong></p>
+    <p>
+      Your security is our top priority. We protect the confidentiality of every transaction using <strong>SSL encryption</strong>. For added safety, we do not store any credit card information on our servers, ensuring your payment details are as secure as possible.
+    </p>
 
-            <p>Once there, enter the code, check the “I’m not a robot” box, and click “Continue.” If everything is correct, the game details will appear, and the game(s) will be added to your account after clicking “Continue” again. Keep in mind that once the code is opened, it will be temporarily reserved for you for a few minutes. If you want to make it available for someone else, click “Cancel.”</p>
-            
-            <p>If the code doesn’t work, make sure it has been entered correctly.</p>
+    <p><strong>How to Place an Order</strong></p>
+    <p>
+      It’s very simple! Find the game you want using our search bar or by browsing the catalog. Once you've found a title, click its price icon or visit its product page to select <strong>"Add to Cart."</strong>
+    </p>
+    <p>
+      Our checkout is a streamlined, one-step process. After a successful payment, your game will be instantly available in your library through the <strong>GOG GALAXY</strong> app or your "My Account" page.
+    </p>
 
-            <p>If you bought the code from an unauthorized key reseller, there’s a chance it may have been blocked or already used by another person.</p>
-          </p>
-        </div>
+    <p><strong>Gifting a Game</strong></p>
+    <p>
+      To send a gift, add the game to your cart as usual. During checkout, simply check the <strong>"Gift this order"</strong> option. Enter the recipient's email address, complete the payment, and they will receive an email with their new game immediately.
+    </p>
+
+    <p><strong>Need Help with an Order?</strong></p>
+    <p>
+      If you encounter any issues or have questions regarding your purchases, please reach out to our <strong>Support Team</strong>. To help us resolve your case faster, please include as much information as possible, such as error messages or the steps you've already taken.
+    </p>
+  </div>
+</div>
 
         <h1 className="more-questions">Do you have more questions?</h1>
         <div className="more-questions-box">
