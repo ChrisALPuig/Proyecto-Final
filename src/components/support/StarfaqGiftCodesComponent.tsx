@@ -18,7 +18,7 @@ const FaqGiftCodesComponent: React.FC = () => {
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
   <div className="how-to-buy-text">
-    <h2>Gifting on GOG</h2>
+    <h2>Gifting on CG</h2>
     <p>
       Gifting allows you to purchase one or multiple games for your friends. It’s a great way to share your favorite titles!
     </p>
@@ -35,7 +35,7 @@ const FaqGiftCodesComponent: React.FC = () => {
 
     <h3>Redeeming a Gift</h3>
     <p>
-      To redeem a code, open <strong>GOG GALAXY</strong>, click the cogwheel icon → "Add games & friends" → <strong>"Redeem a GOG code"</strong>. You can also redeem it directly on our website.
+      To redeem a code, open <strong>CG GALAXY</strong>, click the cogwheel icon → "Add games & friends" → <strong>"Redeem a CG code"</strong>. You can also redeem it directly on our website.
     </p>
 
     <h3>Managing your Gifts</h3>
@@ -46,8 +46,8 @@ const FaqGiftCodesComponent: React.FC = () => {
 
     <h3>Frequently Asked Questions</h3>
     <p>
-      • <strong>Global Access:</strong> All gifts purchased on GOG can be redeemed globally, regardless of your friend's region.<br />
-      • <strong>Expiration:</strong> Gift codes purchased on GOG.COM <strong>never expire</strong>.<br />
+      • <strong>Global Access:</strong> All gifts purchased on CG can be redeemed globally, regardless of your friend's region.<br />
+      • <strong>Expiration:</strong> Gift codes purchased on CG.COM <strong>never expire</strong>.<br />
       • <strong>Pricing:</strong> Gifts use a region-free price to prevent abuse of regional pricing, so the cost might vary slightly from your local price.<br />
       • <strong>Wallet Funds:</strong> You cannot gift Wallet funds directly, but you can use your own Wallet funds to buy a game as a gift.
     </p>

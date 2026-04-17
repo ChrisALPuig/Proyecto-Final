@@ -28,7 +28,7 @@ const FaqShoppingExperienceComponent: React.FC = () => {
       It’s very simple! Find the game you want using our search bar or by browsing the catalog. Once you've found a title, click its price icon or visit its product page to select <strong>"Add to Cart."</strong>
     </p>
     <p>
-      Our checkout is a streamlined, one-step process. After a successful payment, your game will be instantly available in your library through the <strong>GOG GALAXY</strong> app or your "My Account" page.
+      Our checkout is a streamlined, one-step process. After a successful payment, your game will be instantly available in your library through the <strong>CG GALAXY</strong> app or your "My Account" page.
     </p>
 
     <p><strong>Gifting a Game</strong></p>

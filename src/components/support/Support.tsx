@@ -1,4 +1,4 @@
-import { IonPage } from "@ionic/react";
+import { IonPage, IonRouterLink } from "@ionic/react";
 import SupportHeader from "./SupportHeader.tsx";
 import "./Support.css";
 
@@ -44,18 +44,18 @@ const Support: React.FC = () => {
 
         <div className="support-topics">
           <ul>
-            <li>How do I buy a game?</li>
-            <li>How do I buy a gift?</li>
-            <li>How can I change my currency?</li>
-            <li>How do I redeem a code?</li>
-            <li>I tried to make a payment and it didn't work. What can I do now?</li>
-            <li>I got charged and did not get my game</li>
-            <li>I cannot log in. What can I do?</li>
-            <li>How do I reset my password?</li>
-            <li>How do I download my purchased items?</li>
-            <li>How do I install my DLC?</li>
-            <li>I'm unable to download my game - what can I do?</li>
-            <li>How to remove my integration data</li>
+            <li><IonRouterLink className="support-link" routerLink="/howtopay">How do I buy a game?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/howtobuygif">How do I buy a gift?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/howtochangecurrency">How can I change my currency?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/howtoredeemcode">How do I redeem a code?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/i-tried-to-make-a-payment">I tried to make a payment and it didn't work. What can I do now?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/i-got-charged-and-did-not-get-my-game">I got charged and did not get my game</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/i-cannot-log-in-what-can-i-do">I cannot log in. What can I do?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/how-do-i-reset-my-password">How do I reset my password?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/faq-downloads-and-streaming">How do I download my purchased items?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/faq-downloads-and-streaming">How do I install my DLC?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/faq-downloads-and-streaming">I'm unable to download my game - what can I do?</IonRouterLink></li>
+            <li><IonRouterLink className="support-link" routerLink="/policies_general">How to remove my integration data</IonRouterLink></li>
           </ul>
         </div>
       </div>

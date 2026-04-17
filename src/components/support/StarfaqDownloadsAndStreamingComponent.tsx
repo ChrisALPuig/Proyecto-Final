@@ -20,7 +20,7 @@ const FaqDownloadsAndStreamingComponent: React.FC = () => {
   <div className="how-to-buy-text">
     <h2>Downloads and Installation</h2>
     <p>
-      Once your purchase is complete, you can access your games and movies immediately through the <strong>"My Account"</strong> section or the <strong>GOG GALAXY</strong> app.
+      Once your purchase is complete, you can access your games and movies immediately through the <strong>"My Account"</strong> section or the <strong>CG GALAXY</strong> app.
     </p>
 
     <h3>Limits and Re-downloads</h3>
@@ -30,10 +30,10 @@ const FaqDownloadsAndStreamingComponent: React.FC = () => {
 
     <h3>Do I need a launcher to play?</h3>
     <p>
-      <strong>No.</strong> One of the best things about GOG is that all our games are <strong>DRM-free</strong>. You can download standalone, self-executable (.exe) installers that don't require any internet connection or launcher to work. 
+      <strong>No.</strong> One of the best things about CG is that all our games are <strong>DRM-free</strong>. You can download standalone, self-executable (.exe) installers that don't require any internet connection or launcher to work. 
     </p>
     <p>
-      If you prefer convenience, you can use <strong>GOG GALAXY</strong> for automatic updates, achievements, and cloud saves, but it is 100% optional.
+      If you prefer convenience, you can use <strong>CG GALAXY</strong> for automatic updates, achievements, and cloud saves, but it is 100% optional.
     </p>
 
     <h3>Bonus Content & Movies</h3>

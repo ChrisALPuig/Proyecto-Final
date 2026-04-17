@@ -21,14 +21,14 @@ const PrivacyPolicyComponent: React.FC = () => {
     <h2>Privacy Policy</h2>
     <p><em>Last updated: April 2026</em></p>
     <p>
-      At GOG, we respect your privacy. This policy explains what information we collect when you use GOG.COM or the GOG GALAXY app, how we use it, and how we keep it safe.
+      At CG, we respect your privacy. This policy explains what information we collect when you use CG.COM or the CG GALAXY app, how we use it, and how we keep it safe.
     </p>
 
     <hr />
 
     <h3>1. Who We Are</h3>
     <p>
-      We are <strong>GOG sp. z o.o.</strong>, based in Warsaw, Poland. You can always reach our Data Protection Officer at <strong>privacy@gog.com</strong> for any privacy-related queries.
+      We are <strong>CG sp. z o.o.</strong>, based in Warsaw, Poland. You can always reach our Data Protection Officer at <strong>privacy@cg.com</strong> for any privacy-related queries.
     </p>
 
     <h3>2. Information We Collect</h3>
@@ -56,7 +56,7 @@ const PrivacyPolicyComponent: React.FC = () => {
 
     <h3>5. Data Sharing & Trusted Partners</h3>
     <p>
-      We don't sell your data. We only share necessary information with <strong>Trusted Partners</strong> who help us run GOG, such as:
+      We don't sell your data. We only share necessary information with <strong>Trusted Partners</strong> who help us run CG, such as:
     </p>
     <p>
       • Payment providers (to process your orders).<br />
@@ -71,7 +71,7 @@ const PrivacyPolicyComponent: React.FC = () => {
 
     <hr />
     <p>
-      <strong>Summary:</strong> We collect only what we need to make GOG work for you. We store it safely and you can ask us to delete it whenever you want. <strong>Your data, your rules.</strong>
+      <strong>Summary:</strong> We collect only what we need to make CG work for you. We store it safely and you can ask us to delete it whenever you want. <strong>Your data, your rules.</strong>
     </p>
   </div>
 </div>

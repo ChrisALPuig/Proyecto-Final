@@ -20,27 +20,27 @@ const EmailFromCgLooksSuspiciousPhishingComponent: React.FC = () => {
   <div className="how-to-buy-text">
     <h2>Online Safety & Phishing Protection</h2>
     <p>
-      At GOG, we strive to maintain a safe and trustworthy environment. Protecting our users from online harm is a top priority, and we want you to have fun without worrying about security threats.
+      At CG, we strive to maintain a safe and trustworthy environment. Protecting our users from online harm is a top priority, and we want you to have fun without worrying about security threats.
     </p>
 
-    <h3>Is this email really from GOG?</h3>
+    <h3>Is this email really from CG?</h3>
     <p>
       If you receive a suspicious marketing email, always verify the sender's address. Our official newsletter offers are exclusively sent from:
     </p>
     <p>
-      • <strong>newsletter@email3.gog.com</strong>
+      • <strong>newsletter@email3.cg.com</strong>
     </p>
     <p>
       If you're ever unsure about an offer, feel free to confirm its validity with our <strong>Support Team</strong> or our Community before clicking any links.
     </p>
 
-    <h3>Official GOG Email Addresses</h3>
+    <h3>Official CG Email Addresses</h3>
     <p>
       Sometimes, legitimate emails are flagged as spam by your provider. To ensure your account's safety, please verify that communications come from these official addresses:
     </p>
     <ul>
-      <li><strong>no-reply@email.gog.com</strong> – Used for password resets and email change notifications.</li>
-      <li><strong>do-not-reply@email.gog.com</strong> – Used for order confirmations and gift codes.</li>
+      <li><strong>no-reply@email.cg.com</strong> – Used for password resets and email change notifications.</li>
+      <li><strong>do-not-reply@email.cg.com</strong> – Used for order confirmations and gift codes.</li>
     </ul>
     <p>
       <em>Always verify the sender before marking a flagged message as safe!</em>
@@ -48,7 +48,7 @@ const EmailFromCgLooksSuspiciousPhishingComponent: React.FC = () => {
 
     <h3>Reporting Suspicious Activity</h3>
     <p>
-      If you find a website posing as GOG.COM or any other content that infringes on copyright or security policies, please <strong>report it to us immediately</strong>. 
+      If you find a website posing as CG.COM or any other content that infringes on copyright or security policies, please <strong>report it to us immediately</strong>. 
     </p>
     <p>
       You can use our official reporting form to help us take down malicious sites and protect the rest of the community. For more details on how we protect you, check out our moderation and security articles.
