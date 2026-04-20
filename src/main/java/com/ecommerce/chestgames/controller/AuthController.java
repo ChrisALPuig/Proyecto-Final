@@ -9,6 +9,8 @@ import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.repository.RoleRepository;
 import com.ecommerce.chestgames.repository.UserRepository;
 import com.ecommerce.chestgames.security.CustomUserDetails;
+import com.ecommerce.chestgames.service.TwoFactorService;
+import com.ecommerce.chestgames.utils.CryptoUtil;
 import com.ecommerce.chestgames.utils.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,16 +39,18 @@ public class AuthController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TwoFactorService twoFactorService;
+    private final CryptoUtil cryptoUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("El nombre de usuario ya existe.");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("El correo ya está registrado.");
         }
 
         Role userRole = roleRepository.findByName("ROLE_USER")
@@ -93,14 +97,23 @@ public class AuthController {
                     );
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String token = jwtUtils.generateToken(userDetails);
+            User loggedUser = ((CustomUserDetails) userDetails).getUser();
 
+            if (loggedUser.isTwoFactorEnabled()) {
+                return ResponseEntity.ok(
+                        new AuthResponse(null, userDetails.getUsername(),
+                                userDetails.getAuthorities().stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .toList(),
+                                loggedUser, true)
+                );
+            }
+
+            String token = jwtUtils.generateToken(userDetails);
             List<String> roles = userDetails.getAuthorities()
                     .stream()
                     .map(GrantedAuthority::getAuthority)
                     .toList();
-
-            User loggedUser = ((CustomUserDetails) userDetails).getUser();
 
             return ResponseEntity.ok(
                     new AuthResponse(token, userDetails.getUsername(), roles, loggedUser)
@@ -109,6 +122,48 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
     }
+
+    @PostMapping("/login/verify")
+    public ResponseEntity<?> verifyLogin2FA(@RequestBody LoginRequest request) {
+        String loginIdentifier = request.getEmail() != null && !request.getEmail().isBlank()
+                ? request.getEmail()
+                : request.getUsername();
+
+        if (loginIdentifier == null || loginIdentifier.isBlank() || request.getCode() == null || request.getCode().isBlank()) {
+            return ResponseEntity.badRequest().body("Login identifier and 2FA code are required");
+        }
+
+        User user = userRepository.findByEmail(loginIdentifier)
+                .or(() -> userRepository.findByUsername(loginIdentifier))
+                .orElse(null);
+
+        if (user == null || !user.isTwoFactorEnabled() || user.getTwoFactorSecret() == null) {
+            return ResponseEntity.status(401).body("Usuario no autorizado o 2FA no activado");
+        }
+
+        try {
+            String secret = cryptoUtil.decrypt(user.getTwoFactorSecret());
+            boolean valid = twoFactorService.verifyCode(secret, request.getCode());
+
+            if (!valid) {
+                return ResponseEntity.status(401).body("Código inválido");
+            }
+
+            CustomUserDetails userDetails = new CustomUserDetails(user);
+            String token = jwtUtils.generateToken(userDetails);
+            List<String> roles = userDetails.getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
+
+            return ResponseEntity.ok(
+                    new AuthResponse(token, userDetails.getUsername(), roles, user)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error verificando 2FA");
+        }
+    }
+
     @PostMapping("/create-admin")
     //@PreAuthorize("hasRole('ADMIN')") // Solo usuarios con ROLE_ADMIN pueden crear otros admins
     public ResponseEntity<?> createAdmin(@RequestBody @Valid CreateAdminRequest request) {

@@ -37,7 +37,8 @@ public class TwoFactorController {
         String qr = twoFactorService.generateQR(user.getEmail(), secret);
 
         return ResponseEntity.ok(Map.of(
-                "qr", qr
+                "qr", qr,
+                "secret", secret
         ));
     }
 

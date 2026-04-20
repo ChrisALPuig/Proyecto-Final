@@ -2,6 +2,7 @@ package com.ecommerce.chestgames.controller;
 
 import com.ecommerce.chestgames.entity.Game;
 import com.ecommerce.chestgames.repository.GameRepository;
+import com.ecommerce.chestgames.service.IgdbService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +16,16 @@ import java.util.stream.Collectors;
 public class GameController {
 
     private final GameRepository gameRepository;
+    private final IgdbService igdbService;
 
     @Transactional
     @GetMapping
     public List<Game> getAllGames() {
         List<Game> games = gameRepository.findAll();
-        games.forEach(this::initializeCollections);
+        games.forEach(game -> {
+            initializeCollections(game);
+            ensureDefaults(game);
+        });
         return games;
     }
 
@@ -61,7 +66,10 @@ public class GameController {
         }
 
         games = applyFilter(games, filter);
-        games.forEach(this::initializeCollections);
+        games.forEach(game -> {
+            initializeCollections(game);
+            ensureDefaults(game);
+        });
         return games;
     }
 
@@ -104,9 +112,15 @@ public class GameController {
     @Transactional
     @GetMapping("/{id}")
     public Game getGameById(@PathVariable Long id) {
-        Game game = gameRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Game not found with id: " + id));
+        Game game = gameRepository.findById(id).orElse(null);
+        if (game == null) {
+            game = igdbService.searchGameById(id);
+            if (game == null) {
+                throw new RuntimeException("Game not found with id: " + id);
+            }
+        }
         initializeCollections(game);
+        ensureDefaults(game);
         return game;
     }
 
@@ -115,5 +129,20 @@ public class GameController {
         if (game.getGenres() != null) game.getGenres().size();
         if (game.getTags() != null) game.getTags().size();
         if (game.getFeatures() != null) game.getFeatures().size();
+    }
+
+    private void ensureDefaults(Game game) {
+        if (game.getPrice() == null) {
+            game.setPrice(19.99);
+        }
+        if (game.getSystemRequirementsMin() == null || game.getSystemRequirementsMin().isBlank()) {
+            game.setSystemRequirementsMin("OS: Windows 10, RAM: 8GB, GPU: GTX 960 or equivalent, Storage: 50GB");
+        }
+        if (game.getSystemRequirementsRecommended() == null || game.getSystemRequirementsRecommended().isBlank()) {
+            game.setSystemRequirementsRecommended("OS: Windows 10/11, RAM: 16GB, GPU: GTX 1060 / AMD RX 580 or better, Storage: 50GB");
+        }
+        if (game.getFeatures() == null || game.getFeatures().isEmpty()) {
+            game.setFeatures(List.of("Single Player", "Achievements", "Cloud Saves"));
+        }
     }
 }
