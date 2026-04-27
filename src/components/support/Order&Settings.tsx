@@ -42,12 +42,18 @@ const defaultProfile = {
   language: "English",
 };
 
-const OrderSettings: React.FC = () => {
+interface OrderSettingsProps {
+  showOnlySection?: string;
+  initialPayments?: Payment[];
+  initialLoading?: boolean;
+}
+
+const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialPayments, initialLoading = false }) => {
   const { token, isAuthenticated, roles, login, logout, setAvatar } = useAuth();
   const { setLanguage, t } = useLanguage();
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [payments, setPayments] = useState<Payment[]>(initialPayments || []);
+  const [loading, setLoading] = useState(initialPayments ? false : initialLoading);
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileSaving, setProfileSaving] = useState(false);
   const [phoneSaving, setPhoneSaving] = useState(false);
@@ -63,7 +69,7 @@ const OrderSettings: React.FC = () => {
     language: "English",
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeSection, setActiveSection] = useState("ordersHistory");
+  const [activeSection, setActiveSection] = useState(showOnlySection || "ordersHistory");
   const [message, setMessage] = useState("");
   const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
 
@@ -101,6 +107,11 @@ const OrderSettings: React.FC = () => {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   useEffect(() => {
+    if (initialPayments) {
+      setPayments(initialPayments);
+      return;
+    }
+
     const fetchPayments = async () => {
       if (!token) {
         setLoading(false);
@@ -425,6 +436,259 @@ const OrderSettings: React.FC = () => {
     { key: "loginAndSecurity", icon: Lock },
     { key: "deleteAccount", icon: Trash2 },
   ];
+
+  if (showOnlySection) {
+    return (
+      <section className="orders-panel">
+        <div className="panel-topbar">
+          <div className="panel-heading">
+            <span className="panel-label">{t(showOnlySection)}</span>
+            <h2 className="panel-title">{t(showOnlySection)}</h2>
+          </div>
+        </div>
+        {showOnlySection === "ordersHistory" && (
+          <div className="orders-list">
+            {loading ? (
+              <div className="orders-empty">{t("loadingPayments")}</div>
+            ) : !isAuthenticated ? (
+              <div className="orders-empty">
+                <p>{t("signInToViewPayments")}</p>
+                <IonRouterLink routerLink="/login" className="login-link">
+                  {t("signIn")}
+                </IonRouterLink>
+              </div>
+            ) : filteredPayments.length === 0 ? (
+              <div className="orders-empty">{t("noPaymentsFound")}</div>
+            ) : (
+              filteredPayments.map((payment) => {
+                let paymentItems: { id: number; name: string; quantity: number; price: number; image: string; }[] = [];
+                if (payment.items) {
+                  try {
+                    paymentItems = JSON.parse(payment.items);
+                  } catch (error) {
+                    console.error('Error parsing order items:', error);
+                  }
+                }
+
+                return (
+                  <article key={payment.id} className="order-card">
+                    <div className="order-card-header">
+                      <div className="order-card-header-left">
+                        <p className="order-number">ORDER #{payment.orderId}</p>
+                        <span className="order-date">{new Date(payment.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <span className="order-price">€{Number(payment.amount).toFixed(2)}</span>
+                    </div>
+
+                    <div className="order-card-body">
+                      <div className="order-thumb">{payment.productName?.charAt(0) || "#"}</div>
+                      <div className="order-details">
+                        <p className="order-product">{payment.productName}</p>
+                        <div className="order-meta">
+                          <span className="order-subtitle">{payment.status}</span>
+                        </div>
+                        <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
+                          {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
+                        </button>
+                      </div>
+                    </div>
+
+                    {expandedOrders[payment.id] && (
+                      <div className="order-items-details">
+                        <h4>{t('orderItemsTitle')}</h4>
+                        {paymentItems.length > 0 ? (
+                          paymentItems.map((item) => (
+                            <div key={item.id} className="order-item-row">
+                              <img src={item.image} alt={item.name} className="order-item-image" />
+                              <div className="order-item-info">
+                                <p className="order-item-name">{item.name}</p>
+                                <p className="order-item-qty">{t('orderItemsQuantity').replace('{count}', item.quantity.toString())}</p>
+                              </div>
+                              <span className="order-item-price">€{Number(item.price).toFixed(2)}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="order-item-empty">{t('orderItemsEmpty')}</p>
+                        )}
+                      </div>
+                    )}
+                  </article>
+                );
+              })
+            )}
+          </div>
+        )}
+        {showOnlySection === "accountAndLocale" && (
+          <div className="account-content">
+            <div className="account-section">
+              <h3>{t("myIdentity")}</h3>
+              {message && <div className="account-message account-message-above-section">{message}</div>}
+              {profileLoading ? (
+                <div className="orders-empty">{t("loadingProfile")}</div>
+              ) : (
+                <>
+                  <div className="account-row">
+                    <span>{t("avatar")}</span>
+                    <div className="account-avatar">
+                      {avatarPreview ? (
+                        <img src={avatarPreview} alt="avatar" className="account-avatar-img" />
+                      ) : (
+                        <User className="sidebar-icon" />
+                      )}
+                    </div>
+                    <div>
+                      <button
+                        className="button-secondary"
+                        type="button"
+                        onClick={() => avatarInputRef.current?.click()}
+                      >
+                        {t("change")}
+                      </button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={avatarInputRef}
+                        onChange={handleAvatarChange}
+                        hidden
+                      />
+                    </div>
+                  </div>
+                  <div className="account-row">
+                    <span>{t("username")}</span>
+                    <input
+                      name="username"
+                      value={accountForm.username}
+                      onChange={handleAccountChange}
+                      className="account-input"
+                      placeholder={t("yourUsername")}
+                    />
+                    <div />
+                  </div>
+                  <div className="account-row">
+                    <span>{t("phoneNumber")}</span>
+                    <input
+                      name="phoneNumber"
+                      value={accountForm.phoneNumber}
+                      onChange={handleAccountChange}
+                      className="account-input"
+                      placeholder={t("addPhoneNumber")}
+                    />
+                    <button
+                      type="button"
+                      className="button-primary"
+                      onClick={handleAddPhone}
+                      disabled={phoneSaving || profileLoading || !isAuthenticated}
+                    >
+                      {phoneSaving ? t("saving") : t("add")}
+                    </button>
+                  </div>
+                  <div className="account-row">
+                    <span>{t("birthday")}</span>
+                    <input
+                      name="birthDate"
+                      type="date"
+                      value={accountForm.birthDate}
+                      onChange={handleAccountChange}
+                      className="account-input"
+                    />
+                    <div />
+                  </div>
+                  <div className="account-row">
+                    <span>{t("country")}</span>
+                    <select
+                      name="country"
+                      value={accountForm.country}
+                      onChange={handleAccountChange}
+                      className="account-select"
+                    >
+                      <option value="Spain">Spain</option>
+                      <option value="United States">United States</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="France">France</option>
+                      <option value="Germany">Germany</option>
+                      <option value="Italy">Italy</option>
+                      <option value="Canada">Canada</option>
+                      <option value="Australia">Australia</option>
+                      <option value="Japan">Japan</option>
+                      <option value="China">China</option>
+                      <option value="India">India</option>
+                      <option value="Brazil">Brazil</option>
+                      <option value="Mexico">Mexico</option>
+                      <option value="Argentina">Argentina</option>
+                      <option value="Chile">Chile</option>
+                      <option value="Colombia">Colombia</option>
+                      <option value="Peru">Peru</option>
+                      <option value="Venezuela">Venezuela</option>
+                      <option value="Ecuador">Ecuador</option>
+                      <option value="Uruguay">Uruguay</option>
+                      <option value="Paraguay">Paraguay</option>
+                      <option value="Bolivia">Bolivia</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <div />
+                  </div>
+                  <div className="account-row">
+                    <span>{t("currency")}</span>
+                    <select
+                      name="currency"
+                      value={accountForm.currency}
+                      onChange={handleAccountChange}
+                      className="account-select"
+                    >
+                      <option value="Euro (EUR)">Euro (EUR)</option>
+                      <option value="US Dollar (USD)">US Dollar (USD)</option>
+                      <option value="British Pound (GBP)">British Pound (GBP)</option>
+                      <option value="Japanese Yen (JPY)">Japanese Yen (JPY)</option>
+                      <option value="Canadian Dollar (CAD)">Canadian Dollar (CAD)</option>
+                      <option value="Australian Dollar (AUD)">Australian Dollar (AUD)</option>
+                      <option value="Swiss Franc (CHF)">Swiss Franc (CHF)</option>
+                      <option value="Chinese Yuan (CNY)">Chinese Yuan (CNY)</option>
+                      <option value="Indian Rupee (INR)">Indian Rupee (INR)</option>
+                      <option value="Brazilian Real (BRL)">Brazilian Real (BRL)</option>
+                      <option value="Mexican Peso (MXN)">Mexican Peso (MXN)</option>
+                      <option value="Argentine Peso (ARS)">Argentine Peso (ARS)</option>
+                      <option value="Chilean Peso (CLP)">Chilean Peso (CLP)</option>
+                      <option value="Colombian Peso (COP)">Colombian Peso (COP)</option>
+                      <option value="Peruvian Sol (PEN)">Peruvian Sol (PEN)</option>
+                      <option value="Venezuelan Bolivar (VES)">Venezuelan Bolivar (VES)</option>
+                      <option value="Uruguayan Peso (UYU)">Uruguayan Peso (UYU)</option>
+                      <option value="Paraguayan Guarani (PYG)">Paraguayan Guarani (PYG)</option>
+                      <option value="Bolivian Boliviano (BOB)">Bolivian Boliviano (BOB)</option>
+                    </select>
+                    <div />
+                  </div>
+                  <div className="account-row">
+                    <span>{t("language")}</span>
+                    <select
+                      name="language"
+                      value={accountForm.language}
+                      onChange={handleAccountChange}
+                      className="account-select"
+                    >
+                      <option value="English">English</option>
+                      <option value="Español">Español</option>
+                    </select>
+                    <div />
+                  </div>
+                  <div className="account-row account-row-save">
+                    <div />
+                    <button
+                      type="button"
+                      className="button-primary"
+                      onClick={handleProfileSave}
+                      disabled={profileSaving || profileLoading || !isAuthenticated}
+                    >
+                      {profileSaving ? t("saving") : t("saveChanges")}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </section>
+    );
+  }
 
   return (
     <div className="orders-settings-page">

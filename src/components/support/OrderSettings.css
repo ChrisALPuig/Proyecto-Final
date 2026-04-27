@@ -107,8 +107,8 @@
   gap: 12px;
   padding: 12px 18px;
   min-width: 260px;
-  background: #111426;
-  border: 1px solid #1e2135;
+  background: #1f2536;
+  border: 1px solid #2a2f4a;
   border-radius: 999px;
   margin-left: auto;
   flex: 0 0 auto;
@@ -117,7 +117,7 @@
 .search-icon {
   width: 18px;
   height: 18px;
-  color: #94a3b8;
+  color: #cbd5e1;
 }
 
 .search-input {
@@ -125,12 +125,12 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #e5e7eb;
+  color: #f8fafc;
   font-size: 0.95rem;
 }
 
 .search-input::placeholder {
-  color: #718096;
+  color: #94a3b8;
 }
 
 .orders-list {
@@ -598,5 +598,45 @@
 
   .order-card-body {
     grid-template-columns: 1fr;
+  }
+
+  .account-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .account-row span {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .account-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+  }
+
+  .account-input,
+  .account-select,
+  .button-primary,
+  .button-secondary {
+    width: 100%;
+  }
+
+  .account-row > div,
+  .account-row > button,
+  .account-row > input,
+  .account-row > select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .account-row.account-row-save {
+    justify-items: start;
+  }
+
+  .account-section {
+    padding: 18px;
   }
 }

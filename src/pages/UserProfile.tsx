@@ -31,12 +31,14 @@ const UserProfile: React.FC = () => {
   const history = useHistory();
   const { token, avatar, setAvatar } = useAuth();
   const { wishlistItems, wishlistCount } = useWishlist();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [userProfile, setUserProfile] = useState<any>(null);
-
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [allOrders, setAllOrders] = useState<any[]>([]);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [openTicketsCount, setOpenTicketsCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'general' | 'edit' | 'orders' | 'tickets'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'edit' | 'orders'>('general');
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -47,7 +49,7 @@ const UserProfile: React.FC = () => {
         if (profile.avatar && !avatar) {
           setAvatar(profile.avatar);
         }
-        // Load recent orders (for general tab)
+        // Load all orders
         const ordersResponse = await fetch('http://localhost:8080/api/payments/user', {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -56,7 +58,20 @@ const UserProfile: React.FC = () => {
         });
         if (ordersResponse.ok) {
           const orders = await ordersResponse.json();
-          setRecentOrders(orders.slice(0, 3));
+          setAllOrders(orders);
+          setTotalOrders(orders.length);
+        }
+        // Load open tickets
+        const ticketsResponse = await fetch('http://localhost:8080/api/tickets/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (ticketsResponse.ok) {
+          const tickets = await ticketsResponse.json();
+          const openTickets = Array.isArray(tickets) ? tickets.filter((ticket: any) => ticket.status !== 'closed' && ticket.status !== 'CLOSED').length : 0;
+          setOpenTicketsCount(openTickets);
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -66,6 +81,24 @@ const UserProfile: React.FC = () => {
     };
     loadUserData();
   }, [token, avatar, setAvatar]);
+
+  useEffect(() => {
+    if (activeTab === 'general' && token && !loading) {
+      // Recargar perfil automáticamente cuando se selecciona la pestaña general
+      const reloadProfile = async () => {
+        try {
+          const profile = await getUserProfile(token);
+          setUserProfile(profile);
+          if (profile.avatar && !avatar) {
+            setAvatar(profile.avatar);
+          }
+        } catch (error) {
+          console.error('Error reloading user profile:', error);
+        }
+      };
+      reloadProfile();
+    }
+  }, [activeTab, token, avatar, setAvatar, loading]);
 
   if (loading) {
     return (
@@ -86,16 +119,18 @@ const UserProfile: React.FC = () => {
     { key: 'general', label: t('generalView') || 'Vista general' },
     { key: 'edit', label: t('editProfile') || 'Editar perfil' },
     { key: 'orders', label: t('purchaseHistory') || 'Historial de compra' },
-    { key: 'tickets', label: t('supportTickets') || 'Soporte/Tickets' },
   ];
 
-  // Usar la fecha de creación de la cuenta
+  // Usar la fecha de creación de la cuenta según el idioma seleccionado
   const formattedSince = userProfile?.createdAt
-    ? new Date(userProfile.createdAt).toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
+    ? new Date(userProfile.createdAt).toLocaleDateString(
+        language === 'Español' ? 'es-ES' : 'en-US',
+        {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }
+      )
     : '---';
 
 
@@ -119,7 +154,6 @@ const UserProfile: React.FC = () => {
                 <h1>{userProfile?.username || 'User'}</h1>
                 <p className="hero-subtitle">{userProfile?.email}</p>
                 <div className="hero-meta">
-                  <span>{t('level') || 'Nivel'} 30</span>
                   <span>{t('memberSince') || 'Miembro desde:'} {formattedSince}</span>
                   <span>{userProfile?.country || 'Global'}</span>
                 </div>
@@ -145,7 +179,7 @@ const UserProfile: React.FC = () => {
           <div className="profile-tab-content">
             {activeTab === 'general' && (
               <div className="profile-card-grid">
-                <div className="profile-card profile-card-wide">
+                <div className="profile-card">
                   <div className="profile-card-header">
                     <IonIcon icon={person} />
                     {t('generalView') || 'Vista general'}
@@ -157,28 +191,90 @@ const UserProfile: React.FC = () => {
                         <p>{t('wishlist') || 'Wishlist'}</p>
                       </div>
                       <div>
-                        <span>{recentOrders.length}</span>
-                        <p>{t('games') || 'Juegos'}</p>
+                        <span>{totalOrders}</span>
+                        <p>{t('orders') || 'Pedidos'}</p>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div className="profile-card">
+                  <div className="profile-card-header">
+                    {t('Recent Orders') || 'Pedidos Totales'}
+                  </div>
+                  <div className="profile-card-content">
+                    <div className="recent-orders">
+                      {allOrders.length > 0 ? (
+                        allOrders.slice(0, 3).map((order: Payment) => (
+                          <div key={order.id} className="order-item-card">
+                            {order.gameImage ? (
+                              <img src={order.gameImage} alt={order.productName} className="order-item-image" />
+                            ) : (
+                              <div className="order-item-placeholder">{order.productName?.charAt(0) || '?'}</div>
+                            )}
+                            <div className="order-item-info">
+                              <p className="order-item-name">{order.productName}</p>
+                              <p className="order-item-id">{order.orderId}</p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p>{t('noRecentOrders') || 'No hay pedidos recientes'}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="profile-card">
+                  <div className="profile-card-header">
+                    {t('supportTickets') || 'Tickets de Soporte'}
+                  </div>
+                  <div className="profile-card-content">
+                    <div className="support-tickets-section">
+                      <div className="tickets-count">
+                        <span>{openTicketsCount}</span>
+                        <p>{t('openTickets') || 'Tickets abiertos'}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className="button-primary"
+                        onClick={() => history.push('/my-tickets')}
+                        style={{ marginTop: '12px' }}
+                      >
+                        {t('viewTickets') || 'Ver Tickets'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="profile-card profile-card-details">
+                  <div className="profile-card-header">
+                    {t('userDetails') || 'Detalles del Usuario'}
+                  </div>
+                  <div className="profile-card-content">
+                    <div className="user-details">
+                      <p><strong>{t('phone') || 'Teléfono'}:</strong> {userProfile?.phoneNumber || '---'}</p>
+                      <p><strong>{t('birthDate') || 'Fecha de Nacimiento'}:</strong> {userProfile?.birthDate ? new Date(userProfile.birthDate).toLocaleDateString(language === 'Español' ? 'es-ES' : 'en-US') : '---'}</p>
+                      <p><strong>{t('currency') || 'Moneda'}:</strong> {userProfile?.currency || '---'}</p>
+                      <p><strong>{t('language') || 'Idioma'}:</strong> {userProfile?.language || '---'}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="button-edit-profile"
+                      onClick={() => setActiveTab('edit')}
+                    >
+                      {t('editProfile') || 'Editar perfil'}
+                    </button>
                   </div>
                 </div>
               </div>
             )}
             {activeTab === 'edit' && (
               <div style={{ marginTop: 24 }}>
-                <OrderSettings />
+                <OrderSettings showOnlySection="accountAndLocale" />
               </div>
             )}
             {activeTab === 'orders' && (
-              <React.Suspense fallback={<div style={{ padding: 32, textAlign: 'center' }}><IonSpinner name="crescent" /> {t('loading') || 'Cargando...'}</div>}>
-                <UserOrders />
-              </React.Suspense>
-            )}
-            {activeTab === 'tickets' && (
-              <React.Suspense fallback={<div style={{ padding: 32, textAlign: 'center' }}><IonSpinner name="crescent" /> {t('loading') || 'Cargando...'}</div>}>
-                <MyTickets />
-              </React.Suspense>
+              <div style={{ marginTop: 24 }}>
+                <OrderSettings showOnlySection="ordersHistory" initialPayments={allOrders} initialLoading={loading} />
+              </div>
             )}
           </div>
         </div>

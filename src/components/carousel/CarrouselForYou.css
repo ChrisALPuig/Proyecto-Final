@@ -1,12 +1,13 @@
 .recommended {
-  margin: 2rem;
+  margin: 2rem 16px;
+  max-width: 1200px;
+  width: calc(100% - 32px);
 }
 
 .recommended-title {
-  font-size: 1.5rem;
+  font-size: clamp(1.4rem, 5vw, 2rem);
   font-weight: bold;
-  margin-bottom: 1rem;
-  margin-left: 170px;
+  margin: 0 0 1rem 0;
   color: #ffffff;
 }
 
@@ -15,6 +16,7 @@
   display: flex;
   align-items: center;
   width: 100%;
+  gap: 0.75rem;
 }
 
 /* contenedor */
@@ -23,8 +25,8 @@
   overflow-x: auto;
   scroll-behavior: smooth;
   flex: 1;
-  gap: 15px;
-
+  gap: 12px;
+  padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -35,10 +37,13 @@
 
 /* slides */
 .carousel-slide {
-  min-width: 100%;
+  min-width: min(100%, 420px);
+  width: min(100%, 420px);
   height: 300px;
   position: relative;
   flex-shrink: 0;
+  border-radius: 18px;
+  overflow: hidden;
 }
 
 /* imagen */
@@ -46,6 +51,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 /* texto */
@@ -53,10 +59,11 @@
   position: absolute;
   bottom: 20px;
   left: 20px;
+  right: 20px;
   color: white;
-  background: rgba(0,0,0,0.5);
-  padding: 10px;
-  border-radius: 6px;
+  background: rgba(0,0,0,0.55);
+  padding: 12px;
+  border-radius: 10px;
 }
 
 /* flechas */
@@ -75,4 +82,23 @@
 
 .right {
   margin-left: 5px;
+}
+
+@media (max-width: 680px) {
+  .recommended {
+    margin: 1.5rem 12px;
+    width: calc(100% - 24px);
+  }
+  .carousel-wrapper {
+    gap: 0.5rem;
+  }
+  .nav-button {
+    font-size: 1.5rem;
+    padding: 0.4rem;
+  }
+  .carousel-slide {
+    min-width: min(100%, 320px);
+    width: min(100%, 320px);
+    height: 260px;
+  }
 }

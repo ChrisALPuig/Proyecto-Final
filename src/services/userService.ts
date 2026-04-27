@@ -9,6 +9,7 @@ export interface UserProfile {
   language: string;
   avatar?: string;
   roles: string[];
+  createdAt?: string;
   token?: string;
 }
 

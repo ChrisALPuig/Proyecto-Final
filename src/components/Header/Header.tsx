@@ -86,7 +86,13 @@ const Header: React.FC = () => {
 
     const rect = userIconRef.current?.getBoundingClientRect();
     if (rect) {
-      setMenuCoords({ top: rect.bottom + 8, left: rect.left });
+      const menuWidth = 220;
+      const viewportWidth = window.innerWidth;
+      let left = rect.left;
+      if (left + menuWidth > viewportWidth - 16) {
+        left = Math.max(16, viewportWidth - menuWidth - 16);
+      }
+      setMenuCoords({ top: rect.bottom + 8, left });
     }
     setUserMenuOpen(true);
   };
@@ -112,7 +118,13 @@ const Header: React.FC = () => {
   const openNotificationMenu = () => {
     const rect = notificationRef.current?.getBoundingClientRect();
     if (rect) {
-      setNotificationCoords({ top: rect.bottom + 8, left: rect.left });
+      const menuWidth = 320;
+      const viewportWidth = window.innerWidth;
+      let left = rect.left;
+      if (left + menuWidth > viewportWidth - 16) {
+        left = Math.max(16, viewportWidth - menuWidth - 16);
+      }
+      setNotificationCoords({ top: rect.bottom + 8, left });
     }
     setNotificationMenuOpen(true);
     if (unreadCount > 0) {
@@ -542,7 +554,7 @@ const Header: React.FC = () => {
             <ul>
               <li
                 onClick={() => {
-                  history.push("/home");
+                  history.push("/games");
                   setMenuOpen(false);
                 }}
               >
