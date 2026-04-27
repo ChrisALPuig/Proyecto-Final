@@ -381,7 +381,10 @@ const Header: React.FC = () => {
                       >
                         <div className="hover-user-menu-header">{t("yourAccount")}</div>
                         <ul>
-                          <li>{t("yourProfile")}</li>
+                          <li onClick={() => {
+                            history.push("/user-profile");
+                            setUserMenuOpen(false);
+                          }}>{t("yourProfile")}</li>
                           <li onClick={() => {
                             history.push("/orders-settings");
                             setUserMenuOpen(false);

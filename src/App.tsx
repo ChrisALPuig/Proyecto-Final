@@ -18,10 +18,9 @@ import HowToRedeemCode from './pages/HowToRedeemCode.tsx';
 import GameDynamicPage from './pages/juegos/GameDynamicPage.tsx';
 import MyTickets from './pages/support/MyTickets.tsx';
 import OrdersSettingsPage from './pages/support/OrdersSettingsPage.tsx';
-import UserOrders from './pages/orders/UserOrders.tsx';
 import TicketView from './pages/support/TicketView.tsx';
-import Store from './pages/store/store.tsx';
-import Form from './pages/support/FormSupport.tsx';
+import UserOrders from './pages/orders/UserOrders.tsx';
+import UserProfile from './pages/UserProfile.tsx';
 
 /* Auth (AJUSTA RUTAS SI ES NECESARIO) */
 import SignIn from './pages/auth/SignIn.tsx';
@@ -31,6 +30,8 @@ import Doom from './pages/juegos/doom.tsx';
 /* Components */
 import AccountStoreComponent from './components/support/AccountStoreComponent.tsx';
 import PoliciesGeneralInfoComponent from './components/support/Policies_GeneralnfoComponent.tsx';
+import Store from './pages/store/store.tsx';
+import Form from './pages/support/FormSupport.tsx';
 
 /* Context Providers */
 import { AuthProvider } from './contexts/AuthContext.tsx';
@@ -110,6 +111,7 @@ const App: React.FC = () => (
                   <Route exact path="/my-tickets" component={MyTickets} />
                   <Route exact path="/orders-settings" component={OrdersSettingsPage} />
                   <Route exact path="/user-orders" component={UserOrders} />
+                  <Route exact path="/user-profile" component={UserProfile} />
                   <Route path="/ticket/:id" component={TicketView} exact />
 
                   {/* STORE */}
