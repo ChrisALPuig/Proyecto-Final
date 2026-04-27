@@ -23,5 +23,6 @@ public class UserProfileResponse {
     private String language;
     private Set<Role> roles;
     private String avatar;
+    private String createdAt;
     private String token;
 }

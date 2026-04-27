@@ -1,6 +1,7 @@
 package com.ecommerce.chestgames.entity;
 
 import com.ecommerce.chestgames.dto.TicketResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -28,7 +29,7 @@ public class Ticket {
     @ElementCollection
     private List<String> attachmentUrls;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketResponse> responses = new ArrayList<>();
 

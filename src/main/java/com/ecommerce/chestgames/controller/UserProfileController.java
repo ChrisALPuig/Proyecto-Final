@@ -89,6 +89,7 @@ public class UserProfileController {
                 user.getLanguage(),
                 user.getRoles(),
                 user.getAvatar(),
+                user.getCreatedAt() != null ? user.getCreatedAt().toString() : null,
                 null
         );
     }
