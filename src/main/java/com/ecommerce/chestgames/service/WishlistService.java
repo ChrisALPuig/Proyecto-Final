@@ -25,7 +25,7 @@ public class WishlistService {
     }
 
     // Devuelve la wishlist como lista de DTO para el frontend
-    @Transactional(readOnly = true)
+    @Transactional
     public List<WishlistItemDTO> getWishlist(User user) {
         Wishlist wishlist = wishlistRepository.findByUser(user)
                 .orElseGet(() -> {

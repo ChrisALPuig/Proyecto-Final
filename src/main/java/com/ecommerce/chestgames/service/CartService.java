@@ -26,7 +26,7 @@ public class CartService {
         this.gameRepository = gameRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<CartItemDTO> getCart(User user) {
         Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> {

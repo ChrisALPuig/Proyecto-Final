@@ -1,8 +1,8 @@
 package com.ecommerce.chestgames.entity;
 
 import com.ecommerce.chestgames.dto.TicketResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -26,11 +26,11 @@ public class Ticket {
 
     private LocalDateTime createdAt;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> attachmentUrls;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketResponse> responses = new ArrayList<>();
 
     // Getters y Setters
@@ -59,6 +59,7 @@ public class Ticket {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
+    @JsonProperty("attachments")
     public List<String> getAttachmentUrls() { return attachmentUrls; }
     public void setAttachmentUrls(List<String> attachmentUrls) { this.attachmentUrls = attachmentUrls; }
 
