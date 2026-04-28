@@ -422,122 +422,508 @@
 }
 
 
+/* ===== TABLET LANDSCAPE (1024px - 1200px) ===== */
+@media (max-width: 1024px) {
+  .profile-wrap {
+    padding: 18px 20px 36px;
+  }
+  .profile-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .profile-card {
+    padding: 26px 22px;
+  }
+  .hero-info h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  }
+  .profile-tabs {
+    gap: 14px;
+    margin-top: 24px;
+  }
+}
+
+/* ===== TABLET PORTRAIT (768px - 900px) ===== */
 @media (max-width: 900px) {
+  .profile-wrap {
+    padding: 16px 18px 32px;
+  }
   .profile-hero {
-    padding: 22px;
+    padding: 24px;
+    margin-bottom: 20px;
   }
   .profile-hero-top {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+  }
+  .hero-avatar {
+    width: 96px;
+    height: 96px;
+  }
+  .hero-info {
+    min-width: auto;
+    width: 100%;
+    text-align: center;
+  }
+  .hero-info h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    margin: 0 0 6px;
+  }
+  .hero-subtitle {
+    margin: 6px 0 12px;
+    font-size: 0.93rem;
+  }
+  .hero-meta {
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.9rem;
+  }
+  .profile-tabs {
+    gap: 12px;
+    margin-top: 22px;
+    padding-bottom: 8px;
+  }
+  .profile-tab {
+    padding: 11px 26px 9px;
+    font-size: 0.98rem;
+  }
+  .profile-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+      margin-bottom: 18px;
+  }
+  .profile-card {
+    padding: 24px 22px;
+  }
+  .profile-card-header {
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+  }
+  .general-stats {
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+  }
+  .general-stats div {
+    padding: 18px 24px;
+    min-width: auto;
+    flex: 1;
+  }
+  .general-stats span {
+    font-size: 1.6rem;
+  }
+  .general-stats p {
+    font-size: 0.85rem;
+  }
+  .order-item-card {
+    padding: 12px;
+    gap: 12px;
+  }
+  .order-item-image,
+  .order-item-placeholder {
+    width: 60px;
+    height: 60px;
+  }
+  .user-details {
+    gap: 16px;
+  }
+  .user-details p {
+    font-size: 0.98rem;
+  }
+  .button-edit-profile,
+  .button-primary {
+    align-self: flex-start;
+  }
+}
+
+/* ===== SMALL TABLET / LARGE MOBILE (640px - 767px) ===== */
+@media (max-width: 767px) {
+  .user-profile-content {
+    --padding-top: 80px;
+  }
+  .profile-wrap {
+    padding: 14px 14px 28px;
+    max-width: 100%;
+  }
+  .profile-hero {
+    padding: 20px;
+    margin-bottom: 16px;
+    border-radius: 18px;
+  }
+  .profile-hero-top {
+    gap: 16px;
+    text-align: center;
   }
   .hero-avatar {
     width: 88px;
     height: 88px;
   }
-  .hero-info {
-    min-width: auto;
-    width: 100%;
-  }
   .hero-info h1 {
-    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    font-size: clamp(1.4rem, 5vw, 2rem);
   }
-  .profile-card-grid {
-    grid-template-columns: repeat(2, minmax(280px, 1fr));
-    gap: 16px;
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin: 4px 0 10px;
   }
-  .general-stats {
-    flex-direction: column;
-    gap: 18px;
-  }
-  .profile-card {
-    min-width: unset;
-    max-width: 100%;
-    padding: 24px 22px 20px 22px;
-  }
-  .order-item-card {
-    flex-wrap: wrap;
+  .hero-meta {
     gap: 10px;
+    font-size: 0.85rem;
   }
-  .order-item-info {
-    min-width: 0;
-    width: 100%;
-  }
-}
-
-@media (max-width: 720px) {
-  .profile-card-grid {
-    grid-template-columns: 1fr;
+  .hero-meta span {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
   }
   .profile-tabs {
+    gap: 8px;
+    margin-top: 18px;
+    padding-bottom: 6px;
     flex-wrap: wrap;
-    gap: 10px;
     justify-content: center;
   }
   .profile-tab {
-    flex: 1 1 140px;
-    padding: 10px 14px 8px;
-    font-size: 0.95rem;
+    flex: 1 1 auto;
+    min-width: 90px;
+    padding: 10px 12px 8px;
+    font-size: 0.88rem;
   }
-  .general-stats {
-    gap: 14px;
+  .profile-card-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   .profile-card {
-    padding: 20px 18px 18px;
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+  .profile-card-header {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  .general-stats {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: space-around;
+    margin-top: 12px;
+  }
+  .general-stats div {
+    padding: 16px 12px;
+    min-width: auto;
+    flex: 1;
+  }
+  .general-stats span {
+    font-size: 1.4rem;
+  }
+  .general-stats p {
+    font-size: 0.78rem;
+    margin-top: 6px;
+  }
+  .recent-orders {
+    gap: 10px;
   }
   .order-item-card {
-    padding: 10px;
+    padding: 11px;
+    gap: 11px;
+    border-radius: 10px;
+  }
+  .order-item-image,
+  .order-item-placeholder {
+    width: 54px;
+    height: 54px;
+  }
+  .order-item-name {
+    font-size: 0.9rem;
+  }
+  .order-item-id {
+    font-size: 0.75rem;
   }
   .user-details {
-    gap: 16px;
+    gap: 13px;
   }
   .user-details p {
-    font-size: 0.98rem;
+    font-size: 0.95rem;
   }
-  .button-edit-profile {
+  .button-edit-profile,
+  .button-primary {
     width: 100%;
     align-self: stretch;
-    display: block;
+    padding: 12px 16px;
+    font-size: 0.9rem;
     text-align: center;
+  }
+  .support-tickets-section {
+    gap: 12px;
+  }
+  .tickets-count span {
+    font-size: 2rem;
+  }
+  .tickets-count p {
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 640px) {
+/* ===== MOBILE (480px - 639px) ===== */
+@media (max-width: 639px) {
+  .user-profile-content {
+    --padding-top: 75px;
+  }
   .profile-wrap {
-    padding: 10px 4px 18px;
+    padding: 12px 12px 24px;
+    max-width: 100%;
   }
   .profile-hero {
-    padding: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
   }
   .profile-hero-top {
-    gap: 10px;
+    gap: 14px;
+  }
+  .hero-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  .hero-info {
+    flex: 1;
+  }
+  .hero-info h1 {
+    font-size: clamp(1.3rem, 6vw, 1.8rem);
+    margin: 0 0 4px;
+  }
+  .hero-subtitle {
+    font-size: 0.85rem;
+    margin: 3px 0 9px;
+    word-break: break-word;
   }
   .hero-meta {
-    gap: 7px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    font-size: 0.78rem;
+  }
+  .hero-meta span {
+    padding: 7px 10px;
+    border-radius: 6px;
     font-size: 0.78rem;
   }
   .profile-tabs {
-    gap: 4px;
-    padding-bottom: 2px;
+    gap: 6px;
+    margin-top: 14px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   }
   .profile-tab {
-    font-size: 0.98rem;
-    padding: 8px 10px 7px 10px;
+    flex: 1;
+    min-width: auto;
+    padding: 9px 10px 7px;
+    font-size: 0.82rem;
+    border-radius: 8px 8px 0 0;
+    letter-spacing: 0;
+  }
+  .profile-tab.active {
+    border-bottom: 2.5px solid #60a5fa;
+    box-shadow: 0 2px 12px 0 rgba(59,130,246,0.06);
+  }
+  .profile-card-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
   }
   .profile-card {
-    padding: 12px 2px 10px 2px;
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+  .profile-card-header {
+    font-size: 0.95rem;
+    margin-bottom: 11px;
+    gap: 8px;
+  }
+  .general-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-top: 10px;
   }
   .general-stats div {
-    padding: 12px 6px;
+    padding: 13px 14px;
+    min-width: unset;
+  }
+  .general-stats span {
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+  .general-stats p {
+    font-size: 0.78rem;
+    margin-top: 6px;
+  }
+  .order-item-card {
+    padding: 10px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+  .order-item-image,
+  .order-item-placeholder {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .order-item-placeholder {
+    font-size: 1.1rem;
+  }
+  .order-item-info {
+    overflow: hidden;
+    flex: 1;
+  }
+  .order-item-name {
+    font-size: 0.88rem;
+    margin: 0 0 2px;
+  }
+  .order-item-id {
+    font-size: 0.73rem;
   }
   .user-details {
-    gap: 14px;
+    gap: 11px;
   }
   .user-details p {
-    font-size: 0.94rem;
+    font-size: 0.92rem;
+    margin: 0;
   }
-  .button-edit-profile {
+  .user-details strong {
+    font-size: 0.92rem;
+  }
+  .button-edit-profile,
+  .button-primary {
     width: 100%;
-    padding: 12px 20px;
-    text-align: center;
+    padding: 11px 16px;
+    font-size: 0.87rem;
+    border-radius: 10px;
+  }
+  .button-edit-profile:hover,
+  .button-primary:hover {
+    transform: translateY(-1px);
+  }
+  .support-tickets-section {
+    gap: 11px;
+  }
+  .tickets-count span {
+    font-size: 1.75rem;
+  }
+  .tickets-count p {
+    font-size: 0.85rem;
+  }
+}
+
+/* ===== SMALL MOBILE (< 480px) ===== */
+@media (max-width: 479px) {
+  .user-profile-content {
+    --padding-top: 65px;
+  }
+  .profile-wrap {
+    padding: 10px 10px 20px;
+  }
+  .profile-hero {
+    padding: 13px 12px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+  }
+  .profile-hero-top {
+    gap: 12px;
+  }
+  .hero-avatar {
+    width: 72px;
+    height: 72px;
+    border-width: 2px;
+  }
+  .hero-info h1 {
+    font-size: 1.25rem;
+    margin: 0 0 2px;
+  }
+  .hero-subtitle {
+    font-size: 0.8rem;
+    margin: 2px 0 7px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hero-meta {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .hero-meta span {
+    padding: 6px 8px;
+    font-size: 0.74rem;
+  }
+  .profile-tabs {
+    gap: 4px;
+    margin-top: 12px;
+    padding-bottom: 3px;
+  }
+  .profile-tab {
+    padding: 8px 8px 6px;
+    font-size: 0.78rem;
+  }
+  .profile-card {
+    padding: 13px 11px;
+    border-radius: 12px;
+  }
+  .profile-card-header {
+    font-size: 0.88rem;
+    margin-bottom: 9px;
+    gap: 6px;
+  }
+  .general-stats {
+    gap: 8px;
+    margin-top: 9px;
+  }
+  .general-stats div {
+    padding: 11px 10px;
+  }
+  .general-stats span {
+    font-size: 1.25rem;
+  }
+  .general-stats p {
+    font-size: 0.73rem;
+    margin-top: 4px;
+  }
+  .order-item-card {
+    padding: 8px;
+    gap: 8px;
+  }
+  .order-item-image,
+  .order-item-placeholder {
+    width: 48px;
+    height: 48px;
+  }
+  .order-item-placeholder {
+    font-size: 1rem;
+  }
+  .order-item-name {
+    font-size: 0.82rem;
+  }
+  .order-item-id {
+    font-size: 0.68rem;
+  }
+  .user-details {
+    gap: 10px;
+  }
+  .user-details p {
+    font-size: 0.88rem;
+  }
+  .user-details strong {
+    font-size: 0.88rem;
+  }
+  .button-edit-profile,
+  .button-primary {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+  .tickets-count span {
+    font-size: 1.55rem;
+  }
+  .tickets-count p {
+    font-size: 0.8rem;
   }
 }

@@ -100,7 +100,13 @@ const SupportHeader: React.FC = () => {
   return (
     <div className="header-fixed2">
       <div className="header-inner">
-        <img src="/logo.png" alt="Logo" className="logo" />
+        <img 
+          src="/logo.png" 
+          alt="Logo" 
+          className="logo" 
+          style={{ cursor: "pointer" }}
+          onClick={() => history.push("/home")}
+        />
         <IonRouterLink href="/home" className="home-link">
           <h3 className="header-title">{t("goToStore")}</h3>
         </IonRouterLink>
@@ -122,7 +128,7 @@ const SupportHeader: React.FC = () => {
             </>
           ) : (
             <>
-              <div className="notification-wrapper" ref={notificationRef}>
+              <div className="notification-wrapper" ref={notificationRef} style={{ order: 1 }}>
                 {unreadCount > 0 ? (
                   <BellRing
                     className="notification-icon"
@@ -189,7 +195,7 @@ const SupportHeader: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div className="user-menu-wrapper" ref={userMenuRef}>
+              <div className="user-menu-wrapper" ref={userMenuRef} style={{ order: 2 }}>
                 {avatar && !avatarError ? (
                   <img
                     src={avatar}
