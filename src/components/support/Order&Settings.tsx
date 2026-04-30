@@ -109,7 +109,6 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
   useEffect(() => {
     if (initialPayments) {
       setPayments(initialPayments);
-      return;
     }
 
     const fetchPayments = async () => {
@@ -138,6 +137,8 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
         setLoading(false);
       }
     };
+
+    fetchPayments();
 
     const normalizeLanguageValue = (value: string) => {
       if (value === "Spanish" || value === "Español") return "Español";

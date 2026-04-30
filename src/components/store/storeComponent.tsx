@@ -18,6 +18,7 @@ const languages = ["English", "Español", "Français", "Deutsch", "Italiano", "P
 
 const StoreComponent: React.FC = () => {
   const history = useHistory();
+  const [apiGames, setApiGames] = useState<Game[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,44 +45,53 @@ const StoreComponent: React.FC = () => {
   const loadGames = async () => {
     setLoading(true);
     try {
-      const apiGames = await fetchIgdbGames(searchQuery);
-
-      let filteredGames = apiGames;
-      if (selectedGenres.length > 0) {
-        filteredGames = filteredGames.filter((game) =>
-          game.genres?.some((genre) => selectedGenres.includes(genre))
-        );
-      }
-
-      if (onlyFree) {
-        filteredGames = filteredGames.filter((game) => game.price === 0);
-      }
-
-      if (onlyDiscounted) {
-        filteredGames = filteredGames.filter((game) => game.price !== undefined && game.price < 20);
-      }
-
-      const priceFilteredGames = filteredGames.filter((game) => {
-        const price = game.price;
-        if (price === undefined || price === null) {
-          return true;
-        }
-        return price >= priceRange[0] && price <= priceRange[1];
-      });
-
-      setGames(priceFilteredGames);
-      setPage(1);
+      const apiResults = await fetchIgdbGames(searchQuery, 20);
+      setApiGames(apiResults);
     } catch (error) {
       console.error("Error loading games:", error);
+      setApiGames([]);
       setGames([]);
     } finally {
       setLoading(false);
     }
   };
 
+  const applyFilters = () => {
+    let filteredGames = apiGames;
+
+    if (selectedGenres.length > 0) {
+      filteredGames = filteredGames.filter((game) =>
+        game.genres?.some((genre) => selectedGenres.includes(genre))
+      );
+    }
+
+    if (onlyFree) {
+      filteredGames = filteredGames.filter((game) => game.price === 0);
+    }
+
+    if (onlyDiscounted) {
+      filteredGames = filteredGames.filter((game) => game.price !== undefined && game.price < 20);
+    }
+
+    filteredGames = filteredGames.filter((game) => {
+      const price = game.price;
+      if (price === undefined || price === null) {
+        return true;
+      }
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
+
+    setGames(filteredGames);
+    setPage(1);
+  };
+
   useEffect(() => {
     loadGames();
-  }, [searchQuery, onlyDiscounted, onlyFree, includeDLCs, hideDLCs, selectedGenres, selectedReleaseStatus, selectedLanguages, priceRange]);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [apiGames, onlyDiscounted, onlyFree, includeDLCs, hideDLCs, selectedGenres, selectedReleaseStatus, selectedLanguages, priceRange]);
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>

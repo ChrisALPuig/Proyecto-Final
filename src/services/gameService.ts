@@ -76,13 +76,14 @@ type IgdbResponseItem = {
   screenshots?: string[];
   videos?: string[];
   genres?: string[];
+  price?: number;
 };
 
 function mapIgdbResponseToGame(item: IgdbResponseItem): Game {
   return {
     id: item.id,
     title: item.name,
-    price: 19.99,
+    price: item.price ?? 19.99,
     description: item.summary,
     story: item.storyline,
     coverImage: formatImageUrl(item.coverUrl),
@@ -96,9 +97,10 @@ function mapIgdbResponseToGame(item: IgdbResponseItem): Game {
   };
 }
 
-export async function fetchIgdbGames(name?: string): Promise<Game[]> {
+export async function fetchIgdbGames(name?: string, limit: number = 20): Promise<Game[]> {
   const params = {
     name: name?.trim() ? name : undefined,
+    limit,
   };
 
   const queryString = buildQueryString(params);

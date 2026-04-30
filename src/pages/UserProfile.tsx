@@ -100,6 +100,31 @@ const UserProfile: React.FC = () => {
     }
   }, [activeTab, token, avatar, setAvatar, loading]);
 
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!token) return;
+      try {
+        const ordersResponse = await fetch('http://localhost:8080/api/payments/user', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (ordersResponse.ok) {
+          const orders = await ordersResponse.json();
+          setAllOrders(orders);
+          setTotalOrders(orders.length);
+        }
+      } catch (error) {
+        console.error('Error reloading orders:', error);
+      }
+    };
+
+    if (activeTab === 'orders') {
+      fetchOrders();
+    }
+  }, [activeTab, token]);
+
   if (loading) {
     return (
       <IonPage>

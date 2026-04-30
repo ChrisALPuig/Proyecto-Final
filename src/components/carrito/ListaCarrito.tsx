@@ -82,9 +82,10 @@ const ListaCarrito = () => {
         return;
       }
 
-      // Guardar paymentId y orderId en localStorage
+      // Guardar paymentId, orderId y payload completo en localStorage
       localStorage.setItem('paymentId', data.paymentId);
       localStorage.setItem('orderId', orderId);
+      localStorage.setItem('paymentPayload', JSON.stringify(payload));
 
       // Redirigir a la página de pago
       history.push('/payment');

@@ -9,49 +9,59 @@ import { useHistory } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header/Header.tsx';
 import { useNotification } from '../../contexts/NotificationContext.tsx';
+import { useAuth } from '../../contexts/AuthContext.tsx';
 import './success.css';
 
 const Success = () => {
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const { addNotification } = useNotification();
+  const { token } = useAuth();
 
   useEffect(() => {
-    const markPaymentAsPaid = async () => {
+    const recordPayment = async () => {
       const orderId = localStorage.getItem('orderId');
+      const paymentId = localStorage.getItem('paymentId');
+      const paymentPayload = localStorage.getItem('paymentPayload');
       if (!orderId) {
         setLoading(false);
         return;
       }
 
+      const payload = paymentPayload ? JSON.parse(paymentPayload) : {
+        orderId,
+        paymentId,
+      };
+
       try {
-        const res = await fetch(`http://localhost:8080/api/payments/mark-paid/${orderId}`, {
+        const res = await fetch(`http://localhost:8080/api/payments/record`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            ...payload,
+            paymentId,
+            status: 'success',
+            stripePaymentId: paymentId,
+          }),
         });
 
         if (!res.ok) {
-          console.error('Failed to mark payment as PAID');
+          console.error('Failed to record payment');
         } else {
-          console.log('Payment marked as PAID for order', orderId);
-          addNotification({
-            id: `payment-completed-${orderId}`,
-            title: "Pago completado",
-            message: "Tu pago se ha completado correctamente.",
-            createdAt: new Date().toISOString(),
-            read: false,
-            link: "/user-orders",
-          });
+          console.log('Payment recorded for order', orderId);
         }
       } catch (err) {
-        console.error('Error marking payment as PAID:', err);
+        console.error('Error recording payment:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    markPaymentAsPaid();
-  }, []);
+    recordPayment();
+  }, [token]);
 
   return (
     <IonPage>

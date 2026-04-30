@@ -203,6 +203,16 @@ const Header: React.FC = () => {
     setCartItems(cartItems.filter((item) => item.id !== itemId));
   };
 
+  const navigateTo = (path: string) => {
+    setUserMenuOpen(false);
+    history.push(path);
+    setTimeout(() => {
+      if (window.location.pathname !== path) {
+        window.location.href = path;
+      }
+    }, 100);
+  };
+
   // 🔒 Carrito y wishlist protegidos
   const handleCartClick = () => {
     if (!isAuthenticated) {
@@ -393,23 +403,13 @@ const Header: React.FC = () => {
                       >
                         <div className="hover-user-menu-header">{t("yourAccount")}</div>
                         <ul>
-                          <li onClick={() => {
-                            history.push("/user-profile");
-                            setUserMenuOpen(false);
-                          }}>{t("yourProfile")}</li>
-                          <li onClick={() => {
-                            history.push("/orders-settings");
-                            setUserMenuOpen(false);
-                          }}>{t("ordersSettings")}</li>
-                          <li onClick={() => {
-                            history.push("/my-tickets");
-                            setUserMenuOpen(false);
-                          }}>{t("myTickets")}</li>
+                          <li onClick={() => navigateTo("/user-profile")}>{t("yourProfile")}</li>
+                          <li onClick={() => navigateTo("/orders-settings")}>{t("ordersSettings")}</li>
+                          <li onClick={() => navigateTo("/my-tickets")}>{t("myTickets")}</li>
                           <li
                             onClick={() => {
                               logout();
-                              history.push("/home");
-                              setUserMenuOpen(false);
+                              navigateTo("/home");
                             }}
                           >
                             {t("signOut")}
