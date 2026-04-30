@@ -38,6 +38,10 @@ public class GameMapper {
             game.setTrailerVideo(dto.getVideos().get(0));
         }
 
+        if (dto.getPrice() != null) {
+            game.setPrice(dto.getPrice());
+        }
+
         // Default values for IGDB-sourced games
         if (game.getPrice() == null) {
             game.setPrice(19.99);

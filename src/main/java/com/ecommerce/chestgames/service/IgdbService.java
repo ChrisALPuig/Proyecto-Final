@@ -25,13 +25,15 @@ public class IgdbService {
     private final TwitchAuthService authService;
     private final GameRepository repository;
     private final GameMapper gameMapper;
+    private final CheapSharkService cheapSharkService;
 
     private final String clientId = "371c2gm5j7jl7p6qllac5jiwkc38mi"; // ⚠️ mejor externalizar en application.properties
 
-    public IgdbService(TwitchAuthService authService, GameRepository repository, GameMapper gameMapper) {
+    public IgdbService(TwitchAuthService authService, GameRepository repository, GameMapper gameMapper, CheapSharkService cheapSharkService) {
         this.authService = authService;
         this.repository = repository;
         this.gameMapper = gameMapper;
+        this.cheapSharkService = cheapSharkService;
     }
 
     public IgdbGameDTO searchGameByName(String gameName) {
@@ -49,7 +51,7 @@ public class IgdbService {
             return null;
         }
         IgdbGameDTO dto = queryIgdbGameById(igdbId);
-        return dto == null ? null : gameMapper.mapToGame(dto);
+        return dto == null ? null : getOrCreateGame(dto);
     }
 
     private IgdbGameDTO queryIgdbGameById(Long igdbId) {
@@ -73,7 +75,9 @@ public class IgdbService {
                 return null;
             }
 
-            return parseGameNode(root.get(0));
+            IgdbGameDTO dto = parseGameNode(root.get(0));
+            dto.setPrice(fetchPriceForGame(dto.getName()));
+            return dto;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -83,6 +87,17 @@ public class IgdbService {
     private Game getOrCreateGame(IgdbGameDTO dto) {
         if (dto.getName() == null || dto.getName().isBlank()) {
             return null;
+        }
+
+        if (dto.getId() != null) {
+            return repository.findById(dto.getId()).orElseGet(() -> {
+                Game existingByTitle = repository.findByTitle(dto.getName());
+                if (existingByTitle != null) {
+                    return existingByTitle;
+                }
+                Game newGame = gameMapper.mapToGame(dto);
+                return repository.save(newGame);
+            });
         }
 
         Game existing = repository.findByTitle(dto.getName());
@@ -134,10 +149,29 @@ public class IgdbService {
             for (JsonNode gameNode : root) {
                 results.add(parseGameNode(gameNode));
             }
+            enrichPrices(results);
             return results;
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();
+        }
+    }
+
+    private void enrichPrices(List<IgdbGameDTO> games) {
+        if (games == null || games.isEmpty()) {
+            return;
+        }
+
+        for (IgdbGameDTO dto : games) {
+            dto.setPrice(fetchPriceForGame(dto.getName()));
+        }
+    }
+
+    private Double fetchPriceForGame(String title) {
+        try {
+            return cheapSharkService.fetchLowestPrice(title);
+        } catch (Exception e) {
+            return null;
         }
     }
 

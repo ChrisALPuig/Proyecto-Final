@@ -20,10 +20,12 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final GameRepository gameRepository;
+    private final IgdbService igdbService;
 
-    public CartService(CartRepository cartRepository, GameRepository gameRepository) {
+    public CartService(CartRepository cartRepository, GameRepository gameRepository, IgdbService igdbService) {
         this.cartRepository = cartRepository;
         this.gameRepository = gameRepository;
+        this.igdbService = igdbService;
     }
 
     @Transactional
@@ -62,7 +64,13 @@ public class CartService {
                 });
 
         Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+                .orElseGet(() -> {
+                    Game igdbGame = igdbService.searchGameById(gameId);
+                    if (igdbGame == null) {
+                        throw new RuntimeException("Game not found");
+                    }
+                    return igdbGame;
+                });
 
         var existingItem = cart.getItems().stream()
                 .filter(i -> i.getGame().getId().equals(gameId))

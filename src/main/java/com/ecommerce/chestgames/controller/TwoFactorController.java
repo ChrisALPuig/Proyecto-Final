@@ -3,6 +3,8 @@ package com.ecommerce.chestgames.controller;
 import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.repository.UserRepository;
 import com.ecommerce.chestgames.security.CustomUserDetails;
+import com.ecommerce.chestgames.service.EmailService;
+import com.ecommerce.chestgames.service.EmailTemplateService;
 import com.ecommerce.chestgames.service.TwoFactorService;
 import com.ecommerce.chestgames.utils.CryptoUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ public class TwoFactorController {
     private final TwoFactorService twoFactorService;
     private final UserRepository userRepository;
     private final CryptoUtil cryptoUtil;
+    private final EmailService emailService;
+    private final EmailTemplateService emailTemplateService;
 
     // SETUP 2FA
     @PostMapping("/setup")
@@ -66,6 +70,13 @@ public class TwoFactorController {
         user.setTwoFactorTempSecret(null);
 
         userRepository.save(user);
+
+        try {
+            EmailTemplateService.EmailTemplate template = emailTemplateService.twoFactorActivatedTemplate(user.getUsername());
+            emailService.sendEmail(user.getEmail(), template.getSubject(), template.getBody());
+        } catch (Exception ignored) {
+            // No bloqueamos la activación si el correo no se puede enviar.
+        }
 
         return ResponseEntity.ok("2FA activado correctamente");
     }

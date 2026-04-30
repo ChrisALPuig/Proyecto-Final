@@ -13,6 +13,7 @@ public class IgdbGameDTO {
     private String name;
     private String summary;
     private String storyline;
+    private Double price;
 
     private String coverUrl;
     private List<String> screenshots;

@@ -18,10 +18,12 @@ public class WishlistService {
 
     private final WishlistRepository wishlistRepository;
     private final GameRepository gameRepository;
+    private final IgdbService igdbService;
 
-    public WishlistService(WishlistRepository wishlistRepository, GameRepository gameRepository) {
+    public WishlistService(WishlistRepository wishlistRepository, GameRepository gameRepository, IgdbService igdbService) {
         this.wishlistRepository = wishlistRepository;
         this.gameRepository = gameRepository;
+        this.igdbService = igdbService;
     }
 
     // Devuelve la wishlist como lista de DTO para el frontend
@@ -56,9 +58,17 @@ public class WishlistService {
                 });
 
         Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+                .orElseGet(() -> {
+                    Game igdbGame = igdbService.searchGameById(gameId);
+                    if (igdbGame == null) {
+                        throw new RuntimeException("Game not found");
+                    }
+                    return igdbGame;
+                });
 
-        wishlist.getGames().add(game);
+        if (wishlist.getGames().stream().noneMatch(g -> g.getId().equals(gameId))) {
+            wishlist.getGames().add(game);
+        }
         wishlistRepository.save(wishlist);
     }
 
@@ -72,10 +82,7 @@ public class WishlistService {
                     return wishlistRepository.save(newWishlist);
                 });
 
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
-
-        wishlist.getGames().remove(game);
+        wishlist.getGames().removeIf(g -> g.getId().equals(gameId));
         wishlistRepository.save(wishlist);
     }
 }

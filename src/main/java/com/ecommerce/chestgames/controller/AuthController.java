@@ -9,6 +9,8 @@ import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.repository.RoleRepository;
 import com.ecommerce.chestgames.repository.UserRepository;
 import com.ecommerce.chestgames.security.CustomUserDetails;
+import com.ecommerce.chestgames.service.EmailService;
+import com.ecommerce.chestgames.service.EmailTemplateService;
 import com.ecommerce.chestgames.service.TwoFactorService;
 import com.ecommerce.chestgames.utils.CryptoUtil;
 import com.ecommerce.chestgames.utils.JwtUtils;
@@ -41,6 +43,8 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final TwoFactorService twoFactorService;
     private final CryptoUtil cryptoUtil;
+    private final EmailService emailService;
+    private final EmailTemplateService emailTemplateService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
@@ -63,6 +67,13 @@ public class AuthController {
         user.getRoles().add(userRole);
 
         userRepository.save(user);
+
+        try {
+            EmailTemplateService.EmailTemplate template = emailTemplateService.welcomeTemplate(user.getUsername());
+            emailService.sendEmail(user.getEmail(), template.getSubject(), template.getBody());
+        } catch (Exception ignored) {
+            // Si falla el envío, no bloqueamos el registro.
+        }
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
         String token = jwtUtils.generateToken(userDetails);

@@ -16,4 +16,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     // Buscar por usuario
     List<Payment> findByUser(User user);
+
+    // Buscar por usuario ordenado por fecha de creación
+    List<Payment> findByUserOrderByCreatedAtDesc(User user);
 }

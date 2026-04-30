@@ -2,6 +2,8 @@ package com.ecommerce.chestgames.controller;
 
 import com.ecommerce.chestgames.entity.Payment;
 import com.ecommerce.chestgames.repository.PaymentRepository;
+import com.ecommerce.chestgames.service.EmailService;
+import com.ecommerce.chestgames.service.EmailTemplateService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
@@ -16,6 +18,12 @@ public class StripeWebhookController {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private EmailTemplateService emailTemplateService;
 
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
@@ -57,6 +65,19 @@ public class StripeWebhookController {
 
                         // ⚡ No modificar amount (ya está en euros)
                         paymentRepository.save(payment);
+
+                        try {
+                            String downloadLink = "http://localhost:3000/user-orders?orderId=" + payment.getOrderId();
+                            EmailTemplateService.EmailTemplate template = emailTemplateService.paymentCompletedTemplate(
+                                    payment.getUser().getUsername(),
+                                    payment.getProductName(),
+                                    payment.getOrderId(),
+                                    downloadLink
+                            );
+                            emailService.sendEmail(payment.getUser().getEmail(), template.getSubject(), template.getBody());
+                        } catch (Exception ignored) {
+                            // No bloquear el webhook si el email fallara.
+                        }
 
                         System.out.println("Pago completado: orderId=" + orderId + ", paymentId=" + intent.getId());
                     } else {

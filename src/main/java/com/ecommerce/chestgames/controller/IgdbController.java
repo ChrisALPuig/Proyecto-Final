@@ -19,7 +19,7 @@ public class IgdbController {
     @GetMapping("/games")
     public List<IgdbGameDTO> search(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false, defaultValue = "100") int limit
+            @RequestParam(required = false, defaultValue = "20") int limit
     ) {
         return igdbService.searchGames(name, limit);
     }
