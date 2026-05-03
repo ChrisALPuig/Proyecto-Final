@@ -23,15 +23,34 @@ const Success = () => {
       const orderId = localStorage.getItem('orderId');
       const paymentId = localStorage.getItem('paymentId');
       const paymentPayload = localStorage.getItem('paymentPayload');
+      
       if (!orderId) {
         setLoading(false);
         return;
       }
 
-      const payload = paymentPayload ? JSON.parse(paymentPayload) : {
+      // Parsear el payload con todos los datos del pedido
+      let payload: any = {
         orderId,
         paymentId,
+        status: 'success',
+        stripePaymentId: paymentId,
       };
+
+      if (paymentPayload) {
+        try {
+          const parsedPayload = JSON.parse(paymentPayload);
+          // Asegurar que todos los campos están incluidos
+          payload = {
+            ...parsedPayload,
+            paymentId,
+            status: 'success',
+            stripePaymentId: paymentId,
+          };
+        } catch (e) {
+          console.error('Error parsing payment payload:', e);
+        }
+      }
 
       try {
         const res = await fetch(`http://localhost:8080/api/payments/record`, {
@@ -40,18 +59,17 @@ const Success = () => {
             'Content-Type': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({
-            ...payload,
-            paymentId,
-            status: 'success',
-            stripePaymentId: paymentId,
-          }),
+          body: JSON.stringify(payload),
         });
 
         if (!res.ok) {
-          console.error('Failed to record payment');
+          console.error('Failed to record payment', res.status);
         } else {
           console.log('Payment recorded for order', orderId);
+          // Limpiar localStorage después de guardar exitosamente
+          localStorage.removeItem('paymentPayload');
+          localStorage.removeItem('paymentId');
+          localStorage.removeItem('orderId');
         }
       } catch (err) {
         console.error('Error recording payment:', err);

@@ -40,6 +40,40 @@ const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'general' | 'edit' | 'orders'>('general');
 
+  // Función para refrescar el perfil del usuario
+  const refreshUserProfile = async () => {
+    if (!token) return;
+    try {
+      const profile = await getUserProfile(token);
+      setUserProfile(profile);
+      if (profile.avatar) {
+        setAvatar(profile.avatar);
+      }
+    } catch (error) {
+      console.error('Error refreshing user profile:', error);
+    }
+  };
+
+  // Función para refrescar las órdenes
+  const refreshOrders = async () => {
+    if (!token) return;
+    try {
+      const ordersResponse = await fetch('http://localhost:8080/api/payments/user', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (ordersResponse.ok) {
+        const orders = await ordersResponse.json();
+        setAllOrders(orders);
+        setTotalOrders(orders.length);
+      }
+    } catch (error) {
+      console.error('Error refreshing orders:', error);
+    }
+  };
+
   useEffect(() => {
     const loadUserData = async () => {
       if (!token) return;
@@ -293,12 +327,12 @@ const UserProfile: React.FC = () => {
             )}
             {activeTab === 'edit' && (
               <div style={{ marginTop: 24 }}>
-                <OrderSettings showOnlySection="accountAndLocale" />
+                <OrderSettings showOnlySection="accountAndLocale" onProfileUpdated={refreshUserProfile} />
               </div>
             )}
             {activeTab === 'orders' && (
               <div style={{ marginTop: 24 }}>
-                <OrderSettings showOnlySection="ordersHistory" initialPayments={allOrders} initialLoading={loading} />
+                <OrderSettings showOnlySection="ordersHistory" initialPayments={allOrders} initialLoading={loading} onPaymentUpdated={refreshOrders} />
               </div>
             )}
           </div>

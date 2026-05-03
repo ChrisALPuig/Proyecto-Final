@@ -46,9 +46,11 @@ interface OrderSettingsProps {
   showOnlySection?: string;
   initialPayments?: Payment[];
   initialLoading?: boolean;
+  onProfileUpdated?: () => void;
+  onPaymentUpdated?: () => void;
 }
 
-const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialPayments, initialLoading = false }) => {
+const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialPayments, initialLoading = false, onProfileUpdated, onPaymentUpdated }) => {
   const { token, isAuthenticated, roles, login, logout, setAvatar } = useAuth();
   const { setLanguage, t } = useLanguage();
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -257,6 +259,11 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
       }
 
       setMessage(t("profileUpdatedSuccess"));
+      
+      // Notificar al componente padre que el perfil fue actualizado
+      if (onProfileUpdated) {
+        setTimeout(() => onProfileUpdated(), 300);
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
       setMessage(t("profileUpdatedError"));
@@ -290,6 +297,11 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
       setProfile(updated);
       setAccountForm((prev) => ({ ...prev, phoneNumber: updated.phoneNumber || prev.phoneNumber }));
       setMessage(t("phoneAddedSuccess"));
+      
+      // Notificar al componente padre que el perfil fue actualizado
+      if (onProfileUpdated) {
+        setTimeout(() => onProfileUpdated(), 300);
+      }
     } catch (error) {
       console.error("Error updating phone number:", error);
       setMessage(t("phoneAddError"));
