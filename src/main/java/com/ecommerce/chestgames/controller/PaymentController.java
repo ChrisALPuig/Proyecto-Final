@@ -150,11 +150,22 @@ public class PaymentController {
                 response.put("message", "Pago no autorizado");
                 return response;
             }
-            payment.setProductName(productName);
-            payment.setGameImage(gameImage);
-            payment.setItems(items);
-            payment.setOrderId(orderId);
-            payment.setAmount(amount);
+            // Solo actualizar campos que vienen en el payload, preservar los existentes
+            if (!productName.isBlank()) {
+                payment.setProductName(productName);
+            }
+            if (gameImage != null && !gameImage.isBlank()) {
+                payment.setGameImage(gameImage);
+            }
+            if (items != null) {
+                payment.setItems(items);
+            }
+            if (orderId != null) {
+                payment.setOrderId(orderId);
+            }
+            if (amount.compareTo(BigDecimal.ZERO) > 0) {
+                payment.setAmount(amount);
+            }
             payment.setStatus(status);
             if (stripePaymentId != null) {
                 payment.setPaymentId(stripePaymentId);
