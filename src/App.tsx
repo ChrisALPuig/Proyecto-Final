@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import Sidebar from "./components/Sidebar";
 import PaymentsTable from "./components/PaymentsTable";
 import SupportTable from "./components/SupportTable";
+import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import "./App.css";
 
@@ -83,6 +84,7 @@ export default function App() {
           </div>
         </div>
         <div className="tab-content">
+          {activeTab === "dashboard" && <Dashboard />}
           {activeTab === "payments" && <PaymentsTable />}
           {activeTab === "support" && <SupportTable />}
         </div>

@@ -3,6 +3,7 @@ import "./Sidebar.css";
 
 export default function Sidebar({ activeTab, setActiveTab }) {
   const tabs = [
+    { id: "dashboard", label: "Dashboard" },
     { id: "payments", label: "Pagos" },
     { id: "support", label: "Soporte" },
   ];
