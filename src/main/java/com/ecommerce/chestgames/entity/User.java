@@ -53,6 +53,11 @@ public class User {
     @Column(length = 255)
     private String twoFactorTempSecret;
 
+    @Column(length = 255)
+    private String resetPasswordToken;
+
+    private LocalDateTime resetPasswordExpiry;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

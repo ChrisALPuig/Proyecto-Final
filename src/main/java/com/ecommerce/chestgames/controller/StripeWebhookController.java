@@ -66,19 +66,6 @@ public class StripeWebhookController {
                         // ⚡ No modificar amount (ya está en euros)
                         paymentRepository.save(payment);
 
-                        try {
-                            String downloadLink = "http://localhost:3000/user-orders?orderId=" + payment.getOrderId();
-                            EmailTemplateService.EmailTemplate template = emailTemplateService.paymentCompletedTemplate(
-                                    payment.getUser().getUsername(),
-                                    payment.getProductName(),
-                                    payment.getOrderId(),
-                                    downloadLink
-                            );
-                            emailService.sendEmail(payment.getUser().getEmail(), template.getSubject(), template.getBody());
-                        } catch (Exception ignored) {
-                            // No bloquear el webhook si el email fallara.
-                        }
-
                         System.out.println("Pago completado: orderId=" + orderId + ", paymentId=" + intent.getId());
                     } else {
                         System.err.println("Pago no encontrado para PaymentIntent: " + intent.getId());

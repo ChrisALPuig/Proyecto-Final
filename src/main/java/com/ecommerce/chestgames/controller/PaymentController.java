@@ -5,6 +5,8 @@ import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.repository.PaymentRepository;
 import com.ecommerce.chestgames.repository.UserRepository;
 import com.ecommerce.chestgames.security.CustomUserDetails;
+import com.ecommerce.chestgames.service.EmailService;
+import com.ecommerce.chestgames.service.EmailTemplateService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
@@ -31,6 +33,12 @@ public class PaymentController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private EmailTemplateService emailTemplateService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -282,6 +290,57 @@ public class PaymentController {
 
         response.put("status", "success");
         response.put("message", "Pago actualizado correctamente");
+        return response;
+    }
+
+    @PostMapping("/send-email/{orderId}")
+    @PreAuthorize("hasRole('USER')")
+    public Map<String, String> sendPaymentEmail(@AuthenticationPrincipal CustomUserDetails currentUserDetails,
+                                                @PathVariable String orderId) {
+        Map<String, String> response = new HashMap<>();
+
+        if (currentUserDetails == null) {
+            response.put("status", "error");
+            response.put("message", "Usuario no autenticado");
+            return response;
+        }
+
+        User currentUser = userRepository.findByUsername(currentUserDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Buscar el pago más reciente para ese orderId
+        Payment payment = paymentRepository.findFirstByOrderIdOrderByCreatedAtDesc(orderId);
+        
+        if (payment == null) {
+            response.put("status", "error");
+            response.put("message", "Pago no encontrado");
+            return response;
+        }
+
+        // Verificar que pertenece al usuario autenticado
+        if (!payment.getUser().getId().equals(currentUser.getId())) {
+            response.put("status", "error");
+            response.put("message", "No autorizado");
+            return response;
+        }
+
+        try {
+            String ordersLink = "http://localhost:5173/user-orders";
+            EmailTemplateService.EmailTemplate template = emailTemplateService.paymentCompletedTemplate(
+                    payment.getUser().getUsername(),
+                    payment.getProductName(),
+                    payment.getOrderId(),
+                    ordersLink
+            );
+            emailService.sendEmail(payment.getUser().getEmail(), template.getSubject(), template.getBody());
+
+            response.put("status", "success");
+            response.put("message", "Email enviado correctamente");
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Error al enviar email: " + e.getMessage());
+        }
+
         return response;
     }
 }

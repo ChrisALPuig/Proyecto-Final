@@ -2,8 +2,10 @@ package com.ecommerce.chestgames.controller;
 
 import com.ecommerce.chestgames.dto.AuthResponse;
 import com.ecommerce.chestgames.dto.CreateAdminRequest;
+import com.ecommerce.chestgames.dto.ForgotPasswordRequest;
 import com.ecommerce.chestgames.dto.LoginRequest;
 import com.ecommerce.chestgames.dto.RegisterRequest;
+import com.ecommerce.chestgames.dto.ResetPasswordRequest;
 import com.ecommerce.chestgames.entity.Role;
 import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.repository.RoleRepository;
@@ -17,7 +19,6 @@ import com.ecommerce.chestgames.utils.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -200,6 +203,70 @@ public class AuthController {
         userRepository.save(admin);
 
         return ResponseEntity.ok("Admin created successfully");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            return ResponseEntity.badRequest().body("El correo es requerido");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+
+        if (user == null) {
+            // Por seguridad, no revelamos si el email existe o no
+            return ResponseEntity.ok("Si el correo existe, recibirás un enlace para restablecer tu contraseña");
+        }
+
+        try {
+            // Generar token único
+            String resetToken = UUID.randomUUID().toString();
+            user.setResetPasswordToken(resetToken);
+            user.setResetPasswordExpiry(LocalDateTime.now().plusHours(24));
+            userRepository.save(user);
+
+            // Construir enlace de reset (cambiar según tu URL frontend)
+            String resetLink = "http://localhost:5173/reset-password?token=" + resetToken;
+
+            // Enviar correo
+            EmailTemplateService.EmailTemplate template = emailTemplateService.resetPasswordTemplate(user.getUsername(), resetLink);
+            emailService.sendEmail(user.getEmail(), template.getSubject(), template.getBody());
+
+            return ResponseEntity.ok("Si el correo existe, recibirás un enlace para restablecer tu contraseña");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al enviar el correo");
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        if (request.getToken() == null || request.getToken().isBlank() || 
+            request.getNewPassword() == null || request.getNewPassword().isBlank()) {
+            return ResponseEntity.badRequest().body("Token y contraseña son requeridos");
+        }
+
+        User user = userRepository.findByResetPasswordToken(request.getToken()).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(400).body("Token inválido o expirado");
+        }
+
+        // Verificar que el token no haya expirado
+        if (user.getResetPasswordExpiry() == null || LocalDateTime.now().isAfter(user.getResetPasswordExpiry())) {
+            return ResponseEntity.status(400).body("El enlace de recuperación ha expirado");
+        }
+
+        try {
+            // Cambiar contraseña
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            user.setResetPasswordToken(null);
+            user.setResetPasswordExpiry(null);
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Contraseña restablecida exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al restablecer la contraseña");
+        }
     }
 
 }
