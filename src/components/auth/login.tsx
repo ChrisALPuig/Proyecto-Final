@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import Verify2FA from "./Verify2FA";
+import ForgotPassword from "./ForgotPassword";
 import { verifyLogin2FA } from "../../services/twoFactorService.ts";
 import "./login.css";
 
@@ -28,6 +29,7 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [twoFARequired, setTwoFARequired] = useState(false);
   const [pendingAuth, setPendingAuth] = useState<PendingAuth | null>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,6 +141,16 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
             {loading ? "Logging in..." : "Login"}
           </button>
 
+          <p className="forgot-password-link-text">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="forgot-password-link-btn"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </p>
+
           <p className="signup-link">
             Don't have an account? <a href="/register">Sign Up</a>
           </p>
@@ -152,6 +164,11 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
           onCancel={handle2FACancel}
         />
       )}
+
+      <ForgotPassword
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+      />
     </IonPage>
   );
 };

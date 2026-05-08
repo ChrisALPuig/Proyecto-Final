@@ -25,6 +25,7 @@ import UserProfile from './pages/UserProfile.tsx';
 /* Auth (AJUSTA RUTAS SI ES NECESARIO) */
 import SignIn from './pages/auth/SignIn.tsx';
 import SignUp from './pages/auth/SignUp.tsx';
+import ResetPassword from './pages/auth/ResetPassword.tsx';
 import Doom from './pages/juegos/doom.tsx';
 
 /* Components */
@@ -127,6 +128,7 @@ const App: React.FC = () => (
                   {/* AUTH */}
                   <Route exact path="/login" component={SignIn} />
                   <Route exact path="/register" component={SignUp} />
+                  <Route exact path="/reset-password" component={ResetPassword} />
 
                   {/* EXTRA */}
                   <Route exact path="/account-store" component={AccountStoreComponent} />

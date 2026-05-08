@@ -120,3 +120,46 @@ export const deleteAccount = async (token: string, data: DeleteAccountRequest) =
     throw new Error(error || 'Failed to delete account');
   }
 };
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export const forgotPassword = async (data: ForgotPasswordRequest) => {
+  const response = await fetch('http://localhost:8080/auth/forgot-password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Failed to send recovery email');
+  }
+
+  return response.text();
+};
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+export const resetPassword = async (data: ResetPasswordRequest) => {
+  const response = await fetch('http://localhost:8080/auth/reset-password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Failed to reset password');
+  }
+
+  return response.text();
+};

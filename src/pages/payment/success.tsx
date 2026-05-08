@@ -15,10 +15,16 @@ import './success.css';
 const Success = () => {
   const history = useHistory();
   const [loading, setLoading] = useState(true);
+  const [processed, setProcessed] = useState(false);
   const { addNotification } = useNotification();
   const { token } = useAuth();
 
   useEffect(() => {
+    // Evitar procesamiento duplicado
+    if (processed) {
+      return;
+    }
+
     const recordPayment = async () => {
       const orderId = localStorage.getItem('orderId');
       const paymentId = localStorage.getItem('paymentId');
@@ -28,6 +34,9 @@ const Success = () => {
         setLoading(false);
         return;
       }
+
+      // Marcar como procesado inmediatamente para evitar ejecución duplicada
+      setProcessed(true);
 
       // Parsear el payload con todos los datos del pedido
       let payload: any = {
@@ -66,10 +75,33 @@ const Success = () => {
           console.error('Failed to record payment', res.status);
         } else {
           console.log('Payment recorded for order', orderId);
+          
+          // Enviar email después de registrar el pago
+          try {
+            const emailRes = await fetch(`http://localhost:8080/api/payments/send-email/${orderId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+            });
+
+            if (!emailRes.ok) {
+              console.error('Failed to send email', emailRes.status);
+            } else {
+              console.log('Payment email sent for order', orderId);
+            }
+          } catch (emailErr) {
+            console.error('Error sending email:', emailErr);
+          }
+
           // Limpiar localStorage después de guardar exitosamente
           localStorage.removeItem('paymentPayload');
           localStorage.removeItem('paymentId');
           localStorage.removeItem('orderId');
+          
+          // Emitir evento personalizado para que otros componentes sepan que se completó el pago
+          window.dispatchEvent(new CustomEvent('paymentCompleted', { detail: { orderId, paymentId } }));
         }
       } catch (err) {
         console.error('Error recording payment:', err);
@@ -79,7 +111,7 @@ const Success = () => {
     };
 
     recordPayment();
-  }, [token]);
+  }, [processed, token]);
 
   return (
     <IonPage>

@@ -39,6 +39,7 @@ const UserProfile: React.FC = () => {
   const [openTicketsCount, setOpenTicketsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'general' | 'edit' | 'orders'>('general');
+  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
 
   // Función para refrescar el perfil del usuario
   const refreshUserProfile = async () => {
@@ -113,7 +114,20 @@ const UserProfile: React.FC = () => {
         setLoading(false);
       }
     };
+    
+    // Escuchar evento de pago completado
+    const handlePaymentCompleted = () => {
+      console.log('Pago completado detectado, actualizando datos...');
+      loadUserData();
+    };
+    
     loadUserData();
+    
+    window.addEventListener('paymentCompleted', handlePaymentCompleted);
+    
+    return () => {
+      window.removeEventListener('paymentCompleted', handlePaymentCompleted);
+    };
   }, [token, avatar, setAvatar]);
 
   useEffect(() => {
@@ -263,19 +277,64 @@ const UserProfile: React.FC = () => {
                   <div className="profile-card-content">
                     <div className="recent-orders">
                       {allOrders.length > 0 ? (
-                        allOrders.slice(0, 3).map((order: Payment) => (
-                          <div key={order.id} className="order-item-card">
-                            {order.gameImage ? (
-                              <img src={order.gameImage} alt={order.productName} className="order-item-image" />
-                            ) : (
-                              <div className="order-item-placeholder">{order.productName?.charAt(0) || '?'}</div>
-                            )}
-                            <div className="order-item-info">
-                              <p className="order-item-name">{order.productName}</p>
-                              <p className="order-item-id">{order.orderId}</p>
+                        allOrders.slice(0, 3).map((order: Payment) => {
+                          const isExpanded = expandedOrderId === order.id;
+                          let paymentItems: any[] = [];
+                          if (order.items) {
+                            try {
+                              paymentItems = JSON.parse(order.items);
+                            } catch (e) {
+                              console.error('Error parsing items:', e);
+                            }
+                          }
+
+                          return (
+                            <div 
+                              key={order.id} 
+                              className={`order-item-card ${isExpanded ? 'expanded' : ''}`}
+                              onClick={() => setExpandedOrderId(isExpanded ? null : order.id)}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              {order.gameImage ? (
+                                <img src={order.gameImage} alt={order.productName} className="order-item-image" />
+                              ) : (
+                                <div className="order-item-placeholder">{order.productName?.charAt(0) || '?'}</div>
+                              )}
+                              <div className="order-item-info">
+                                <p className="order-item-name">{order.productName}</p>
+                                <p className="order-item-id">{order.orderId}</p>
+                                <div className="order-item-meta">
+                                  <span className={`order-status-badge ${order.status}`}>{order.status}</span>
+                                  <span className="order-amount">€{Number(order.amount).toFixed(2)}</span>
+                                </div>
+                              </div>
+                              {isExpanded && (
+                                <div className="order-item-expanded">
+                                  <div className="order-expanded-content">
+                                    <p><strong>{t('createdAt') || 'Fecha'}:</strong> {new Date(order.createdAt).toLocaleDateString(language === 'Español' ? 'es-ES' : 'en-US')}</p>
+                                    <p><strong>{t('amountLabel') || 'Cantidad'}:</strong> €{Number(order.amount).toFixed(2)}</p>
+                                    <p><strong>{t('status') || 'Estado'}:</strong> {order.status}</p>
+                                    {paymentItems.length > 0 && (
+                                      <div className="order-expanded-items">
+                                        <h5>{t('items') || 'Items'}:</h5>
+                                        {paymentItems.map((item: any) => (
+                                          <div key={item.id} className="expanded-item-row">
+                                            {item.image && <img src={item.image} alt={item.name} className="expanded-item-image" />}
+                                            <div className="expanded-item-info">
+                                              <p className="expanded-item-name">{item.name}</p>
+                                              <p className="expanded-item-qty">x{item.quantity}</p>
+                                            </div>
+                                            <p className="expanded-item-price">€{Number(item.price).toFixed(2)}</p>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))
+                          );
+                        })
                       ) : (
                         <p>{t('noRecentOrders') || 'No hay pedidos recientes'}</p>
                       )}

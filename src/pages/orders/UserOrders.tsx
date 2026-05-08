@@ -29,6 +29,7 @@ const UserOrders: React.FC = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
+  const [downloadingOrderId, setDownloadingOrderId] = useState<string | null>(null);
   const { token } = useAuth();
   const { t } = useLanguage();
 
@@ -37,6 +38,33 @@ const UserOrders: React.FC = () => {
       ...prev,
       [orderId]: !prev[orderId],
     }));
+  };
+
+  const downloadGame = async (orderId: string, gameName: string) => {
+    try {
+      setDownloadingOrderId(orderId);
+      const response = await fetch(`http://localhost:8080/api/downloads/game/${orderId}`);
+      
+      if (!response.ok) {
+        alert('Error downloading file');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${gameName.replaceAll(/[^a-zA-Z0-9._-]/g, '_')}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading game:', error);
+      alert('Error downloading file');
+    } finally {
+      setDownloadingOrderId(null);
+    }
   };
 
   useEffect(() => {
@@ -116,6 +144,15 @@ const UserOrders: React.FC = () => {
                         <div className="order-details">
                           <p><strong>{t('orderIdLabel')}</strong> {payment.orderId}</p>
                           <p><strong>{t('amountLabel')}</strong> €{Number(payment.amount).toFixed(2)}</p>
+                          {payment.status === 'success' && (
+                            <button 
+                              className="download-game-btn"
+                              onClick={() => downloadGame(payment.orderId, payment.productName)}
+                              disabled={downloadingOrderId === payment.orderId}
+                            >
+                              {downloadingOrderId === payment.orderId ? 'Downloading...' : 'Download Game'}
+                            </button>
+                          )}
                         </div>
                         {expandedOrders[payment.id] && (
                           <div className="order-items">

@@ -107,6 +107,20 @@
   background-color: #7a2cc3;
 }
 
+.login-form .forgot-password-link-btn {
+  padding: 0;
+  border-radius: 0;
+  background-color: transparent;
+  color: #000000;
+  font-size: 0.85rem;
+  font-weight: normal;
+}
+
+.login-form .forgot-password-link-btn:hover {
+  background-color: transparent;
+  color: #d1b3ff;
+}
+
 /* Link de registro */
 .signup-link {
   margin-top: 15px;
@@ -119,6 +133,28 @@
 }
 
 .signup-link a:hover {
+  color: #d1b3ff;
+}
+
+.forgot-password-link-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+}
+
+.forgot-password-link-btn {
+  background: none;
+  border: none;
+  color: #000000;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+  transition: color 0.2s ease;
+  font-family: inherit;
+}
+
+.forgot-password-link-btn:hover {
   color: #d1b3ff;
 }
   .input-error {

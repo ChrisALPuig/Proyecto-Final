@@ -199,6 +199,14 @@ const Payments = () => {
 
         <div className="layout-carrito">
           <div className='caja-juego'>
+            <button 
+              className="boton-volver-carrito" 
+              onClick={() => history.push('/carrito')}
+              type="button"
+            >
+              ← {t('backToCart') || 'Back to Cart'}
+            </button>
+            
             <div className='payment-section'>
               <h3 className='payment-title'>Choose a Payment Method</h3>
 

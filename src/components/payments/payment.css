@@ -98,6 +98,28 @@
   gap: 10px;
 }
 
+.boton-volver-carrito {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  background-color: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.boton-volver-carrito:hover {
+  background-color: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #93c5fd;
+}
+
 .fila-arriba {
   display: flex;
   padding-top: 10px;
@@ -282,9 +304,9 @@
 .payment-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   margin-top: 12px;
-  padding: 12px;
+  padding: 10px;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -322,7 +344,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 2px;
   color: #f8fafc;
   font-size: 0.9rem;
 }
@@ -353,11 +375,14 @@
 .payment-form {
   margin-top: 0;
   margin-bottom: 10px;
-  padding: 16px;
+  padding: 12px;
   background-color: #636262;
   border-radius: 8px;
   border: 2px solid #ccc;
   animation: slideDown 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 
@@ -528,6 +553,12 @@
     font-size: 13px;
   }
 
+  .boton-volver-carrito {
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
   .boton-home {
     position: absolute;
     right: 32%;
@@ -586,6 +617,7 @@
   .product-preview-price {
     font-size: 11px;
   }
+}
 
   /* ===================================== */
 /* CAMPOS DE PAGO Y STRIPE CARD ELEMENT  */
@@ -635,4 +667,228 @@
   border-color: #ff4d4f;
   color: #ff4d4f;
 }
+
+/* MEDIA QUERIES ADICIONALES */
+/* Pantallas muy pequeñas (< 480px) */
+@media (max-width: 480px) {
+  .payments-page {
+    padding-top: 100px;
+    padding-bottom: 20px;
+  }
+
+  .lista-carrito {
+    padding-top: 15px;
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 8px;
+  }
+
+  .item-carrito {
+    gap: 5px;
+  }
+
+  .circulo-payment,
+  .circulo2-payment {
+    width: 30px;
+    height: 30px;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .texto-carrito,
+  .texto-carrito-payment,
+  .texto-carrito2-payment {
+    font-size: 10px;
+  }
+
+  .layout-carrito {
+    padding: 0 12px;
+    gap: 15px;
+  }
+
+  .caja-juego {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .titulo-juego {
+    font-size: 14px;
+  }
+
+  .contenido-juego {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .imagen-juego {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+  }
+
+  .informacion-juego {
+    width: 100%;
+  }
+
+  .fila-arriba {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nombre-juego {
+    font-size: 13px;
+  }
+
+  .precio-juego {
+    font-size: 13px;
+    padding-left: 0;
+  }
+
+  .caja-resumen {
+    width: 100%;
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .boton-pago {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .boton-home {
+    position: relative;
+    right: auto;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .payment-section {
+    padding: 0;
+  }
+
+  .payment-title {
+    font-size: 14px;
+  }
+
+  .payment-methods {
+    gap: 6px;
+  }
+
+  .payment-option {
+    padding: 10px;
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .payment-form {
+    padding: 10px;
+    margin-top: 6px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .form-group input {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .product-preview {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .product-preview-img {
+    height: 50px;
+    width: auto;
+  }
+
+  .product-preview-name {
+    font-size: 11px;
+  }
+
+  .product-preview-price {
+    font-size: 10px;
+  }
+
+  .linea-resumen {
+    font-size: 12px;
+  }
+
+  .linea-resumen.total {
+    font-size: 14px;
+  }
+}
+
+/* Tablets medianas (480px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .payments-page {
+    padding-top: 105px;
+  }
+
+  .lista-carrito {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .layout-carrito {
+    flex-direction: column;
+    padding: 0 20px;
+    margin-left: 0;
+  }
+
+  .caja-juego {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .imagen-juego {
+    width: 120px;
+  }
+
+  .caja-resumen {
+    width: 100%;
+  }
+
+  .boton-home {
+    position: relative;
+    right: auto;
+    width: auto;
+    margin: 15px 20px;
+  }
+}
+
+/* Tablets grandes (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .lista-carrito {
+    padding-left: 60px;
+  }
+
+  .layout-carrito {
+    margin-left: 60px;
+    gap: 20px;
+  }
+
+  .caja-juego {
+    width: calc(100% - 420px);
+  }
+
+  .imagen-juego {
+    width: 180px;
+  }
+
+  .caja-resumen {
+    width: 380px;
+  }
+
+  .boton-home {
+    margin-left: 60px;
+  }
 }

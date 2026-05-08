@@ -261,6 +261,13 @@
   align-self: flex-start;
 }
 
+.order-details-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
 
 .order-items-details {
   margin-top: 14px;

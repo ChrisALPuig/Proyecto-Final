@@ -74,12 +74,40 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
   const [activeSection, setActiveSection] = useState(showOnlySection || "ordersHistory");
   const [message, setMessage] = useState("");
   const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
+  const [downloadingOrderId, setDownloadingOrderId] = useState<string | null>(null);
 
   const toggleOrderDetails = (orderId: number) => {
     setExpandedOrders((prev) => ({
       ...prev,
       [orderId]: !prev[orderId],
     }));
+  };
+
+  const downloadGame = async (orderId: string, gameName: string) => {
+    try {
+      setDownloadingOrderId(orderId);
+      const response = await fetch(`http://localhost:8080/api/downloads/game/${orderId}`);
+      
+      if (!response.ok) {
+        alert('Error downloading file');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${gameName.replaceAll(/[^a-zA-Z0-9._-]/g, '_')}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading game:', error);
+      alert('Error downloading file');
+    } finally {
+      setDownloadingOrderId(null);
+    }
   };
   
   // Email/Password change modals
@@ -500,9 +528,18 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
                         <div className="order-meta">
                           <span className="order-subtitle">{payment.status}</span>
                         </div>
-                        <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
-                          {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
-                        </button>
+                        <div className="order-details-actions">
+                          <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
+                            {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
+                          </button>
+                          <button 
+                            className="order-details-btn order-details-btn-small" 
+                            onClick={() => downloadGame(payment.orderId, payment.productName)}
+                            disabled={downloadingOrderId === payment.orderId}
+                          >
+                            {downloadingOrderId === payment.orderId ? 'Downloading...' : 'Download Game'}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -778,9 +815,18 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
                           <div className="order-meta">
                             <span className="order-subtitle">{payment.status}</span>
                           </div>
-                          <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
-                            {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
-                          </button>
+                          <div className="order-details-actions">
+                            <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
+                              {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
+                            </button>
+                            <button 
+                              className="order-details-btn order-details-btn-small" 
+                              onClick={() => downloadGame(payment.orderId, payment.productName)}
+                              disabled={downloadingOrderId === payment.orderId}
+                            >
+                              {downloadingOrderId === payment.orderId ? 'Downloading...' : 'Download Game'}
+                            </button>
+                          </div>
                         </div>
                       </div>
 
