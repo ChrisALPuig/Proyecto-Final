@@ -12,7 +12,9 @@ import './home.css';
 import CarouselJuegos from '../carousel/CarrouselJuegos.js';
 import CarouselForYou from '../carousel/CarrouselForYou.js';
 import CarrouselWhishlist from '../carousel/CarrouselWhishlist.js';
+import Footer from '../Footer/Footer';
 import { useWishlist } from '../../contexts/useWishlist.ts';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { fetchGames, Game, getGameImageUrl } from '../../services/gameService.js';
 
 interface HomeBienProps {
@@ -23,6 +25,7 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const { wishlistItems } = useWishlist();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const loadGames = async () => {
@@ -63,28 +66,27 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
   if (loading) {
     return (
       <IonContent fullscreen className="home-content">
-        <div className="loading">Loading games...</div>
+        <div className="loading">{t('loading')}</div>
       </IonContent>
     );
   }
 
   return (
-    <>
-      <IonContent fullscreen className="home-content">
-        <div
-          className="hero-background"
-          style={{ backgroundImage: "url('/FondoInicio.png')" }}
-        />
+    <IonContent fullscreen className="home-content">
+      <div
+        className="hero-background"
+        style={{ backgroundImage: "url('/FondoInicio.png')" }}
+      />
 
         <div className="main-content">
-          <h1 className="section-title">HIGHLIGHTS</h1>
+          <h1 className="section-title">{t('highlightSection')}</h1>
           <div className="section-divider"></div>
 
           <CarouselJuegos games={games} />
 
           <section className="special-offers-section">
             <div className="special-offers-header">
-              <span>SPECIAL OFFERS</span>
+              <span>{t('specialOffers')}</span>
             </div>
             <Swiper
               modules={[Pagination, Autoplay]}
@@ -105,7 +107,7 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
                       <img src={getCoverImage(game)} alt={game.title} className="offer-image" onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/300x180?text=No+Image'; }} />
                       <div className="offer-badge">-30%</div>
                       <div className="offer-content">
-                        <div className="offer-label">SPECIAL OFFER</div>
+                        <div className="offer-label">{t('specialOffer')}</div>
                         <div className="offer-title">{game.title}</div>
                         <div className="offer-prices">
                           <span className="offer-price">{game.price?.toFixed(2)}€</span>
@@ -121,11 +123,11 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
           {/* CATEGORIES */}
           <section className="home-categories-grid">
             {[
-              { name: 'Classic', image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg' },
-              { name: 'Strategy', image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg' },
-              { name: 'Adventure', image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg' },
-              { name: 'Indie', image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg' },
-              { name: 'Role-playing', image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/489830/header.jpg' },
+              { name: t('classic'), image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg' },
+              { name: t('strategy'), image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg' },
+              { name: t('adventure'), image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg' },
+              { name: t('indie'), image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg' },
+              { name: t('rolePlaying'), image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/489830/header.jpg' },
             ].map((cat) => (
               <div key={cat.name} className="category-card">
                 <img className="category-image" src={cat.image} alt={`${cat.name} category`} />
@@ -141,8 +143,8 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
 
           <section className="cgmods-section">
             <div className="cgmods-header">
-              <h2>CG Mods</h2>
-              <span>See more</span>
+              <h2>{t('cgMods')}</h2>
+              <span>{t('seeMore')}</span>
             </div>
             <Swiper
               modules={[Navigation, Autoplay, Pagination]}
@@ -195,7 +197,7 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
 
             {/* ================= BESTSELLERS ================= */}
             <div className="columna">
-              <h2 className="column-title">BESTSELLERS</h2>
+              <h2 className="column-title">{t('bestsellers')}</h2>
               {displayedBestsellers.map((game) => (
                 <IonRouterLink key={game.id} routerLink={`/game/${game.id}`} className="juego-link">
                   <div className="juego">
@@ -214,7 +216,7 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
             </div>
             {/* ================= NEW RELEASES ================= */}
             <div className="columna">
-              <h2 className="column-title">NEW RELEASES</h2>
+              <h2 className="column-title">{t('newReleases')}</h2>
               {displayedNewReleases.map((game) => (
                 <IonRouterLink key={game.id} routerLink={`/game/${game.id}`} className="juego-link">
                   <div className="juego">
@@ -240,9 +242,10 @@ const HomeBien: React.FC<HomeBienProps> = ({ initialAuthMode }) => {
           )}
           
         </div>
+
+        <Footer />
       </IonContent>
-    </>
-  );
+    );
 };
 
 export default HomeBien;

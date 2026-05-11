@@ -31,27 +31,38 @@ const MyTickets: React.FC = () => {
   const history = useHistory();
   const { addNotification } = useNotification();
 
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        if (!isAuthenticated || !token) {
-          setError(t("ticketsAuthRequired"));
-          setLoading(false);
-          return;
-        }
-
-        const data = await getUserTickets(token);
-        setTickets(data);
-      } catch (err) {
-        console.error(err);
-        setError(t("ticketsLoadError"));
-      } finally {
+  const fetchTickets = async () => {
+    try {
+      if (!isAuthenticated || !token) {
+        setError(t("ticketsAuthRequired"));
         setLoading(false);
+        return;
       }
-    };
 
+      const data = await getUserTickets(token);
+      setTickets(data);
+    } catch (err) {
+      console.error(err);
+      setError(t("ticketsLoadError"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchTickets();
   }, [token, isAuthenticated]);
+
+  // Auto-refresh tickets every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isAuthenticated && token && !isModalOpen) {
+        fetchTickets();
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [token, isAuthenticated, isModalOpen]);
 
   const handleViewTicket = (ticketId: number) => {
     const ticket = tickets.find(t => t.id === ticketId);

@@ -34,7 +34,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
   onClose,
   onTicketUpdated,
 }) => {
-  const { token } = useAuth();
+  const { token, username } = useAuth();
   const { addNotification } = useNotification();
   const { t } = useLanguage();
   const [responseText, setResponseText] = useState("");
@@ -139,7 +139,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
           {/* Mensaje inicial del usuario */}
           <div className="modal-message user-message">
             <div className="message-header">
-              <strong>{t("userLabel")}</strong>
+              <strong>{username || t("userLabel")}</strong>
               <span className="message-time">
                 {new Date(ticket.createdAt).toLocaleString()}
               </span>

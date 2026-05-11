@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import './CarrouselWishlist.css';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Game, getGameImageUrl } from '../../services/gameService.js';
 
 interface CarrouselWhishlistProps {
@@ -11,6 +12,7 @@ const ITEMS_PER_PAGE = 3;
 
 const CarrouselWhishlist: React.FC<CarrouselWhishlistProps> = ({ games }) => {
   const history = useHistory();
+  const { t } = useLanguage();
   const [page, setPage] = useState(0);
 
   const totalPages = Math.max(1, Math.ceil(games.length / ITEMS_PER_PAGE));
@@ -31,7 +33,7 @@ const CarrouselWhishlist: React.FC<CarrouselWhishlistProps> = ({ games }) => {
 
       {/* HEADER */}
       <div className="wishlist-header">
-        <h2 className="wishlist-title">Top Wishlisted (30 days)</h2>
+        <h2 className="wishlist-title">{t('topWishlisted')}</h2>
 
         <div className="wishlist-controls">
           <button onClick={handlePrev} className="nav-btn">‹</button>

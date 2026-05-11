@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { fetchIgdbGames, Game, formatImageUrl } from "../../services/gameService";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { fetchGames, fetchIgdbGames, Game, formatImageUrl } from "../../services/gameService";
 import "./storeComponent.css";
 
 const ITEMS_PER_PAGE = 18;
@@ -18,7 +19,9 @@ const languages = ["English", "Español", "Français", "Deutsch", "Italiano", "P
 
 const StoreComponent: React.FC = () => {
   const history = useHistory();
-  const [apiGames, setApiGames] = useState<Game[]>([]);
+  const { t } = useLanguage();
+  const [bdGames, setBdGames] = useState<Game[]>([]);
+  const [igdbGames, setIgdbGames] = useState<Game[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,19 +48,39 @@ const StoreComponent: React.FC = () => {
   const loadGames = async () => {
     setLoading(true);
     try {
-      const apiResults = await fetchIgdbGames(searchQuery, 20);
-      setApiGames(apiResults);
+      // Cargar juegos de la BD
+      let bdResults: Game[] = [];
+      try {
+        bdResults = await fetchGames({
+          query: searchQuery?.trim() ? searchQuery : undefined,
+        });
+      } catch (error) {
+        console.error("Error loading BD games:", error);
+      }
+
+      // Cargar juegos de IGDB (unos 50)
+      let igdbResults: Game[] = [];
+      try {
+        igdbResults = await fetchIgdbGames(searchQuery?.trim() ? searchQuery : undefined, 50);
+      } catch (error) {
+        console.error("Error loading IGDB games:", error);
+      }
+
+      setBdGames(bdResults);
+      setIgdbGames(igdbResults);
     } catch (error) {
       console.error("Error loading games:", error);
-      setApiGames([]);
-      setGames([]);
+      setBdGames([]);
+      setIgdbGames([]);
     } finally {
       setLoading(false);
     }
   };
 
   const applyFilters = () => {
-    let filteredGames = apiGames;
+    // Combinar juegos de BD primero, luego de IGDB
+    let combinedGames = [...bdGames, ...igdbGames];
+    let filteredGames = combinedGames;
 
     if (selectedGenres.length > 0) {
       filteredGames = filteredGames.filter((game) =>
@@ -91,7 +114,7 @@ const StoreComponent: React.FC = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [apiGames, onlyDiscounted, onlyFree, includeDLCs, hideDLCs, selectedGenres, selectedReleaseStatus, selectedLanguages, priceRange]);
+  }, [bdGames, igdbGames, onlyDiscounted, onlyFree, includeDLCs, hideDLCs, selectedGenres, selectedReleaseStatus, selectedLanguages, priceRange]);
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
@@ -146,8 +169,8 @@ const StoreComponent: React.FC = () => {
 
       <section className="store-header-bar">
         <div className="store-header-left">
-          <div className="store-page-title">PC games / All Games</div>
-          <div className="store-page-subtitle">{games.length.toLocaleString()} games in total</div>
+          <div className="store-page-title">{t('pcGamesAllGames')}</div>
+          <div className="store-page-subtitle">{games.length.toLocaleString()} {t('gamesInTotal')}</div>
         </div>
         <div className="store-header-right">
           <div className="store-search-top">
@@ -155,13 +178,13 @@ const StoreComponent: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for games"
+              placeholder={t('searchForGames')}
               className="store-top-search-input"
             />
           </div>
           <div className="store-sort-row">
-            <span className="sort-label">Sort by:</span>
-            <button type="button" className="sort-button">Bestselling (recently)</button>
+            <span className="sort-label">{t('sortBy')}</span>
+            <button type="button" className="sort-button">{t('bestsellingRecently')}</button>
             <div className="view-toggle">
               <button
                 type="button"
@@ -185,18 +208,18 @@ const StoreComponent: React.FC = () => {
       <section className="store-main">
         <aside className="store-sidebar">
           <div className="sidebar-section">
-            <h4>SEARCH</h4>
+            <h4>{t('storeSearch')}</h4>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search games..."
+              placeholder={t('searchPlaceholderStore')}
               className="store-search-input"
             />
           </div>
 
           <div className="sidebar-section sidebar-intro">
-            <div className="sidebar-chip">GOOD OLD GAMES</div>
+            <div className="sidebar-chip">{t('goodOldGames')}</div>
             <div className="sidebar-filters-group">
               <label className="sidebar-option">
                 <input
@@ -204,7 +227,7 @@ const StoreComponent: React.FC = () => {
                   checked={onlyDiscounted}
                   onChange={() => setOnlyDiscounted((prev) => !prev)}
                 />
-                <span>Show only discounted</span>
+                <span>{t('showOnlyDiscounted')}</span>
               </label>
               <label className="sidebar-option">
                 <input
@@ -212,7 +235,7 @@ const StoreComponent: React.FC = () => {
                   checked={hideOwnedProducts}
                   onChange={() => setHideOwnedProducts((prev) => !prev)}
                 />
-                <span>Hide all owned products</span>
+                <span>{t('hideAllOwnedProducts')}</span>
               </label>
               <label className="sidebar-option">
                 <input
@@ -220,20 +243,20 @@ const StoreComponent: React.FC = () => {
                   checked={onlyWishlist}
                   onChange={() => setOnlyWishlist((prev) => !prev)}
                 />
-                <span>Show only games on my wishlist</span>
+                <span>{t('showOnlyWishlist')}</span>
               </label>
             </div>
           </div>
 
           <div className="sidebar-section sidebar-group">
-            <h4>DLCs</h4>
+            <h4>{t('dlcs')}</h4>
             <label className="sidebar-option">
               <input
                 type="checkbox"
                 checked={includeDLCs}
                 onChange={() => setIncludeDLCs((prev) => !prev)}
               />
-              <span>DLCs</span>
+              <span>{t('dlcs')}</span>
             </label>
             <label className="sidebar-option">
               <input
@@ -241,7 +264,7 @@ const StoreComponent: React.FC = () => {
                 checked={hideDLCs}
                 onChange={() => setHideDLCs((prev) => !prev)}
               />
-              <span>Hide DLCs and extras</span>
+              <span>{t('hideDlcsAndExtras')}</span>
             </label>
             <label className="sidebar-option">
               <input
@@ -249,12 +272,12 @@ const StoreComponent: React.FC = () => {
                 checked={onlyFree}
                 onChange={() => setOnlyFree((prev) => !prev)}
               />
-              <span>Show only free games</span>
+              <span>{t('showOnlyFreeGames')}</span>
             </label>
           </div>
 
           <div className="sidebar-section sidebar-group">
-            <h4>Price range</h4>
+            <h4>{t('priceRange')}</h4>
             <div className="price-range-row">
               <span>{priceRange[0].toFixed(2)}€</span>
               <span>{priceRange[1].toFixed(2)}€</span>
@@ -271,11 +294,11 @@ const StoreComponent: React.FC = () => {
           </div>
 
           <div className="sidebar-section sidebar-group">
-            <h4>Release Status</h4>
+            <h4>{t('releaseStatus')}</h4>
             {[
-              { label: "New arrivals", value: "new-arrivals" },
-              { label: "Upcoming", value: "upcoming" },
-              { label: "Early access", value: "early-access" },
+              { label: t('newArrivals'), value: "new-arrivals" },
+              { label: t('upcoming'), value: "upcoming" },
+              { label: t('earlyAccess'), value: "early-access" },
             ].map((item) => (
               <label key={item.value} className="sidebar-option">
                 <input
@@ -295,7 +318,7 @@ const StoreComponent: React.FC = () => {
           </div>
 
           <div className="sidebar-section sidebar-group">
-            <h4>Genres</h4>
+            <h4>{t('genres')}</h4>
             {genres.map((genre) => (
               <label key={genre} className="sidebar-option">
                 <input
@@ -309,7 +332,7 @@ const StoreComponent: React.FC = () => {
           </div>
 
           <div className="sidebar-section sidebar-group">
-            <h4>Languages</h4>
+            <h4>{t('languages')}</h4>
             {languages.map((language) => (
               <label key={language} className="sidebar-option">
                 <input
@@ -331,7 +354,7 @@ const StoreComponent: React.FC = () => {
 
         <div className={`store-grid ${viewMode === 'list' ? 'list-mode' : ''}`}>
           {loading ? (
-            <div className="loading-message">Loading games from backend...</div>
+            <div className="loading-message">{t('loadingGamesBackend')}</div>
           ) : displayedGames.length > 0 ? (
             displayedGames.map((game) => (
               <div key={game.id} className="game-card" onClick={() => handleGameClick(game.id)}>
@@ -340,7 +363,7 @@ const StoreComponent: React.FC = () => {
                   <div className="game-card-top-chip">PC</div>
                   {game.trailerVideo && (
                     <div className="game-card-trailer-badge">
-                      🎬 Trailer
+                      🎬 {t('trailer')}
                     </div>
                   )}
                   <div className="game-card-overlay" />
@@ -358,9 +381,9 @@ const StoreComponent: React.FC = () => {
                   <div className="game-card-footer">
                     <span className="game-price">
                       {game.price === undefined || game.price === null
-                        ? 'TBD'
+                        ? t('tbd')
                         : game.price === 0
-                        ? 'FREE'
+                        ? t('free')
                         : `${game.price.toFixed(2)}€`}
                     </span>
                   </div>
@@ -369,7 +392,7 @@ const StoreComponent: React.FC = () => {
             ))
           ) : (
             <div className="empty-state">
-              No games found. Try another search or remove filters.
+              {t('noGamesFound')}
             </div>
           )}
         </div>
@@ -377,11 +400,11 @@ const StoreComponent: React.FC = () => {
 
       <div className="pagination">
         <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-          Prev
+          {t('prev')}
         </button>
         <span>{page} / {totalPages}</span>
         <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>
-          Next
+          {t('next')}
         </button>
       </div>
     </div>

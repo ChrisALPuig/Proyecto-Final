@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import './CarrouselForYou.css';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Game, getGameImageUrl } from '../../services/gameService.js';
 
 interface CarouselForYouProps {
@@ -11,6 +12,7 @@ const formatImageUrl = getGameImageUrl;
 
 const CarouselForYou: React.FC<CarouselForYouProps> = ({ games }) => {
   const history = useHistory();
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const slides = games.slice(0, 4);
@@ -54,7 +56,7 @@ const CarouselForYou: React.FC<CarouselForYouProps> = ({ games }) => {
 
   return (
     <section className="recommended">
-      <h2 className="recommended-title">Recommended For You</h2>
+      <h2 className="recommended-title">{t('recommendedForYou')}</h2>
 
       <div className="carousel-wrapper">
         <button className="nav-button left" onClick={handlePrev}>

@@ -160,7 +160,6 @@ const FormularioComponente: React.FC = () => {
               onChange={e => setEmail(e.target.value)}
               readOnly={!!profileEmail}
             />
-            {profileEmail && <p className="form-note">{t("ticketFormProfileNote")}</p>}
 
             <p className="form-label">{t("ticketFormOrderLabel")}</p>
             <input type="text" className="inputs-form-1" value={orderId} onChange={e => setOrderId(e.target.value)} />

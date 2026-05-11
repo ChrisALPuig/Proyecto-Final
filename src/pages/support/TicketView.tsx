@@ -38,7 +38,7 @@ interface Ticket {
 
 const TicketView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { token } = useAuth();
+  const { token, username } = useAuth();
   const { addNotification } = useNotification();
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -120,6 +120,12 @@ const TicketView: React.FC = () => {
                 borderRadius: "8px",
               }}
             >
+              <div style={{ marginBottom: "8px" }}>
+                <strong>{msg.sender === "user" ? username : "admin"}</strong>
+                <span style={{ marginLeft: "8px", fontSize: "0.8rem", color: "#666" }}>
+                  {new Date(msg.createdAt).toLocaleString()}
+                </span>
+              </div>
               <p style={{ margin: "0 0 5px 0" }}>{msg.message}</p>
 
               {msg.attachments &&
@@ -138,10 +144,6 @@ const TicketView: React.FC = () => {
                     onClick={() => window.open(att.filePath, "_blank")}
                   />
                 ))}
-
-              <div style={{ fontSize: "0.8rem", color: "#666", marginTop: "4px" }}>
-                {new Date(msg.createdAt).toLocaleString()}
-              </div>
             </div>
           ))}
         </div>

@@ -1,6 +1,14 @@
+/* Contenedor página flex */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Fondo general */
 .home-content {
   --background: #1a1a1a;
+  flex: 1;
 }
 
 /* Header general */

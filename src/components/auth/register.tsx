@@ -25,6 +25,7 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [fieldsError, setFieldsError] = useState({ email: false, username: false, password: false });
   const [showSetup2FA, setShowSetup2FA] = useState(false);
   const [token, setToken] = useState("");
@@ -43,6 +44,7 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
       return;
     }
 
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:8080/auth/register", {
         method: "POST",
@@ -79,6 +81,8 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
     } catch (err: any) {
       console.error("Error en registro:", err);
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -150,7 +154,16 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
             className={fieldsError.password ? "input-error" : ""}
           />
 
-          <button type="submit">Register</button>
+          <button type="submit" disabled={loading} className="register-btn">
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                Registrando...
+              </>
+            ) : (
+              "Register"
+            )}
+          </button>
 
           <p className="login-link">
             Already have an account? <a href="/login">Sign In</a>

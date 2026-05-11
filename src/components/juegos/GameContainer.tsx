@@ -2,10 +2,12 @@ import { IonRouterLink } from "@ionic/react";
 import { useState, useEffect } from "react";
 import { useCart } from "../../contexts/useCart.tsx";
 import { useAlert } from "../../contexts/AlertContext.tsx";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import ImagenToggle from "../carrito/fav.tsx";
 import CartPopover from "../carrito/CartPopover.tsx";
 import { useHistory } from "react-router";
 import { fetchGameById, formatImageUrl } from "../../services/gameService.ts";
+import { translateGameContent, LanguageCode } from "../../services/translationService.ts";
 import './css/doomContainer.css';
 
 import { Game } from "../../services/gameService.ts";
@@ -17,8 +19,11 @@ interface GamePageProps {
 const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
   const { addToCart } = useCart();
   const { showErrorAlert, showLoginRequiredAlert } = useAlert();
+  const { t, language } = useLanguage();
   const [game, setGame] = useState<Game | null>(null);
+  const [translatedGame, setTranslatedGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
+  const [translating, setTranslating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imagesPerPage, setImagesPerPage] = useState(4);
@@ -64,6 +69,42 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
       });
   }, [gameId]);
 
+  // Traducir contenido del juego cuando cambia el idioma
+  useEffect(() => {
+    if (!game) return;
+
+    const translateContent = async () => {
+      setTranslating(true);
+      try {
+        const langCode: LanguageCode = language === "Español" ? "es" : "en";
+        const translated = await translateGameContent(
+          {
+            description: game.description,
+            story: game.story,
+            systemRequirementsMin: game.systemRequirementsMin,
+            systemRequirementsRecommended: game.systemRequirementsRecommended,
+            genres: game.genres,
+            tags: game.tags,
+            features: game.features,
+          },
+          langCode
+        );
+
+        setTranslatedGame({
+          ...game,
+          ...translated,
+        });
+      } catch (err) {
+        console.error("Translation error:", err);
+        setTranslatedGame(game);
+      } finally {
+        setTranslating(false);
+      }
+    };
+
+    translateContent();
+  }, [game, language]);
+
   // Control de cantidad de imágenes por tamaño
   useEffect(() => {
     const handleResize = () => {
@@ -76,9 +117,9 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (loading) return <p>Cargando juego...</p>;
+  if (loading) return <p>{t("loadingGame")}</p>;
   if (error) return <p style={{ color: 'red', padding: '20px' }}>Error: {error}</p>;
-  if (!game) return <p>Juego no encontrado</p>;
+  if (!game) return <p>{t("gameNotFound")}</p>;
 
   const maxIndex = Math.max(0, (game.images?.length || 0) - imagesPerPage);
   const nextSlide = () => setCurrentIndex(prev => Math.min(prev + imagesPerPage, maxIndex));
@@ -96,7 +137,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
       });
       setIsCartOpen(true); // abre el popover
     } catch (err: any) {
-      const errorMessage = err?.message || "No se pudo añadir el juego al carrito.";
+      const errorMessage = err?.message || t("failedAddToCart");
       if (errorMessage.includes("iniciar sesión")) {
         showLoginRequiredAlert();
       } else {
@@ -117,7 +158,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
       history.push("/carrito-juego"); // redirección automática
     } catch (err: any) {
       console.error("Error adding to cart:", err);
-      const errorMessage = err?.message || "No se pudo añadir el juego al carrito.";
+      const errorMessage = err?.message || t("failedAddToCart");
       if (errorMessage.includes("iniciar sesión")) {
         showLoginRequiredAlert();
       } else {
@@ -219,23 +260,23 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
         <p className="price">{game.price}€</p>
 
         <div className="botones">
-          <button className="add-to-cart" onClick={handleAddToCart}>Añadir al carrito</button>
+          <button className="add-to-cart" onClick={handleAddToCart}>{t("addToCart")}</button>
           <button className="buy-now" onClick={handleBuyNow}>
-            Comprar ahora
+            {t("buyNow")}
           </button>
         </div>
 
         <div className="wishlist-section">
           <ImagenToggle itemId={game.id.toString()} itemName={game.title} itemPrice={game.price} itemImage={game.coverImage} />
-          <span className="wishlist-text">Wishlist</span>
+          <span className="wishlist-text">{t("wishlist")}</span>
         </div>
       </div>
 
       {/* INFORMACIÓN DEL JUEGO */}
       <div className="doom-info-container">
         <div className="doom-description">
-          <h2>Description</h2>
-          <p>{game.description}</p>
+          <h2>{t("description")}</h2>
+          <p>{translating ? "..." : translatedGame?.description || game?.description}</p>
 
           {game.descriptionVideo && (
             <video
@@ -249,27 +290,27 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
             />
           )}
 
-          <h2>Story</h2>
-          <p>{game.story}</p>
+          <h2>{t("story")}</h2>
+          <p>{translating ? "..." : translatedGame?.story || game?.story}</p>
 
-          <h2>System Requirements</h2>
-          <p><strong>Minimum:</strong> {game.systemRequirementsMin}</p>
-          <p><strong>Recommended:</strong> {game.systemRequirementsRecommended}</p>
+          <h2>{t("systemRequirements")}</h2>
+          <p><strong>{t("minimum")}</strong> {translating ? "..." : translatedGame?.systemRequirementsMin || game?.systemRequirementsMin}</p>
+          <p><strong>{t("recommended")}</strong> {translating ? "..." : translatedGame?.systemRequirementsRecommended || game?.systemRequirementsRecommended}</p>
         </div>
 
         <div className="doom-right-panel">
           <div className="doom-game-details">
-            <h2>Game Details</h2>
+            <h2>{t("gameDetails")}</h2>
             <ul>
-              {(game.genres || []).map((g, i) => <li key={i}><strong>Genre:</strong> {g}</li>)}
-              {(game.tags || []).map((t, i) => <li key={i}><strong>Tag:</strong> {t}</li>)}
+              {(translatedGame?.genres || game?.genres || []).map((g, i) => <li key={i}><strong>{t("genre")}</strong> {g}</li>)}
+              {(translatedGame?.tags || game?.tags || []).map((t_item, i) => <li key={i}><strong>{t("tag")}</strong> {t_item}</li>)}
             </ul>
           </div>
 
           <div className="doom-features">
-            <h2>Game Features</h2>
+            <h2>{t("gameFeatures")}</h2>
             <ul>
-              {(game.features || []).map((f, i) => <li key={i}>{f}</li>)}
+              {(translatedGame?.features || game?.features || []).map((f, i) => <li key={i}>{f}</li>)}
             </ul>
           </div>
         </div>
