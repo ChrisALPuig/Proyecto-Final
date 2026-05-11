@@ -6,45 +6,72 @@ export default function Login({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!username || !password) {
-      setError("Usuario y contraseña son requeridos");
+      setError("Por favor completa todos los campos");
       return;
     }
 
+    setLoading(true);
     try {
       const data = await loginAdmin({ username, password });
-      onLogin(data.token); // enviamos solo el token
+      onLogin(data.token);
     } catch (err) {
       setError("Usuario o contraseña incorrectos");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Admin Login</h2>
-        {error && <p className="error">{error}</p>}
-        <label>Usuario</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <label>Contraseña</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Ingresar</button>
-      </form>
+      <div className="login-box">
+        <form className="login-form" onSubmit={handleSubmit}>
+          <h2>Admin Login</h2>
+          <p className="login-subtitle">Acceso a panel administrativo</p>
+          
+          {error && (
+            <div className="error-box">
+              <p className="error">{error}</p>
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="username">Usuario</label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="admin"
+              disabled={loading}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Contraseña</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              disabled={loading}
+              required
+            />
+          </div>
+          
+          <button type="submit" disabled={loading} className="submit-btn">
+            {loading ? "Cargando..." : "Ingresar"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
