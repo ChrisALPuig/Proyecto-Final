@@ -224,4 +224,67 @@ public class IgdbService {
     private String getSafeText(JsonNode node, String field) {
         return node.has(field) ? node.get(field).asText(null) : null;
     }
+
+    public List<Game> populateTop30Games() {
+        List<String> gameNames = List.of(
+            "Grand Theft Auto V",
+            "Red Dead Redemption 2",
+            "The Witcher 3: Wild Hunt",
+            "Cyberpunk 2077",
+            "Elden Ring",
+            "Dark Souls III",
+            "Sekiro: Shadows Die Twice",
+            "Bloodborne",
+            "The Last of Us Part II",
+            "The Last of Us",
+            "God of War",
+            "God of War Ragnarök",
+            "Ghost of Tsushima",
+            "Horizon Zero Dawn",
+            "Horizon Forbidden West",
+            "Marvel's Spider-Man 2",
+            "Uncharted 4: A Thief's End",
+            "Halo Infinite",
+            "Halo 3",
+            "Gears of War 3",
+            "Call of Duty: Modern Warfare 2",
+            "Battlefield 1",
+            "Resident Evil 4",
+            "Resident Evil Village",
+            "Dead Space",
+            "Assassin's Creed IV: Black Flag",
+            "Far Cry 3",
+            "Baldur's Gate 3",
+            "Final Fantasy VII Rebirth",
+            "DOOM Eternal"
+        );
+
+        List<Game> savedGames = new ArrayList<>();
+        for (String gameName : gameNames) {
+            try {
+                // Search for the game in IGDB
+                IgdbGameDTO dto = searchGameByName(gameName);
+                if (dto != null) {
+                    // Check if game already exists in DB
+                    Game existingGame = repository.findByTitle(dto.getName());
+                    if (existingGame == null) {
+                        // Map DTO to entity and save
+                        Game game = gameMapper.mapToGame(dto);
+                        Game savedGame = repository.save(game);
+                        savedGames.add(savedGame);
+                        System.out.println("✓ Saved: " + gameName);
+                    } else {
+                        System.out.println("⊘ Already exists: " + gameName);
+                    }
+                } else {
+                    System.out.println("✗ Not found in IGDB: " + gameName);
+                }
+                // Small delay to avoid rate limiting
+                Thread.sleep(500);
+            } catch (Exception e) {
+                System.err.println("Error processing " + gameName + ": " + e.getMessage());
+            }
+        }
+        return savedGames;
+    }
 }

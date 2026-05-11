@@ -1,6 +1,7 @@
 package com.ecommerce.chestgames.controller;
 
 import com.ecommerce.chestgames.dto.IgdbGameDTO;
+import com.ecommerce.chestgames.entity.Game;
 import com.ecommerce.chestgames.service.IgdbService;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,5 +23,11 @@ public class IgdbController {
             @RequestParam(required = false, defaultValue = "20") int limit
     ) {
         return igdbService.searchGames(name, limit);
+    }
+
+    @PostMapping("/populate-30-games")
+    public String populate30Games() {
+        List<Game> games = igdbService.populateTop30Games();
+        return "Successfully saved " + games.size() + " games to the database";
     }
 }

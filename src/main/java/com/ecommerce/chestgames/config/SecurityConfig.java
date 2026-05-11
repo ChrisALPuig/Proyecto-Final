@@ -33,7 +33,7 @@ public class SecurityConfig {
                         // Endpoints públicos → no requieren autenticación
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/products", "/products/platform/**", "/products/category/**").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 
                         // Endpoints que requieren autenticación
                         .requestMatchers("/api/cart/**", "/api/wishlist/**").authenticated()
