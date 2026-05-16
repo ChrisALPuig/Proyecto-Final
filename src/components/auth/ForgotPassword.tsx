@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { forgotPassword } from "../../services/userService";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./ForgotPassword.css";
 
 interface ForgotPasswordProps {
@@ -8,6 +9,7 @@ interface ForgotPasswordProps {
 }
 
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose }) => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -19,7 +21,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose }) => {
     setSuccess(false);
 
     if (!email) {
-      setError("Por favor, ingresa tu correo electrónico.");
+      setError(t("enterEmailError"));
       return;
     }
 
@@ -33,7 +35,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose }) => {
         setSuccess(false);
       }, 3000);
     } catch (err: any) {
-      setError(err.message || "Error al enviar el correo. Inténtalo más tarde.");
+      setError(err.message || t("sendEmailError"));
     } finally {
       setLoading(false);
     }
@@ -48,39 +50,39 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose }) => {
           ✕
         </button>
 
-        <h2>Restablecer Contraseña</h2>
+        <h2>{t("resetPassword")}</h2>
         <p className="forgot-password-subtitle">
-          Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+          {t("resetPasswordSubtitle")}
         </p>
 
         {success && (
           <div className="success-message">
-            ✓ Se ha enviado un enlace de recuperación a tu correo. Por favor, revisa tu bandeja de entrada.
+            {t("recoveryLinkSent")}
           </div>
         )}
 
         {error && <div className="forgot-password-error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Correo Electrónico</label>
+          <label htmlFor="email">{t("email")}</label>
           <input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="tu@correo.com"
+            placeholder={t("enterEmail")}
             disabled={loading || success}
           />
 
           <button type="submit" disabled={loading || success}>
-            {loading ? "Enviando..." : success ? "¡Enviado!" : "Enviar Enlace"}
+            {loading ? t("sending") : success ? t("sent") : t("sendLink")}
           </button>
         </form>
 
         <p className="forgot-password-cancel">
-          ¿Recordaste tu contraseña?{" "}
+          {t("rememberedPassword")}{" "}
           <button type="button" onClick={onClose} className="forgot-password-link">
-            Volver al Login
+            {t("backToLogin")}
           </button>
         </p>
       </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { resetPassword } from "../../services/userService";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./ResetPassword.css";
 
 interface LocationState {
@@ -9,6 +10,7 @@ interface LocationState {
 }
 
 const ResetPassword: React.FC = () => {
+  const { t } = useLanguage();
   const history = useHistory();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -24,31 +26,31 @@ const ResetPassword: React.FC = () => {
 
   useEffect(() => {
     if (!token) {
-      setError("Token de recuperación inválido o expirado.");
+      setError(t("invalidOrExpiredToken"));
     }
-  }, [token]);
+  }, [token, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!newPassword || !confirmPassword) {
-      setError("Por favor, completa todos los campos.");
+      setError(t("pleaseCompleteAllFields"));
       return;
     }
 
     if (newPassword.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres.");
+      setError(t("minimumCharacters"));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError("Las contraseñas no coinciden.");
+      setError(t("passwordsDoNotMatch"));
       return;
     }
 
     if (!token) {
-      setError("Token inválido.");
+      setError(t("invalidToken"));
       return;
     }
 
@@ -62,7 +64,7 @@ const ResetPassword: React.FC = () => {
         history.push("/login");
       }, 2000);
     } catch (err: any) {
-      setError(err.message || "Error al restablecer la contraseña.");
+      setError(err.message || t("errorResettingPassword"));
     } finally {
       setLoading(false);
     }
@@ -71,11 +73,11 @@ const ResetPassword: React.FC = () => {
   return (
     <div className="reset-password-page">
       <div className="reset-password-container">
-        <h1>Restablecer Contraseña</h1>
+        <h1>{t("resetPasswordTitle")}</h1>
 
         {success && (
           <div className="success-message-reset">
-            ✓ Contraseña restablecida exitosamente. Redirigiendo al login...
+            {t("passwordResetSuccessfully")}
           </div>
         )}
 
@@ -84,14 +86,14 @@ const ResetPassword: React.FC = () => {
         {!success && token && (
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="newPassword">Nueva Contraseña</label>
+              <label htmlFor="newPassword">{t("newPassword")}</label>
               <div className="password-input-group">
                 <input
                   id="newPassword"
                   type={showPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Ingresa tu nueva contraseña"
+                  placeholder={t("enterNewPassword")}
                   disabled={loading}
                 />
                 <button
@@ -103,18 +105,18 @@ const ResetPassword: React.FC = () => {
                   {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
-              <small>Mínimo 8 caracteres</small>
+              <small>{t("minimumCharacters")}</small>
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirmar Contraseña</label>
+              <label htmlFor="confirmPassword">{t("confirmPassword")}</label>
               <div className="password-input-group">
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirma tu contraseña"
+                  placeholder={t("confirmYourPassword")}
                   disabled={loading}
                 />
                 <button
@@ -129,14 +131,14 @@ const ResetPassword: React.FC = () => {
             </div>
 
             <button type="submit" disabled={loading} className="reset-submit-btn">
-              {loading ? "Restableciendo..." : "Restablecer Contraseña"}
+              {loading ? t("resetting") : t("resetPasswordButton")}
             </button>
           </form>
         )}
 
         {!token && (
           <button onClick={() => history.push("/login")} className="back-to-login-btn">
-            Volver al Login
+            {t("backToLoginButton")}
           </button>
         )}
       </div>

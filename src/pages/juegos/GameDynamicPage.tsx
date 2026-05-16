@@ -6,6 +6,8 @@ import GamePage from "../../components/juegos/GameContainer.tsx";
 const GameDynamicPage: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
 
+  console.log("🎮 GameDynamicPage - gameId from params:", gameId);
+
   return (
     <IonPage>
       {/* Header fijo y transparente */}
@@ -16,9 +18,12 @@ const GameDynamicPage: React.FC = () => {
       {/* Contenido scrollable */}
       <IonContent fullscreen>
         {gameId ? (
-          <GamePage gameId={Number(gameId)} />
+          <>
+            {console.log("✅ GameDynamicPage - rendering GamePage with ID:", Number(gameId))}
+            <GamePage gameId={Number(gameId)} />
+          </>
         ) : (
-          <p>Juego no encontrado</p>
+          <p style={{ padding: '20px', color: '#fff' }}>Juego no encontrado - no gameId in params</p>
         )}
       </IonContent>
     </IonPage>

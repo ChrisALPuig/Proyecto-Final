@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { verifyLogin2FA } from '../../services/twoFactorService.ts';
+import { useLanguage } from '../../contexts/LanguageContext.tsx';
 import './Verify2FA.css';
 
 interface Verify2FAProps {
@@ -9,6 +10,7 @@ interface Verify2FAProps {
 }
 
 const Verify2FA: React.FC<Verify2FAProps> = ({ email, onSuccess, onCancel }) => {
+  const { t } = useLanguage();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,7 +20,7 @@ const Verify2FA: React.FC<Verify2FAProps> = ({ email, onSuccess, onCancel }) => 
     setError('');
 
     if (code.length !== 6 || !/^[0-9]{6}$/.test(code)) {
-      setError('El código debe tener 6 dígitos.');
+      setError(t('codeMustBeSixDigits'));
       return;
     }
 
@@ -27,7 +29,7 @@ const Verify2FA: React.FC<Verify2FAProps> = ({ email, onSuccess, onCancel }) => 
       const data = await verifyLogin2FA({ email, code });
       onSuccess(data.token, data.username, data.roles);
     } catch (err: any) {
-      setError(err.message || 'Código inválido');
+      setError(err.message || t('invalidCode'));
     } finally {
       setLoading(false);
     }
@@ -37,11 +39,11 @@ const Verify2FA: React.FC<Verify2FAProps> = ({ email, onSuccess, onCancel }) => 
     <div className="verify-2fa-overlay" onClick={onCancel}>
       <div className="verify-2fa-container" onClick={(e) => e.stopPropagation()}>
         <span className="close-btn" onClick={onCancel}>✕</span>
-        <h2>Verificación en dos pasos</h2>
-        <p>Tu cuenta tiene activada la autenticación de dos factores. Ingresa el código de 6 dígitos de tu app autenticadora.</p>
+        <h2>{t('verify2FA')}</h2>
+        <p>{t('verify2FADescription')}</p>
 
         <form className="verify-2fa-form" onSubmit={handleSubmit}>
-          <label>Código de autenticación</label>
+          <label>{t('authenticationCode')}</label>
           <input
             type="text"
             inputMode="numeric"
@@ -55,10 +57,10 @@ const Verify2FA: React.FC<Verify2FAProps> = ({ email, onSuccess, onCancel }) => 
 
           <div className="verify-2fa-buttons">
             <button type="button" className="btn-skip" onClick={onCancel} disabled={loading}>
-              Cancelar
+              {t('cancel')}
             </button>
             <button type="submit" className="btn-activate" disabled={loading || code.length !== 6}>
-              {loading ? 'Verificando...' : 'Verificar'}
+              {loading ? t('verifying') : t('verify')}
             </button>
           </div>
         </form>

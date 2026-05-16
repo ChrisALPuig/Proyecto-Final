@@ -1,5 +1,5 @@
 import { IonContent, IonPage } from '@ionic/react';
-import Policies_GeneralnfoComponent from '../../components/support/Policies _GeneralnfoComponent.tsx';
+import Policies_GeneralnfoComponent from '../../components/support/Policies_GeneralnfoComponent.tsx';
 
 const Policies_Generalnfo: React.FC = () => {
   return (

@@ -112,7 +112,7 @@
 .support-content {
   background-color: #ffffff;
   min-height: 100vh;
-  padding-top: 340px;
+  padding-top: 300px;
 }
 
 /* GRID */
@@ -172,6 +172,16 @@
 .support-topics ul {
   margin: 0;
   padding-left: 20px;
+}
+
+.support-topics .support-link {
+  color: #000000;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease, color 0.2s ease;
+}
+
+.support-topics .support-link:hover {
+  text-decoration: underline;
 }
 
 /* Eliminando las reglas de diseño responsive */

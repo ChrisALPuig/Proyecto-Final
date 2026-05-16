@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { generate2FAQR, verify2FACode } from '../../services/twoFactorService.ts';
+import { useLanguage } from '../../contexts/LanguageContext.tsx';
 import './Setup2FA.css';
 
 interface Setup2FAProps {
@@ -10,6 +11,7 @@ interface Setup2FAProps {
 }
 
 const Setup2FA: React.FC<Setup2FAProps> = ({ token, email, onComplete, onSkip }) => {
+  const { t } = useLanguage();
   const [step, setStep] = useState(1); // 1: preguntar, 2: mostrar QR, 3: validar código
   const [qrCode, setQrCode] = useState<string>('');
   const [secret, setSecret] = useState<string>('');
@@ -36,7 +38,7 @@ const Setup2FA: React.FC<Setup2FAProps> = ({ token, email, onComplete, onSkip })
 
   const handleVerifyCode = async () => {
     if (code.length !== 6 || !/^\d+$/.test(code)) {
-      setError('El código debe tener 6 dígitos');
+      setError(t('codeMustBeSixDigits'));
       return;
     }
 
@@ -60,14 +62,14 @@ const Setup2FA: React.FC<Setup2FAProps> = ({ token, email, onComplete, onSkip })
       <div className="setup-2fa-container">
         {step === 1 && (
           <>
-            <h2>Activar Autenticación de Dos Factores</h2>
-            <p>Aumenta la seguridad de tu cuenta con 2FA. Se te pedirá un código de 6 dígitos además de tu contraseña.</p>
+            <h2>{t('setup2FA')}</h2>
+            <p>{t('setup2FADescription')}</p>
             <div className="setup-2fa-buttons">
               <button className="btn-skip" onClick={onSkip} disabled={loading}>
-                Ahora no
+                {t('notNow')}
               </button>
               <button className="btn-activate" onClick={handleActivate2FA} disabled={loading}>
-                {loading ? 'Cargando...' : 'Activar 2FA'}
+                {loading ? t('loading') : t('activate2FAButton')}
               </button>
             </div>
           </>
@@ -75,20 +77,20 @@ const Setup2FA: React.FC<Setup2FAProps> = ({ token, email, onComplete, onSkip })
 
         {step === 2 && (
           <>
-            <h2>Escanea el código QR</h2>
-            <p>Usa una aplicación autenticadora (Google Authenticator, Authy, etc.)</p>
+            <h2>{t('scanQRCode')}</h2>
+            <p>{t('useAuthenticator')}</p>
             {qrCode && (
               <div className="qr-container">
                 <img src={qrCode} alt="2FA QR Code" className="qr-code" />
               </div>
             )}
             <p className="secret-text">
-              O copia manualmente este código: <code>{secret}</code>
+              {t('copyManually')} <code>{secret}</code>
             </p>
             <div className="code-input">
               <input
                 type="text"
-                placeholder="Ingresa el código de 6 dígitos"
+                placeholder={t('enterSixDigitCode')}
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 maxLength={6}
@@ -98,10 +100,10 @@ const Setup2FA: React.FC<Setup2FAProps> = ({ token, email, onComplete, onSkip })
             {error && <div className="error-message">{error}</div>}
             <div className="setup-2fa-buttons">
               <button className="btn-skip" onClick={onSkip} disabled={loading}>
-                Cancelar
+                {t('cancel')}
               </button>
               <button className="btn-activate" onClick={handleVerifyCode} disabled={loading || code.length !== 6}>
-                {loading ? 'Verificando...' : 'Confirmar'}
+                {loading ? t('verifying') : t('confirmButton')}
               </button>
             </div>
           </>
@@ -109,10 +111,10 @@ const Setup2FA: React.FC<Setup2FAProps> = ({ token, email, onComplete, onSkip })
 
         {step === 3 && (
           <>
-            <h2>✓ 2FA Activado</h2>
-            <p>Tu cuenta está protegida con autenticación de dos factores.</p>
+            <h2>{t('twoFAActivated')}</h2>
+            <p>{t('accountProtected')}</p>
             <div className="success-message">
-              ¡Configuración completada exitosamente!
+              {t('setupCompletedSuccessfully')}
             </div>
           </>
         )}

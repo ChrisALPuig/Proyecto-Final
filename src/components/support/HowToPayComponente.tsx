@@ -1,4 +1,4 @@
-import { IonRouterLink } from "@ionic/react";
+﻿import { IonPage, IonRouterLink } from "@ionic/react";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import "./HowToPayComponente.css"; // <-- nuevo CSS
 import SupportHeader from "./SupportHeader.tsx";
@@ -14,23 +14,23 @@ const HowToPay: React.FC = () => {
 
       {/* CONTENIDO BLANCO */}
       <div className="orders-content">
-        <h1 className="orders-titles">{t("howDoIBuyAGame")}</h1>
+        <h1 className="orders-titles">{t("howDoIBuyAGift")}</h1>
         <div className="divider"></div>
 
         {/* CONTENEDOR DE RESPUESTA */}
         <div className="how-to-buy-container">
-          <p className="how-to-buy-text">
-            {t("howToBuyStepIntro")}
-          </p>
-          <p className="how-to-buy-text2">
-            {t("howToBuyStepCatalog")}
-          </p>
-          <p className="how-to-buy-text">
-            {t("howToBuyStepProduct")}
-          </p>
-            <p className="how-to-buy-text">
-            {t("howToBuyStepCart")}
-          </p>
+  <div className="how-to-buy-text">
+    <p>{t("superEasy")}</p>
+    
+    <p>
+      {t("catalogPageClick")}<br />
+      {t("productPageClick")}
+    </p>
+
+    <p>{t("checkoutInstructions")}</p>
+
+    <p>{t("paymentMethodInstructions")}</p>
+  </div>
             <div className="how-to-buy-gif-container">
             <img src="/game_buy.gif" alt="How to buy tutorial" className="how-to-buy-gif"/>
         </div>
@@ -45,7 +45,7 @@ const HowToPay: React.FC = () => {
         <h5>{t("didntFindAnswer")}</h5>
         </div>
         <div className="more-questions-box-p">
-        <p>{t("moreQuestionsText")}</p>
+        <p>{t("didntFindAnswerDescription")}</p>
         </div>
         <div className="button-contact-uno">
           <IonRouterLink routerLink="/form">

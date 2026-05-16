@@ -39,11 +39,22 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
       return;
     }
     
+    console.log("Fetching game with ID:", gameId);
     setLoading(true);
     setError(null);
     
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundo timeout
+    
     fetchGameById(gameId)
       .then(data => {
+        clearTimeout(timeoutId);
+        console.log("✅ Game data fetched successfully:", data);
+        if (!data) {
+          setError("No game data received");
+          setLoading(false);
+          return;
+        }
         const safeData: Game = {
           ...data,
           id: data.id || gameId,
@@ -53,6 +64,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
           tags: data.tags || [],
           features: data.features || [],
         };
+        console.log("✅ Safe game data prepared:", safeData);
         setGame(safeData);
         setLoading(false);
 
@@ -63,10 +75,16 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
         });
       })
       .catch(err => {
-        console.error(err);
-        setError(err.message || "Failed to load game");
+        clearTimeout(timeoutId);
+        console.error("❌ Error fetching game:", err);
+        console.error("❌ Error message:", err?.message);
+        console.error("❌ Stack:", err?.stack);
+        const errorMsg = err?.message || "Failed to load game";
+        setError(errorMsg);
         setLoading(false);
       });
+
+    return () => clearTimeout(timeoutId);
   }, [gameId]);
 
   // Traducir contenido del juego cuando cambia el idioma
@@ -117,9 +135,52 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (loading) return <p>{t("loadingGame")}</p>;
-  if (error) return <p style={{ color: 'red', padding: '20px' }}>Error: {error}</p>;
-  if (!game) return <p>{t("gameNotFound")}</p>;
+  if (loading) return (
+    <div style={{ 
+      padding: '40px 20px', 
+      color: '#fff', 
+      textAlign: 'center',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#121212'
+    }}>
+      <p style={{ fontSize: '1.2rem', marginBottom: '20px' }}>{t("loadingGame")}</p>
+      <p style={{ fontSize: '0.9rem', color: '#999' }}>Game ID: {gameId}</p>
+    </div>
+  );
+  if (error) return (
+    <div style={{ 
+      color: '#ff6b6b', 
+      padding: '40px 20px',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#121212'
+    }}>
+      <p style={{ fontSize: '1.2rem', marginBottom: '20px' }}>Error: {error}</p>
+      <p style={{ fontSize: '0.9rem', color: '#999' }}>Game ID: {gameId}</p>
+      <p style={{ fontSize: '0.9rem', color: '#999' }}>Check the browser console for more details</p>
+    </div>
+  );
+  if (!game) return (
+    <div style={{ 
+      padding: '40px 20px', 
+      color: '#fff',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#121212'
+    }}>
+      <p style={{ fontSize: '1.2rem' }}>{t("gameNotFound")}</p>
+    </div>
+  );
 
   const maxIndex = Math.max(0, (game.images?.length || 0) - imagesPerPage);
   const nextSlide = () => setCurrentIndex(prev => Math.min(prev + imagesPerPage, maxIndex));
@@ -182,7 +243,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
   return (
     <div className="doom-hero">
       {/* HERO COVER IMAGE */}
-      {heroCoverSrc && (
+      {heroCoverSrc && heroCoverSrc !== 'https://via.placeholder.com/300x400?text=No+Image' ? (
         <div className="doom-video-container">
           <img
             className="doom-video"
@@ -190,6 +251,12 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
             alt={`${game.title} portada`}
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
+        </div>
+      ) : (
+        <div className="doom-video-container" style={{ backgroundColor: '#1a1a1a', minHeight: '280px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#666' }}>
+            {t("loadingGame")}
+          </div>
         </div>
       )}
 
@@ -260,9 +327,9 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
         <p className="price">{game.price}€</p>
 
         <div className="botones">
-          <button className="add-to-cart" onClick={handleAddToCart}>{t("addToCart")}</button>
+          <button className="add-to-cart" onClick={handleAddToCart}>{t("Add to Cart")}</button>
           <button className="buy-now" onClick={handleBuyNow}>
-            {t("buyNow")}
+            {t("Buy Now")}
           </button>
         </div>
 
@@ -275,7 +342,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
       {/* INFORMACIÓN DEL JUEGO */}
       <div className="doom-info-container">
         <div className="doom-description">
-          <h2>{t("description")}</h2>
+          <h2>{t("Description")}</h2>
           <p>{translating ? "..." : translatedGame?.description || game?.description}</p>
 
           {game.descriptionVideo && (
@@ -290,17 +357,17 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
             />
           )}
 
-          <h2>{t("story")}</h2>
+          <h2>{t("Story")}</h2>
           <p>{translating ? "..." : translatedGame?.story || game?.story}</p>
 
-          <h2>{t("systemRequirements")}</h2>
-          <p><strong>{t("minimum")}</strong> {translating ? "..." : translatedGame?.systemRequirementsMin || game?.systemRequirementsMin}</p>
-          <p><strong>{t("recommended")}</strong> {translating ? "..." : translatedGame?.systemRequirementsRecommended || game?.systemRequirementsRecommended}</p>
+          <h2>{t("System Requirements")}</h2>
+          <p><strong>{t("Minimum:")}</strong> {translating ? "..." : translatedGame?.systemRequirementsMin || game?.systemRequirementsMin}</p>
+          <p><strong>{t("Recommended:")}</strong> {translating ? "..." : translatedGame?.systemRequirementsRecommended || game?.systemRequirementsRecommended}</p>
         </div>
 
         <div className="doom-right-panel">
           <div className="doom-game-details">
-            <h2>{t("gameDetails")}</h2>
+            <h2>{t("Game Details")}</h2>
             <ul>
               {(translatedGame?.genres || game?.genres || []).map((g, i) => <li key={i}><strong>{t("genre")}</strong> {g}</li>)}
               {(translatedGame?.tags || game?.tags || []).map((t_item, i) => <li key={i}><strong>{t("tag")}</strong> {t_item}</li>)}
@@ -308,7 +375,7 @@ const GamePage: React.FC<GamePageProps> = ({ gameId }) => {
           </div>
 
           <div className="doom-features">
-            <h2>{t("gameFeatures")}</h2>
+            <h2>{t("Game Features")}</h2>
             <ul>
               {(translatedGame?.features || game?.features || []).map((f, i) => <li key={i}>{f}</li>)}
             </ul>

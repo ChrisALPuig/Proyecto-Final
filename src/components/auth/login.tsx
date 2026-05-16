@@ -2,6 +2,7 @@ import { IonPage } from "@ionic/react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.tsx";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import Verify2FA from "./Verify2FA";
 import ForgotPassword from "./ForgotPassword";
 import { verifyLogin2FA } from "../../services/twoFactorService.ts";
@@ -21,6 +22,7 @@ interface PendingAuth {
 const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
   const history = useHistory();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,7 +41,7 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
     setFieldsError(newFieldsError);
 
     if (newFieldsError.email || newFieldsError.password) {
-      setError("Por favor, completa todos los campos.");
+      setError(t("pleaseCompleteAllFields"));
       return;
     }
 
@@ -53,13 +55,13 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
       });
 
       if (!res.ok) {
-        let friendlyMessage = "Ocurrió un error, inténtalo de nuevo.";
+        let friendlyMessage = t("serverError");
         if (res.status === 401 || res.status === 403) {
-          friendlyMessage = "Usuario o contraseña incorrectos.";
+          friendlyMessage = t("invalidCredentials");
         } else if (res.status === 400) {
-          friendlyMessage = "Datos inválidos. Revisa tu usuario y contraseña.";
+          friendlyMessage = t("invalidData");
         } else if (res.status === 500) {
-          friendlyMessage = "Error del servidor, inténtalo más tarde.";
+          friendlyMessage = t("serverError");
         }
         throw new Error(friendlyMessage);
       }
@@ -115,11 +117,11 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
       <div className="login-page">
         <form className="login-form" onSubmit={handleSubmit}>
           <span className="close-btn" onClick={handleClose}>✕</span>
-          <h1>Sign In</h1>
+          <h1>{t("signIn")}</h1>
 
           {error && <div className="error-message">{error}</div>}
 
-          <label>Email</label>
+          <label>{t("email")}</label>
           <input
             type="email"
             value={email}
@@ -128,7 +130,7 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
             disabled={loading}
           />
 
-          <label>Password</label>
+          <label>{t("password")}</label>
           <input
             type="password"
             value={password}
@@ -138,7 +140,7 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
           />
 
           <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? t("loggingIn") : t("login")}
           </button>
 
           <p className="forgot-password-link-text">
@@ -147,12 +149,12 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
               onClick={() => setShowForgotPassword(true)}
               className="forgot-password-link-btn"
             >
-              ¿Olvidaste tu contraseña?
+              {t("forgotYourPassword")}
             </button>
           </p>
 
           <p className="signup-link">
-            Don't have an account? <a href="/register">Sign Up</a>
+            {t("dontHaveAccount")} <a href="/register">{t("signUp")}</a>
           </p>
         </form>
       </div>

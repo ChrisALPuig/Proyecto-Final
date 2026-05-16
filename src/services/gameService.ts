@@ -117,12 +117,34 @@ export async function fetchIgdbGames(name?: string, limit: number = 20): Promise
 
 export async function fetchGameById(gameId: number): Promise<Game> {
   const url = `${BASE_URL}/${gameId}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load game: ${response.statusText}`);
-  }
+  console.log("Fetching from URL:", url);
+  
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    console.log("Response status:", response.status);
+    console.log("Response headers:", response.headers);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error response text:", errorText);
+      throw new Error(`Failed to load game: ${response.status} ${response.statusText} - ${errorText}`);
+    }
 
-  return (await response.json()) as Game;
+    const data = await response.json() as Game;
+    console.log("✅ Game fetched:", data);
+    return data;
+  } catch (error: any) {
+    console.error("❌ Fetch error:", error);
+    if (error.name === 'AbortError') {
+      throw new Error("Request timeout - the server is taking too long to respond");
+    }
+    throw error;
+  }
 }
 
 export function formatImageUrl(image?: string): string {

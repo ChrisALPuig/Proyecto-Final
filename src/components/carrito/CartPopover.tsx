@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { useCart } from "../../contexts/useCart.tsx";
 import { useAlert } from "../../contexts/AlertContext.tsx";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
+import { useAuth } from "../../contexts/AuthContext.tsx";
 import "./CartPopover.css";
 
 interface CartPopoverProps {
@@ -16,18 +17,89 @@ const CartPopover: React.FC<CartPopoverProps> = ({ isOpen, onClose }) => {
   const history = useHistory();
   const { cartItems, updateQuantity, removeFromCart, getSubtotal } = useCart();
   const { showErrorAlert, showLoginRequiredAlert } = useAlert();
+  const { token, isAuthenticated } = useAuth();
   const { t } = useLanguage();
 
   const subtotal = getSubtotal();
+
+  const generateOrderId = () => {
+    if (crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'ORDER-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+  };
 
   const handleViewCart = () => {
     onClose();
     history.push("/carrito-juego");
   };
 
-  const handleProceedPayment = () => {
-    onClose();
-    history.push("/payment");
+  const handleProceedPayment = async () => {
+    if (cartItems.length === 0) {
+      showErrorAlert(t('yourCartEmpty'));
+      return;
+    }
+
+    if (!isAuthenticated || !token) {
+      showLoginRequiredAlert();
+      return;
+    }
+
+    const orderId = generateOrderId();
+
+    try {
+      // Calcular monto total del carrito
+      const totalAmount = Number(subtotal.toFixed(2));
+      
+      // Crear nombre del producto (si es 1, el nombre; si son varios, indicar múltiples)
+      const productName = cartItems.length === 1 ? cartItems[0].name : `${cartItems.length} items`;
+      
+      // Tomar la primera imagen para la tarjeta (o combinar)
+      const gameImage = cartItems.length > 0 ? cartItems[0].image : null;
+
+      const items = cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: Number(item.price.toFixed(2)),
+        quantity: item.quantity,
+        image: item.image,
+      }));
+
+      // Crear UN SOLO Payment consolidado
+      const payload = {
+        orderId,
+        productName,
+        amount: totalAmount,
+        gameImage,
+        items,
+      };
+
+      const res = await fetch('http://localhost:8080/api/orders/continue-to-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (data.status !== 'success') {
+        showErrorAlert(`Error creando el pago: ${data.message || data.status}`);
+        return;
+      }
+
+      // Guardar paymentId, orderId y payload completo en localStorage
+      localStorage.setItem('paymentId', data.paymentId);
+      localStorage.setItem('orderId', orderId);
+      localStorage.setItem('paymentPayload', JSON.stringify(payload));
+
+      // Cerrar el popover y redirigir a la página de pago
+      onClose();
+      history.push('/payment');
+    } catch (err) {
+      console.error('Error creando el pago:', err);
+      showErrorAlert('Error creando el pago. Intenta nuevamente.');
+    }
   };
 
   const handleRemoveItem = async (itemId: string) => {

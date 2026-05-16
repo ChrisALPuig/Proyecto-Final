@@ -124,11 +124,14 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
   const [twoFAStatusLoading, setTwoFAStatusLoading] = useState(true);
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [showDisable2FAModal, setShowDisable2FAModal] = useState(false);
+  const [show2FAVerificationModal, setShow2FAVerificationModal] = useState(false);
   const [twoFAQR, setTwoFAQR] = useState("");
   const [twoFASecret, setTwoFASecret] = useState("");
   const [twoFACode, setTwoFACode] = useState("");
+  const [twoFAVerificationCode, setTwoFAVerificationCode] = useState("");
   const [twoFAError, setTwoFAError] = useState("");
   const [twoFALoading, setTwoFALoading] = useState(false);
+  const [pendingAction, setPendingAction] = useState<"email" | "password" | null>(null);
   
   // Delete account
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -399,8 +402,40 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
     }
   };
 
+  const handleVerify2FAForAction = async () => {
+    if (!token || !twoFAVerificationCode.trim()) {
+      setTwoFAError(t("enter2FACode"));
+      return;
+    }
+
+    setTwoFALoading(true);
+    setTwoFAError("");
+    try {
+      await verify2FACode(token, twoFAVerificationCode);
+      if (pendingAction === "email") {
+        await handleChangeEmail();
+      } else if (pendingAction === "password") {
+        await handleChangePassword();
+      }
+      setShow2FAVerificationModal(false);
+    } catch (error: any) {
+      setTwoFAError(error.message || t("twoFAVerifyError"));
+    } finally {
+      setTwoFALoading(false);
+    }
+  };
+
   const handleChangeEmail = async () => {
     if (!token) return;
+
+    if (twoFAEnabled && !pendingAction) {
+      setPendingAction("email");
+      setTwoFAVerificationCode("");
+      setTwoFAError("");
+      setShowEmailModal(false);
+      setShow2FAVerificationModal(true);
+      return;
+    }
 
     setEmailError("");
     setIsSavingEmail(true);
@@ -410,6 +445,9 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
       setProfile(updated);
       setShowEmailModal(false);
       setEmailForm({ currentPassword: "", newEmail: "" });
+      setShow2FAVerificationModal(false);
+      setPendingAction(null);
+      setTwoFAVerificationCode("");
       setMessage(t("emailChangedSuccess"));
       setTimeout(() => setMessage(""), 3000);
     } catch (error: any) {
@@ -422,6 +460,15 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
   const handleChangePassword = async () => {
     if (!token) return;
 
+    if (twoFAEnabled && !pendingAction) {
+      setPendingAction("password");
+      setTwoFAVerificationCode("");
+      setTwoFAError("");
+      setShowPasswordModal(false);
+      setShow2FAVerificationModal(true);
+      return;
+    }
+
     setPasswordError("");
     setIsSavingPassword(true);
 
@@ -429,6 +476,9 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
       await changePassword(token, passwordForm);
       setShowPasswordModal(false);
       setPasswordForm({ currentPassword: "", newPassword: "" });
+      setShow2FAVerificationModal(false);
+      setPendingAction(null);
+      setTwoFAVerificationCode("");
       setMessage(t("passwordChangedSuccess"));
       setTimeout(() => setMessage(""), 3000);
     } catch (error: any) {
@@ -532,13 +582,15 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
                           <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
                             {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
                           </button>
-                          <button 
-                            className="order-details-btn order-details-btn-small" 
-                            onClick={() => downloadGame(payment.orderId, payment.productName)}
-                            disabled={downloadingOrderId === payment.orderId}
-                          >
-                            {downloadingOrderId === payment.orderId ? 'Downloading...' : 'Download Game'}
-                          </button>
+                          {payment.status === 'success' && (
+                            <button 
+                              className="order-details-btn order-details-btn-small" 
+                              onClick={() => downloadGame(payment.orderId, payment.productName)}
+                              disabled={downloadingOrderId === payment.orderId}
+                            >
+                              {downloadingOrderId === payment.orderId ? 'Downloading...' : 'Download Game'}
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -819,13 +871,15 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
                             <button type="button" className="order-details-btn order-details-btn-small" onClick={() => toggleOrderDetails(payment.id)}>
                               {expandedOrders[payment.id] ? t('hideDetails') : t('showDetails')}
                             </button>
-                            <button 
-                              className="order-details-btn order-details-btn-small" 
-                              onClick={() => downloadGame(payment.orderId, payment.productName)}
-                              disabled={downloadingOrderId === payment.orderId}
-                            >
-                              {downloadingOrderId === payment.orderId ? 'Downloading...' : 'Download Game'}
-                            </button>
+                            {payment.status === 'success' && (
+                              <button 
+                                className="order-details-btn order-details-btn-small" 
+                                onClick={() => downloadGame(payment.orderId, payment.productName)}
+                                disabled={downloadingOrderId === payment.orderId}
+                              >
+                                {downloadingOrderId === payment.orderId ? 'Downloading...' : 'Download Game'}
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1083,6 +1137,57 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
           )}
         </section>
       </div>
+
+      {/* Modal de verificación 2FA para cambios de email/contraseña */}
+      {show2FAVerificationModal && (
+        <div className="modal-overlay" onClick={() => {
+          setShow2FAVerificationModal(false);
+          setPendingAction(null);
+          setTwoFAVerificationCode("");
+          setTwoFAError("");
+        }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>{t("twoFactorVerification")}</h3>
+            <p style={{ color: "#999", marginBottom: "20px", fontSize: "0.95em" }}>
+              {pendingAction === "email" 
+                ? t("enter2FACodeToChangeEmail") 
+                : t("enter2FACodeToChangePassword")}
+            </p>
+            {twoFAError && <div className="modal-error">{twoFAError}</div>}
+            <div className="modal-form-group">
+              <label>{t("authenticatorCode")}</label>
+              <input
+                type="text"
+                placeholder={t("codePlaceholder")}
+                value={twoFAVerificationCode}
+                onChange={(e) => setTwoFAVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="modal-input"
+                maxLength={6}
+              />
+            </div>
+            <div className="modal-buttons">
+              <button
+                className="button-secondary"
+                onClick={() => {
+                  setShow2FAVerificationModal(false);
+                  setPendingAction(null);
+                  setTwoFAVerificationCode("");
+                  setTwoFAError("");
+                }}
+              >
+                {t("cancel")}
+              </button>
+              <button
+                className="button-primary"
+                onClick={handleVerify2FAForAction}
+                disabled={twoFALoading || twoFAVerificationCode.length !== 6}
+              >
+                {twoFALoading ? t("verifying") : t("verify")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de cambio de email */}
       {showEmailModal && (

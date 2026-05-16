@@ -203,13 +203,12 @@
 .button-contact {
  color: #000000;
  background: linear-gradient(to bottom right, #e57dde, #9f3cb0);
- padding: 8px 16px;
- font-size: 0.85rem;
+ padding: 15px 45px 15px 45px;
 }
 
 .button-contact-uno{
 display: flex;
-justify-content: flex-start;
+justify-content: center;
 align-items: center;
 }
 

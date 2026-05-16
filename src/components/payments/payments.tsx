@@ -199,14 +199,6 @@ const Payments = () => {
 
         <div className="layout-carrito">
           <div className='caja-juego'>
-            <button 
-              className="boton-volver-carrito" 
-              onClick={() => history.push('/carrito-juego')}
-              type="button"
-            >
-              ← {t('backToCart')}
-            </button>
-            
             <div className='payment-section'>
               <h3 className='payment-title'>{t('choosePaymentMethod')}</h3>
 
@@ -300,6 +292,15 @@ const Payments = () => {
           </div>
 
         </div>
+
+        <button 
+          className="boton-volver-carrito" 
+          onClick={() => history.push('/carrito-juego')}
+          type="button"
+        >
+          ← {t('backToCart')}
+        </button>
+
       </div>
     </IonContent>
   );

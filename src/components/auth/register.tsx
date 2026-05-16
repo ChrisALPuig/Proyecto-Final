@@ -2,6 +2,7 @@ import { IonPage } from "@ionic/react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.tsx";
+import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import Setup2FA from "./Setup2FA";
 import "./register.css";
 
@@ -20,6 +21,7 @@ interface RegisterProps {
 const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
   const history = useHistory();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -40,7 +42,7 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
     setFieldsError(newFieldsError);
 
     if (newFieldsError.email || newFieldsError.username || newFieldsError.password) {
-      setError("Por favor, completa todos los campos.");
+      setError(t("pleaseCompleteAllFields"));
       return;
     }
 
@@ -55,12 +57,12 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
       if (!res.ok) {
         const text = await res.text();
 
-        let friendlyMessage = "Ocurrió un error, inténtalo de nuevo.";
+        let friendlyMessage = t("serverError");
         if (res.status === 400) {
           // El servidor devuelve el mensaje directamente si está bien formado
-          friendlyMessage = text || "Datos inválidos. Por favor, verifica el correo y el nombre de usuario.";
+          friendlyMessage = text || t("invalidData");
         } else if (res.status === 500) {
-          friendlyMessage = "Error en el servidor, inténtalo más tarde.";
+          friendlyMessage = t("serverError");
         }
 
         throw new Error(friendlyMessage);
@@ -126,11 +128,11 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
       <div className="register-page">
         <form className="register-form" onSubmit={handleSubmit}>
           <span className="close-btn" onClick={handleClose}>✕</span>
-          <h1>Sign Up</h1>
+          <h1>{t("signUp")}</h1>
 
           {error && <div className="error-message">{error}</div>}
 
-          <label>Email</label>
+          <label>{t("email")}</label>
           <input
             type="email"
             value={email}
@@ -138,7 +140,7 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
             className={fieldsError.email ? "input-error" : ""}
           />
 
-          <label>Username</label>
+          <label>{t("username")}</label>
           <input
             type="text"
             value={username}
@@ -146,7 +148,7 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
             className={fieldsError.username ? "input-error" : ""}
           />
 
-          <label>Password</label>
+          <label>{t("password")}</label>
           <input
             type="password"
             value={password}
@@ -158,15 +160,15 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
             {loading ? (
               <>
                 <span className="spinner"></span>
-                Registrando...
+                {t("registering")}
               </>
             ) : (
-              "Register"
+              t("signUp")
             )}
           </button>
 
           <p className="login-link">
-            Already have an account? <a href="/login">Sign In</a>
+            {t("alreadyHaveAccount")} <a href="/login">{t("signIn")}</a>
           </p>
         </form>
       </div>
