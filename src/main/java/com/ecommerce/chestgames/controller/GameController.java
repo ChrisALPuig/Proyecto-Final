@@ -3,6 +3,7 @@ package com.ecommerce.chestgames.controller;
 import com.ecommerce.chestgames.entity.Game;
 import com.ecommerce.chestgames.repository.GameRepository;
 import com.ecommerce.chestgames.service.IgdbService;
+import com.ecommerce.chestgames.service.GamePricingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ public class GameController {
 
     private final GameRepository gameRepository;
     private final IgdbService igdbService;
+    private final GamePricingService gamePricingService;
 
     @Transactional
     @GetMapping
@@ -144,5 +146,11 @@ public class GameController {
         if (game.getFeatures() == null || game.getFeatures().isEmpty()) {
             game.setFeatures(List.of("Single Player", "Achievements", "Cloud Saves"));
         }
+    }
+
+    @PostMapping("/update-prices")
+    public String updateAllGamePrices() {
+        gamePricingService.updateAllGamePrices();
+        return "✓ Successfully updated prices and discounts for all games";
     }
 }

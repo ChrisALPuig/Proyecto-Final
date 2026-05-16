@@ -15,10 +15,12 @@ public class GameInitializerService {
 
     private final IgdbService igdbService;
     private final GameRepository gameRepository;
+    private final GamePricingService gamePricingService;
 
-    public GameInitializerService(IgdbService igdbService, GameRepository gameRepository) {
+    public GameInitializerService(IgdbService igdbService, GameRepository gameRepository, GamePricingService gamePricingService) {
         this.igdbService = igdbService;
         this.gameRepository = gameRepository;
+        this.gamePricingService = gamePricingService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -28,6 +30,9 @@ public class GameInitializerService {
         // If we already have 30 or more games, skip initialization
         if (gameCount >= EXPECTED_GAME_COUNT) {
             logger.info("✓ Database already contains {} games. Skipping initialization.", gameCount);
+            // Apply varied prices and discounts to existing games
+            logger.info("=== Updating prices and discounts for existing games ===");
+            gamePricingService.updateAllGamePrices();
             return;
         }
         
@@ -35,6 +40,10 @@ public class GameInitializerService {
         try {
             var games = igdbService.populateTop30Games();
             logger.info("=== Successfully loaded {} games from IGDB ===", games.size());
+            
+            // Apply varied prices and discounts
+            logger.info("=== Applying varied prices and discounts ===");
+            gamePricingService.updateAllGamePrices();
         } catch (Exception e) {
             logger.error("=== Error loading games from IGDB: {} ===", e.getMessage(), e);
         }

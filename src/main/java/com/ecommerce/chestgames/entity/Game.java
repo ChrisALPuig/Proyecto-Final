@@ -18,6 +18,8 @@ public class Game {
     private String title;
     private String edition;
     private Double price;
+    private Boolean isOnSale = false;
+    private Double discountPercentage = 0.0;
     private String coverImage;
     private String trailerVideo;
     private String heroVideo;

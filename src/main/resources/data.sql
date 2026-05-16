@@ -1,7 +1,7 @@
 -- Insert Triple A Games
 -- Elden Ring
-INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(262060, 'Elden Ring', 'Standard Edition', 59.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2waq.jpg', 'https://www.youtube.com/watch?v=e8f2F2rnbYU', 'https://www.youtube.com/watch?v=e8f2F2rnbYU', 'https://www.youtube.com/watch?v=e8f2F2rnbYU', 'Elden Ring is a collaboration between FromSoftware and George R. R. Martin. Rise, Tarnished, and let grace guide you in your new adventure in the Lands Between.', 'Grace has been severed, and scattered across the Lands. You are the Elden Lord.', 'OS: Windows 10 64-bit, RAM: 12GB, GPU: GTX 1070 / RX 5600XT, Storage: 60GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2080 / RX 5700XT, Storage: 60GB SSD');
+INSERT INTO game (id, title, edition, price, is_on_sale, discount_percentage, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
+(262060, 'Elden Ring', 'Standard Edition', 59.99, false, 0.0, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2waq.jpg', 'https://www.youtube.com/watch?v=e8f2F2rnbYU', 'https://www.youtube.com/watch?v=e8f2F2rnbYU', 'https://www.youtube.com/watch?v=e8f2F2rnbYU', 'Elden Ring es una colaboración entre FromSoftware y George R. R. Martin. Levántate, Tarnished, y que la gracia te guíe en tu nueva aventura en las Tierras Intermedias.', 'La gracia ha sido cortada y dispersada por las Tierras. Eres el Señor del Elden.', 'OS: Windows 10 64-bit, RAM: 12GB, GPU: GTX 1070 / RX 5600XT, Storage: 60GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2080 / RX 5700XT, Storage: 60GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (262060, 'RPG'),
@@ -23,8 +23,8 @@ INSERT INTO game_images (game_id, image) VALUES
 (262060, 'https://images.igdb.com/igdb/image/upload/t_screenshot_big/scmqxa.jpg');
 
 -- Baldur's Gate 3
-INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(115288, 'Baldur''s Gate 3', 'Standard Edition', 59.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5hoy.jpg', 'https://www.youtube.com/watch?v=GfqJbk8Tg0s', 'https://www.youtube.com/watch?v=GfqJbk8Tg0s', 'https://www.youtube.com/watch?v=GfqJbk8Tg0s', 'Baldur''s Gate 3 is a story-rich, party-based RPG set in the world of D&D 5e. Gather your party and venture forth!', 'A tadpole has been planted in your brain. You must act quickly to find a cure, but in doing so, you might uncover something far more sinister.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / RX 560, Storage: 150GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 150GB SSD');
+INSERT INTO game (id, title, edition, price, is_on_sale, discount_percentage, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
+(115288, 'Baldur''s Gate 3', 'Standard Edition', 59.99, true, 20.0, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5hoy.jpg', 'https://www.youtube.com/watch?v=GfqJbk8Tg0s', 'https://www.youtube.com/watch?v=GfqJbk8Tg0s', 'https://www.youtube.com/watch?v=GfqJbk8Tg0s', 'Baldur''s Gate 3 es un RPG rico en historia, basado en turnos y ambientado en el mundo de D&D 5e. ¡Reúne a tu grupo y aventúrate!', 'Un renacuajo ha sido plantado en tu cerebro. Debes actuar rápidamente para encontrar una cura, pero al hacerlo, podrías descubrir algo mucho más siniestro.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / RX 560, Storage: 150GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 150GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (115288, 'RPG'),
@@ -46,8 +46,8 @@ INSERT INTO game_images (game_id, image) VALUES
 (115288, 'https://images.igdb.com/igdb/image/upload/t_screenshot_big/scd0oi.jpg');
 
 -- Cyberpunk 2077
-INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(155437, 'Cyberpunk 2077', 'Standard Edition', 39.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1xct.jpg', 'https://www.youtube.com/watch?v=UKHv8pNzSu4', 'https://www.youtube.com/watch?v=UKHv8pNzSu4', 'https://www.youtube.com/watch?v=UKHv8pNzSu4', 'Cyberpunk 2077 is an open-world action RPG set in the dark future of Night City. Play as V, an outlaw trying to survive in the futuristic metropolis.', 'Become a legendary mercenary in Night City. Create your character and embark on a life-changing adventure in the vibrant, dystopian metropolis of the distant future.', 'OS: Windows 7/10 64-bit, RAM: 8GB, GPU: GTX 780 / RX 470, Storage: 70GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 70GB SSD');
+INSERT INTO game (id, title, edition, price, is_on_sale, discount_percentage, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
+(155437, 'Cyberpunk 2077', 'Standard Edition', 39.99, false, 0.0, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1xct.jpg', 'https://www.youtube.com/watch?v=UKHv8pNzSu4', 'https://www.youtube.com/watch?v=UKHv8pNzSu4', 'https://www.youtube.com/watch?v=UKHv8pNzSu4', 'Cyberpunk 2077 es un RPG de acción de mundo abierto ambientado en el oscuro futuro de Night City. Juega como V, un forajido intentando sobrevivir en la metrópolis futurista.', 'Conviértete en un mercenario legendario en Night City. Crea tu personaje y embarcate en una aventura que cambiará tu vida en la vibrante y distópica metrópolis del futuro lejano.', 'OS: Windows 7/10 64-bit, RAM: 8GB, GPU: GTX 780 / RX 470, Storage: 70GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 70GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (155437, 'RPG'),
@@ -70,7 +70,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- The Legend of Zelda: Tears of the Kingdom
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(383025, 'The Legend of Zelda: Tears of the Kingdom', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5p6h.jpg', 'https://www.youtube.com/watch?v=gUDIe-fRJMo', 'https://www.youtube.com/watch?v=gUDIe-fRJMo', 'https://www.youtube.com/watch?v=gUDIe-fRJMo', 'An epic adventure awaits in The Legend of Zelda: Tears of the Kingdom. Explore a vast world, solve puzzles, and battle enemies on your quest to save Zelda.', 'Zelda is missing. A deep darkness has covered Hyrule. Link must uncover the truth to save her and the kingdom.', 'OS: Nintendo Switch', 'OS: Nintendo Switch (Recommended: Latest firmware)');
+(383025, 'The Legend of Zelda: Tears of the Kingdom', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5p6h.jpg', 'https://www.youtube.com/watch?v=gUDIe-fRJMo', 'https://www.youtube.com/watch?v=gUDIe-fRJMo', 'https://www.youtube.com/watch?v=gUDIe-fRJMo', 'Una épica aventura te espera en The Legend of Zelda: Tears of the Kingdom. Explora un vasto mundo, resuelve acertijos y lucha contra enemigos en tu misión por salvar a Zelda.', 'Zelda ha desaparecido. Una oscuridad profunda ha cubierto Hyrule. Link debe descubrir la verdad para salvarla a ella y al reino.', 'OS: Nintendo Switch', 'OS: Nintendo Switch (Recomendado: firmware más reciente)');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (383025, 'Adventure'),
@@ -92,7 +92,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- Starfield
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(220519, 'Starfield', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5qkz.jpg', 'https://www.youtube.com/watch?v=zmZiepYXmks', 'https://www.youtube.com/watch?v=zmZiepYXmks', 'https://www.youtube.com/watch?v=zmZiepYXmks', 'Starfield is the next generation of space exploration. Explore a vast galaxy, complete missions, and uncover the mysteries of the cosmos.', 'You awaken in a mining facility with no memory of how you got there. Your journey across the stars begins.', 'OS: Windows 10/11 64-bit, RAM: 16GB, GPU: RTX 2060 / RX 5700, Storage: 125GB', 'OS: Windows 10/11 64-bit, RAM: 32GB, GPU: RTX 2080 / RTX 3080, Storage: 125GB SSD');
+(220519, 'Starfield', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5qkz.jpg', 'https://www.youtube.com/watch?v=zmZiepYXmks', 'https://www.youtube.com/watch?v=zmZiepYXmks', 'https://www.youtube.com/watch?v=zmZiepYXmks', 'Starfield es la próxima generación de exploración espacial. Explora una vasta galaxia, completa misiones y descubre los misterios del cosmos.', 'Despiertas en una instalación minera sin recordar cómo llegaste allí. Tu viaje a través de las estrellas comienza.', 'OS: Windows 10/11 64-bit, RAM: 16GB, GPU: RTX 2060 / RX 5700, Storage: 125GB', 'OS: Windows 10/11 64-bit, RAM: 32GB, GPU: RTX 2080 / RTX 3080, Storage: 125GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (220519, 'RPG'),
@@ -115,7 +115,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- Final Fantasy XVI
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(303212, 'Final Fantasy XVI', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5j9x.jpg', 'https://www.youtube.com/watch?v=mGdqEXLXjcI', 'https://www.youtube.com/watch?v=mGdqEXLXjcI', 'https://www.youtube.com/watch?v=mGdqEXLXjcI', 'Final Fantasy XVI is an action-packed adventure in the world of Valisthea. Play as Clive, a warrior on a quest for vengeance and truth.', 'Clive must uncover the mysteries of the dominants and the threat of eikons as he fights to save Valisthea from destruction.', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 150GB', 'OS: Windows 10 64-bit, RAM: 32GB, GPU: RTX 3080 / RX 6800XT, Storage: 150GB SSD');
+(303212, 'Final Fantasy XVI', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5j9x.jpg', 'https://www.youtube.com/watch?v=mGdqEXLXjcI', 'https://www.youtube.com/watch?v=mGdqEXLXjcI', 'https://www.youtube.com/watch?v=mGdqEXLXjcI', 'Final Fantasy XVI es una aventura llena de acción en el mundo de Valisthea. Juega como Clive, un guerrero en una búsqueda de venganza y verdad.', 'Clive debe descubrir los misterios de los dominantes y la amenaza de los eikons mientras lucha por salvar a Valisthea de la destrucción.', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 150GB', 'OS: Windows 10 64-bit, RAM: 32GB, GPU: RTX 3080 / RX 6800XT, Storage: 150GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (303212, 'RPG'),
@@ -138,7 +138,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- Hogwarts Legacy
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(228409, 'Hogwarts Legacy', 'Standard Edition', 49.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5gul.jpg', 'https://www.youtube.com/watch?v=1O6Qstncpnc', 'https://www.youtube.com/watch?v=1O6Qstncpnc', 'https://www.youtube.com/watch?v=1O6Qstncpnc', 'Experience life as a student in Hogwarts School of Witchcraft and Wizardry. Explore the castle, master magic, and uncover secrets in the wizarding world.', 'You are a late student who has arrived at Hogwarts with a special gift. Discover the truth about ancient magic and your role in the wizarding world.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / RX 570, Storage: 100GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 100GB SSD');
+(228409, 'Hogwarts Legacy', 'Standard Edition', 49.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5gul.jpg', 'https://www.youtube.com/watch?v=1O6Qstncpnc', 'https://www.youtube.com/watch?v=1O6Qstncpnc', 'https://www.youtube.com/watch?v=1O6Qstncpnc', 'Experimenta la vida como estudiante en Hogwarts Escuela de Magia y Hechicería. Explora el castillo, domina la magia y descubre secretos en el mundo mágico.', 'Eres un estudiante rezagado que ha llegado a Hogwarts con un don especial. Descubre la verdad sobre la magia antigua y tu papel en el mundo de la magia.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / RX 570, Storage: 100GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 100GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (228409, 'RPG'),
@@ -161,7 +161,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- The Legend of Zelda: Breath of the Wild
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(26286, 'The Legend of Zelda: Breath of the Wild', 'Standard Edition', 59.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1rq7.jpg', 'https://www.youtube.com/watch?v=1rPxiXXxftE', 'https://www.youtube.com/watch?v=1rPxiXXxftE', 'https://www.youtube.com/watch?v=1rPxiXXxftE', 'Explore the kingdom of Hyrule in The Legend of Zelda: Breath of the Wild. A sprawling, open-air adventure awaits in a world full of mystery and danger.', 'Link must awaken from a century of slumber to defeat Calamity Ganon and save Princess Zelda and the kingdom of Hyrule.', 'OS: Nintendo Switch', 'OS: Nintendo Switch (Recommended: Latest firmware)');
+(26286, 'The Legend of Zelda: Breath of the Wild', 'Standard Edition', 59.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1rq7.jpg', 'https://www.youtube.com/watch?v=1rPxiXXxftE', 'https://www.youtube.com/watch?v=1rPxiXXxftE', 'https://www.youtube.com/watch?v=1rPxiXXxftE', 'Explora el reino de Hyrule en The Legend of Zelda: Breath of the Wild. Una aventura expansiva y al aire libre te espera en un mundo lleno de misterio y peligro.', 'Link debe despertar de un siglo de sueño para derrotar al Calamity Ganon y salvar a la Princesa Zelda y el reino de Hyrule.', 'OS: Nintendo Switch', 'OS: Nintendo Switch (Recomendado: firmware más reciente)');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (26286, 'Adventure'),
@@ -183,7 +183,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- Red Dead Redemption 2
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(104308, 'Red Dead Redemption 2', 'Standard Edition', 59.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1sre.jpg', 'https://www.youtube.com/watch?v=eaQc5-DVGiU', 'https://www.youtube.com/watch?v=eaQc5-DVGiU', 'https://www.youtube.com/watch?v=eaQc5-DVGiU', 'Red Dead Redemption 2 is an action-adventure game set in a sprawling, atmospheric world. Experience the epic tale of outlaw Arthur Morgan.', 'Arthur Morgan and the Van der Linde gang are forced to rob, steal and fight to survive in harsh northern American wilderness. As civilisation encroaches on their way of life, the gang must plan a massive heist to secure their future.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / GTX 1050 Ti, Storage: 150GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2060 / RTX 2080, Storage: 150GB SSD');
+(104308, 'Red Dead Redemption 2', 'Standard Edition', 59.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1sre.jpg', 'https://www.youtube.com/watch?v=eaQc5-DVGiU', 'https://www.youtube.com/watch?v=eaQc5-DVGiU', 'https://www.youtube.com/watch?v=eaQc5-DVGiU', 'Red Dead Redemption 2 es un juego de acción y aventura ambientado en un mundo expansivo y atmosférico. Experimenta la épica historia del forajido Arthur Morgan.', 'Arthur Morgan y la banda Van der Linde se ven obligados a robar, hurtar y luchar para sobrevivir en el duro desierto del norte de América. A medida que la civilización se acerca a su forma de vida, la banda debe planear un robo masivo para asegurar su futuro.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / GTX 1050 Ti, Storage: 150GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2060 / RTX 2080, Storage: 150GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (104308, 'Action'),
@@ -206,7 +206,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- The Witcher 3: Wild Hunt
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(11365, 'The Witcher 3: Wild Hunt', 'Complete Edition', 39.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1s9w.jpg', 'https://www.youtube.com/watch?v=cUROsWmfDkM', 'https://www.youtube.com/watch?v=cUROsWmfDkM', 'https://www.youtube.com/watch?v=cUROsWmfDkM', 'The Witcher 3: Wild Hunt is an open-world action RPG. As monster hunter Geralt of Rivia, you''ll make choices that shape the world around you.', 'Geralt of Rivia, a legendary monster slayer, sets out to find his lost love and his daughter who is the key to stopping an ancient evil.', 'OS: Windows 7 64-bit, RAM: 8GB, GPU: GeForce GTX 660 / Radeon HD 7870, Storage: 136GB', 'OS: Windows 8 64-bit, RAM: 16GB, GPU: GeForce GTX 1070 / Radeon RX 480, Storage: 136GB SSD');
+(11365, 'The Witcher 3: Wild Hunt', 'Complete Edition', 39.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1s9w.jpg', 'https://www.youtube.com/watch?v=cUROsWmfDkM', 'https://www.youtube.com/watch?v=cUROsWmfDkM', 'https://www.youtube.com/watch?v=cUROsWmfDkM', 'The Witcher 3: Wild Hunt es un RPG de acción de mundo abierto. Como cazador de monstruos Geralt de Rivia, harás elecciones que moldearán el mundo que te rodea.', 'Geralt de Rivia, un legendario cazador de monstruos, se propone encontrar a su amor perdido e hija que es la clave para detener un mal antiguo.', 'OS: Windows 7 64-bit, RAM: 8GB, GPU: GeForce GTX 660 / Radeon HD 7870, Storage: 136GB', 'OS: Windows 8 64-bit, RAM: 16GB, GPU: GeForce GTX 1070 / Radeon RX 480, Storage: 136GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (11365, 'RPG'),
@@ -229,7 +229,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- God of War Ragnarök
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(199680, 'God of War Ragnarök', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5jxw.jpg', 'https://www.youtube.com/watch?v=sXRVjLFVhEM', 'https://www.youtube.com/watch?v=sXRVjLFVhEM', 'https://www.youtube.com/watch?v=sXRVjLFVhEM', 'God of War Ragnarök is an action-adventure game. Kratos and Atreus must protect the Nine Realms from the impending end of all things.', 'Ragnarök is coming. As the prophesied end of the Nine Realms approaches, Kratos and his son Atreus must journey through the Nine Realms to prepare for the great battle.', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 130GB', 'OS: Windows 10 64-bit, RAM: 32GB, GPU: RTX 3080 / RX 6800XT, Storage: 130GB SSD');
+(199680, 'God of War Ragnarök', 'Standard Edition', 69.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co5jxw.jpg', 'https://www.youtube.com/watch?v=sXRVjLFVhEM', 'https://www.youtube.com/watch?v=sXRVjLFVhEM', 'https://www.youtube.com/watch?v=sXRVjLFVhEM', 'God of War Ragnarök es un juego de acción y aventura. Kratos y Atreus deben proteger los Nueve Reinos de la inminente fin de todas las cosas.', 'Ragnarök está llegando. A medida que se acerca el fin profetizado de los Nueve Reinos, Kratos y su hijo Atreus deben viajar a través de los Nueve Reinos para prepararse para la gran batalla.', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 130GB', 'OS: Windows 10 64-bit, RAM: 32GB, GPU: RTX 3080 / RX 6800XT, Storage: 130GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (199680, 'Action'),
@@ -252,7 +252,7 @@ INSERT INTO game_images (game_id, image) VALUES
 
 -- Halo Infinite
 INSERT INTO game (id, title, edition, price, cover_image, trailer_video, hero_video, description_video, description, story, system_requirements_min, system_requirements_recommended) VALUES 
-(115570, 'Halo Infinite', 'Standard Edition', 9.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co3uax.jpg', 'https://www.youtube.com/watch?v=qLIpY_RLzOE', 'https://www.youtube.com/watch?v=qLIpY_RLzOE', 'https://www.youtube.com/watch?v=qLIpY_RLzOE', 'Halo Infinite is a free-to-play multiplayer first-person shooter. Experience the legendary saga of Spartan Master Chief.', 'Master Chief awakens on a Halo ring and must uncover the mysteries of this ancient installation and save humanity from extinction.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / RX 570, Storage: 100GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 100GB SSD');
+(115570, 'Halo Infinite', 'Standard Edition', 9.99, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co3uax.jpg', 'https://www.youtube.com/watch?v=qLIpY_RLzOE', 'https://www.youtube.com/watch?v=qLIpY_RLzOE', 'https://www.youtube.com/watch?v=qLIpY_RLzOE', 'Halo Infinite es un tirador de primera persona multijugador gratuito. Experimenta la legendaria saga del Soldado Maestro Chief.', 'El Maestro Chief despierta en un anillo Halo y debe descubrir los misterios de esta antigua instalación y salvar a la humanidad de la extinción.', 'OS: Windows 10 64-bit, RAM: 8GB, GPU: GTX 960 / RX 570, Storage: 100GB', 'OS: Windows 10 64-bit, RAM: 16GB, GPU: RTX 2070 / RX 5700XT, Storage: 100GB SSD');
 
 INSERT INTO game_genres (game_id, genre) VALUES 
 (115570, 'FPS'),

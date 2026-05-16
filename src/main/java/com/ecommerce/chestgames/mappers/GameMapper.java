@@ -44,7 +44,7 @@ public class GameMapper {
 
         // Default values for IGDB-sourced games
         if (game.getPrice() == null) {
-            game.setPrice(19.99);
+            game.setPrice(59.99);
         }
         game.setSystemRequirementsMin("OS: Windows 10, RAM: 8GB, GPU: GTX 960 or equivalent, Storage: 50GB");
         game.setSystemRequirementsRecommended("OS: Windows 10/11, RAM: 16GB, GPU: GTX 1060 / AMD RX 580 or better, Storage: 50GB");
