@@ -11,7 +11,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("localhost:5173", "https://chestgames-proyecto-final.vercel.app", "https://chestgames-frontend-admin-gw76tp8cs-chrisalpuigs-projects.vercel.app"));
+        config.setAllowedOrigins(List.of("localhost:5173", "https://chestgames.vercel.app", "https://chestgames-frontend-admin-gw76tp8cs-chrisalpuigs-projects.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

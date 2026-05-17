@@ -2,6 +2,7 @@ package com.ecommerce.chestgames.controller;
 
 import com.ecommerce.chestgames.entity.Payment;
 import com.ecommerce.chestgames.repository.PaymentRepository;
+import com.ecommerce.chestgames.service.AsyncEmailService;
 import com.ecommerce.chestgames.service.EmailService;
 import com.ecommerce.chestgames.service.EmailTemplateService;
 import com.stripe.exception.SignatureVerificationException;
@@ -24,6 +25,9 @@ public class StripeWebhookController {
 
     @Autowired
     private EmailTemplateService emailTemplateService;
+
+    @Autowired
+    private AsyncEmailService asyncEmailService;
 
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;

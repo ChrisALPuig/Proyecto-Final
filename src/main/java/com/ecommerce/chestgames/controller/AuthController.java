@@ -11,6 +11,7 @@ import com.ecommerce.chestgames.entity.User;
 import com.ecommerce.chestgames.repository.RoleRepository;
 import com.ecommerce.chestgames.repository.UserRepository;
 import com.ecommerce.chestgames.security.CustomUserDetails;
+import com.ecommerce.chestgames.service.AsyncEmailService;
 import com.ecommerce.chestgames.service.EmailService;
 import com.ecommerce.chestgames.service.EmailTemplateService;
 import com.ecommerce.chestgames.service.TwoFactorService;
@@ -48,6 +49,7 @@ public class AuthController {
     private final CryptoUtil cryptoUtil;
     private final EmailService emailService;
     private final EmailTemplateService emailTemplateService;
+    private final AsyncEmailService asyncEmailService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
@@ -71,12 +73,8 @@ public class AuthController {
 
         userRepository.save(user);
 
-        try {
-            EmailTemplateService.EmailTemplate template = emailTemplateService.welcomeTemplate(user.getUsername());
-            emailService.sendEmail(user.getEmail(), template.getSubject(), template.getBody());
-        } catch (Exception ignored) {
-            // Si falla el envío, no bloqueamos el registro.
-        }
+        // Enviar email de bienvenida de forma asíncrona (no bloquea la respuesta)
+        asyncEmailService.sendWelcomeEmailAsync(user.getUsername(), user.getEmail());
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
         String token = jwtUtils.generateToken(userDetails);
@@ -218,24 +216,19 @@ public class AuthController {
             return ResponseEntity.ok("Si el correo existe, recibirás un enlace para restablecer tu contraseña");
         }
 
-        try {
-            // Generar token único
-            String resetToken = UUID.randomUUID().toString();
-            user.setResetPasswordToken(resetToken);
-            user.setResetPasswordExpiry(LocalDateTime.now().plusHours(24));
-            userRepository.save(user);
+        // Generar token único
+        String resetToken = UUID.randomUUID().toString();
+        user.setResetPasswordToken(resetToken);
+        user.setResetPasswordExpiry(LocalDateTime.now().plusHours(24));
+        userRepository.save(user);
 
-            // Construir enlace de reset (cambiar según tu URL frontend)
-            String resetLink = "http://localhost:5173/reset-password?token=" + resetToken;
+        // Construir enlace de reset (cambiar según tu URL frontend)
+        String resetLink = "http://localhost:5173/reset-password?token=" + resetToken;
 
-            // Enviar correo
-            EmailTemplateService.EmailTemplate template = emailTemplateService.resetPasswordTemplate(user.getUsername(), resetLink);
-            emailService.sendEmail(user.getEmail(), template.getSubject(), template.getBody());
+        // Enviar correo de forma asíncrona (no bloquea la respuesta)
+        asyncEmailService.sendResetPasswordEmailAsync(user.getUsername(), user.getEmail(), resetLink);
 
-            return ResponseEntity.ok("Si el correo existe, recibirás un enlace para restablecer tu contraseña");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error al enviar el correo");
-        }
+        return ResponseEntity.ok("Si el correo existe, recibirás un enlace para restablecer tu contraseña");
     }
 
     @PostMapping("/reset-password")
