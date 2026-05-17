@@ -336,7 +336,7 @@ public class PaymentController {
         }
 
         try {
-            String ordersLink = "http://localhost:5173/user-orders";
+            String ordersLink = "https://chestgames.vercel.app/user-orders";
             EmailTemplateService.EmailTemplate template = emailTemplateService.paymentCompletedTemplate(
                     payment.getUser().getUsername(),
                     payment.getProductName(),

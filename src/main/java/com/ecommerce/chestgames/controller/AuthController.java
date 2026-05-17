@@ -223,7 +223,7 @@ public class AuthController {
         userRepository.save(user);
 
         // Construir enlace de reset (cambiar según tu URL frontend)
-        String resetLink = "http://localhost:5173/reset-password?token=" + resetToken;
+        String resetLink = "https://chestgames.vercel.app/reset-password?token=" + resetToken;
 
         // Enviar correo de forma asíncrona (no bloquea la respuesta)
         asyncEmailService.sendResetPasswordEmailAsync(user.getUsername(), user.getEmail(), resetLink);
