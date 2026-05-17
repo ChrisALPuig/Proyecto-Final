@@ -5,6 +5,7 @@ import "../../components/support/FormularioComponente.css";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useNotification } from "../../contexts/NotificationContext.tsx";
+import { API_ENDPOINTS } from "../../config/apiConfig";
 
 interface Attachment {
   name: string;
@@ -48,7 +49,7 @@ const TicketView: React.FC = () => {
   useEffect(() => {
     const fetchTicket = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/tickets/${id}`, {
+        const res = await fetch(`${API_ENDPOINTS.TICKETS}/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

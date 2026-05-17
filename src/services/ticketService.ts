@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/tickets";
+import { API_ENDPOINTS } from '../config/apiConfig.ts';
+
+const API_URL = API_ENDPOINTS.TICKETS;
 
 export const getUserTickets = async (token: string) => {
   const res = await fetch(`${API_URL}/me`, {

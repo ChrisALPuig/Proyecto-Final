@@ -7,10 +7,12 @@ import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import { useNotification } from "../../contexts/NotificationContext.tsx";
 import { useModal } from "../../contexts/ModalContext.tsx";
+import { API_ENDPOINTS } from "../../config/apiConfig";
 import { getUserProfile } from "../../services/userService.ts";
 
 type MenuCoords = { top: number; left: number; };
-import CartPopover, { CartItem } from "../carrito/CartPopover.tsx";
+import CartPopover from "../carrito/CartPopover.tsx";
+import { CartItem } from "../../contexts/useCart.tsx";
 import WishlistPopover from "../carrito/WishlistPopover.tsx";
 import "./Header.css";
 
@@ -241,7 +243,7 @@ const Header: React.FC = () => {
     }
 
     fetch(
-      `http://localhost:8080/api/games/search?query=${encodeURIComponent(
+      `${API_ENDPOINTS.GAMES}/search?query=${encodeURIComponent(
         query
       )}`
     )
@@ -606,9 +608,6 @@ const Header: React.FC = () => {
       <CartPopover
         isOpen={cartPopoverOpen}
         onClose={() => setCartPopoverOpen(false)}
-        cartItems={cartItems}
-        onQuantityChange={handleQuantityChange}
-        onRemoveItem={handleRemoveItem}
         triggerElement={cartRef}
       />
       <WishlistPopover

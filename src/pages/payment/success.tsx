@@ -7,6 +7,7 @@ import {
 import { checkmarkCircleOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { API_ENDPOINTS } from '../../config/apiConfig';
 import Header from '../../components/Header/Header.tsx';
 import { useNotification } from '../../contexts/NotificationContext.tsx';
 import { useAuth } from '../../contexts/AuthContext.tsx';
@@ -62,7 +63,7 @@ const Success = () => {
       }
 
       try {
-        const res = await fetch(`http://localhost:8080/api/payments/record`, {
+        const res = await fetch(`${API_ENDPOINTS.PAYMENTS}/record`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -78,7 +79,7 @@ const Success = () => {
           
           // Enviar email después de registrar el pago
           try {
-            const emailRes = await fetch(`http://localhost:8080/api/payments/send-email/${orderId}`, {
+            const emailRes = await fetch(`${API_ENDPOINTS.PAYMENTS}/send-email/${orderId}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

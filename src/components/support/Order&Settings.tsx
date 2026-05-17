@@ -2,6 +2,7 @@ import { IonRouterLink } from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
+import { API_ENDPOINTS } from "../../config/apiConfig.ts";
 import {
   CreditCard,
   User,
@@ -86,7 +87,7 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
   const downloadGame = async (orderId: string, gameName: string) => {
     try {
       setDownloadingOrderId(orderId);
-      const response = await fetch(`http://localhost:8080/api/downloads/game/${orderId}`);
+      const response = await fetch(`${API_ENDPOINTS.DOWNLOADS}/game/${orderId}`);
       
       if (!response.ok) {
         alert('Error downloading file');
@@ -151,7 +152,7 @@ const OrderSettings: React.FC<OrderSettingsProps> = ({ showOnlySection, initialP
       }
 
       try {
-        const response = await fetch("http://localhost:8080/api/payments/user", {
+        const response = await fetch(`${API_ENDPOINTS.PAYMENTS}/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

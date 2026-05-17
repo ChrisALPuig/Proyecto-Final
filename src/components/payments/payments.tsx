@@ -5,6 +5,7 @@ import { useLanguage } from '../../contexts/LanguageContext.tsx';
 import { useAuth } from '../../contexts/AuthContext.tsx';
 import { useAlert } from '../../contexts/AlertContext.tsx';
 import { useNotification } from '../../contexts/NotificationContext.tsx';
+import { API_ENDPOINTS } from '../../config/apiConfig.ts';
 import { useHistory } from 'react-router';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import './payment.css';
@@ -82,7 +83,7 @@ const Payments = () => {
         const items = cartItems.map(item => ({ price: item.price, quantity: item.quantity }));
 
         // 1️⃣ Crear PaymentIntent en backend
-        const res = await fetch('http://localhost:8080/api/payments/create-intent', {
+        const res = await fetch(`${API_ENDPOINTS.PAYMENTS}/create-intent`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ const Payments = () => {
           alert(result.error.message);
         } else if (result.paymentIntent?.status === 'succeeded') {
           // 3️⃣ Actualizar paymentId en backend (opcional)
-          await fetch(`http://localhost:8080/api/payments/update/${paymentId}`, {
+          await fetch(`${API_ENDPOINTS.PAYMENTS}/update/${paymentId}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

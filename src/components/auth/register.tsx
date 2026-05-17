@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
+import { AUTH_ENDPOINTS } from "../../config/apiConfig";
 import Setup2FA from "./Setup2FA";
 import "./register.css";
 
@@ -48,7 +49,7 @@ const Register: React.FC<RegisterProps> = ({ isModal = false, onClose }) => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/auth/register", {
+      const res = await fetch(`${AUTH_ENDPOINTS.REGISTER}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),

@@ -1,3 +1,5 @@
+import { API_ENDPOINTS, API_BASE_URL } from '../config/apiConfig.js';
+
 export interface Game {
   id: number;
   title: string;
@@ -22,8 +24,8 @@ export function getGameImageUrl(game: Game): string {
   return formatImageUrl(image);
 }
 
-const BASE_URL = "http://localhost:8080/api/games";
-const IGDB_BASE_URL = "http://localhost:8080/api/igdb";
+const BASE_URL = API_ENDPOINTS.GAMES;
+const IGDB_BASE_URL = API_ENDPOINTS.IGDB;
 
 function buildQueryString(params: Record<string, string | number | boolean | undefined | string[] | null>) {
   return Object.entries(params)
@@ -166,5 +168,5 @@ export function formatImageUrl(image?: string): string {
     normalizedImage = normalizedImage.replace(/\/t_[^/]+\//, '/t_1080p/');
   }
 
-  return normalizedImage.startsWith('http') ? normalizedImage : `http://localhost:8080${normalizedImage}`;
+  return normalizedImage.startsWith('http') ? normalizedImage : `${API_BASE_URL.replace('/api', '')}${normalizedImage}`;
 }

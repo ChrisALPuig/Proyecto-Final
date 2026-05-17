@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext.tsx';
 import { useAlert } from '../../contexts/AlertContext.tsx';
 import { useHistory } from 'react-router';
 import { useLanguage } from '../../contexts/LanguageContext.tsx';
+import { API_ENDPOINTS } from '../../config/apiConfig';
 import './ListaCarrito.css';
 
 const ListaCarrito = () => {
@@ -66,7 +67,7 @@ const ListaCarrito = () => {
         items,
       };
 
-      const res = await fetch('http://localhost:8080/api/orders/continue-to-payment', {
+      const res = await fetch(`${API_ENDPOINTS.PAYMENTS}/continue-to-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

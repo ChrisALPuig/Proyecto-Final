@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext.tsx';
+import { API_ENDPOINTS } from '../config/apiConfig';
 
 export interface WishlistItem {
   id: string;
@@ -44,7 +45,7 @@ export const WishlistProvider: React.FC<{ children: ReactNode }> = ({ children }
         return;
       }
 
-      const res = await fetch('http://localhost:8080/api/wishlist', {
+      const res = await fetch(`${API_ENDPOINTS.WISHLIST}`, {
         credentials: 'include',
         headers: authHeaders,
       });
@@ -70,7 +71,7 @@ export const WishlistProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
 
     try {
-      const res = await fetch(`http://localhost:8080/api/wishlist/${item.id}`, {
+      const res = await fetch(`${API_ENDPOINTS.WISHLIST}/${item.id}`, {
         method: 'POST',
         credentials: 'include',
         headers: authHeaders,
@@ -92,7 +93,7 @@ const removeFromWishlist = async (itemId: string) => {
   }
 
   try {
-    const res = await fetch(`http://localhost:8080/api/wishlist/${itemId}`, {
+    const res = await fetch(`${API_ENDPOINTS.WISHLIST}/${itemId}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: authHeaders,

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { IonPage, IonContent, IonAvatar, IonIcon, IonText, IonSpinner } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { person } from 'ionicons/icons';
+import { API_ENDPOINTS } from '../config/apiConfig';
 import Header from '../components/Header/Header.tsx';
 import { useAuth } from '../contexts/AuthContext.tsx';
 import { useWishlist } from "../contexts/useWishlist.ts";
@@ -59,7 +60,7 @@ const UserProfile: React.FC = () => {
   const refreshOrders = async () => {
     if (!token) return;
     try {
-      const ordersResponse = await fetch('http://localhost:8080/api/payments/user', {
+      const ordersResponse = await fetch(`${API_ENDPOINTS.PAYMENTS}/user`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -85,7 +86,7 @@ const UserProfile: React.FC = () => {
           setAvatar(profile.avatar);
         }
         // Load all orders
-        const ordersResponse = await fetch('http://localhost:8080/api/payments/user', {
+        const ordersResponse = await fetch(`${API_ENDPOINTS.PAYMENTS}/user`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -97,7 +98,7 @@ const UserProfile: React.FC = () => {
           setTotalOrders(orders.length);
         }
         // Load open tickets
-        const ticketsResponse = await fetch('http://localhost:8080/api/tickets/me', {
+        const ticketsResponse = await fetch(`${API_ENDPOINTS.TICKETS}/me`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -152,7 +153,7 @@ const UserProfile: React.FC = () => {
     const fetchOrders = async () => {
       if (!token) return;
       try {
-        const ordersResponse = await fetch('http://localhost:8080/api/payments/user', {
+        const ordersResponse = await fetch(`${API_ENDPOINTS.PAYMENTS}/user`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

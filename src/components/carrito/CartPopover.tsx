@@ -5,6 +5,7 @@ import { useCart } from "../../contexts/useCart.tsx";
 import { useAlert } from "../../contexts/AlertContext.tsx";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
 import { useAuth } from "../../contexts/AuthContext.tsx";
+import { API_ENDPOINTS } from "../../config/apiConfig";
 import "./CartPopover.css";
 
 interface CartPopoverProps {
@@ -72,7 +73,7 @@ const CartPopover: React.FC<CartPopoverProps> = ({ isOpen, onClose }) => {
         items,
       };
 
-      const res = await fetch('http://localhost:8080/api/orders/continue-to-payment', {
+      const res = await fetch(`${API_ENDPOINTS.PAYMENTS}/continue-to-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

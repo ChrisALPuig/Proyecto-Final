@@ -1,3 +1,5 @@
+import { API_ENDPOINTS, AUTH_ENDPOINTS } from '../config/apiConfig';
+
 export interface UserProfile {
   id: number;
   username: string;
@@ -24,7 +26,7 @@ export interface UserProfileUpdate {
 }
 
 export const getUserProfile = async (token: string) => {
-  const response = await fetch('http://localhost:8080/api/user/profile', {
+  const response = await fetch(`${API_ENDPOINTS.USER}/profile`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -39,7 +41,7 @@ export const getUserProfile = async (token: string) => {
 };
 
 export const updateUserProfile = async (token: string, data: UserProfileUpdate) => {
-  const response = await fetch('http://localhost:8080/api/user/profile', {
+  const response = await fetch(`${API_ENDPOINTS.USER}/profile`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -66,7 +68,7 @@ export interface ChangePasswordRequest {
 }
 
 export const changeEmail = async (token: string, data: ChangeEmailRequest) => {
-  const response = await fetch('http://localhost:8080/api/user/change-email', {
+  const response = await fetch(`${API_ENDPOINTS.USER}/change-email`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -84,7 +86,7 @@ export const changeEmail = async (token: string, data: ChangeEmailRequest) => {
 };
 
 export const changePassword = async (token: string, data: ChangePasswordRequest) => {
-  const response = await fetch('http://localhost:8080/api/user/change-password', {
+  const response = await fetch(`${API_ENDPOINTS.USER}/change-password`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -106,7 +108,7 @@ export interface DeleteAccountRequest {
 }
 
 export const deleteAccount = async (token: string, data: DeleteAccountRequest) => {
-  const response = await fetch('http://localhost:8080/api/user/delete-account', {
+  const response = await fetch(`${API_ENDPOINTS.USER}/delete-account`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -126,7 +128,7 @@ export interface ForgotPasswordRequest {
 }
 
 export const forgotPassword = async (data: ForgotPasswordRequest) => {
-  const response = await fetch('http://localhost:8080/auth/forgot-password', {
+  const response = await fetch(`${AUTH_ENDPOINTS.LOGIN}/forgot-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -148,7 +150,7 @@ export interface ResetPasswordRequest {
 }
 
 export const resetPassword = async (data: ResetPasswordRequest) => {
-  const response = await fetch('http://localhost:8080/auth/reset-password', {
+  const response = await fetch(`${AUTH_ENDPOINTS.LOGIN}/reset-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

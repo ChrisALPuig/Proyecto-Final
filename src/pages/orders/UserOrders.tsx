@@ -1,5 +1,6 @@
 import { IonContent, IonPage, IonText } from '@ionic/react';
 import { useEffect, useState } from 'react';
+import { API_ENDPOINTS } from '../../config/apiConfig';
 import Header from '../../components/Header/Header.tsx';
 import { useAuth } from '../../contexts/AuthContext.tsx';
 import { useLanguage } from '../../contexts/LanguageContext.tsx';
@@ -43,7 +44,7 @@ const UserOrders: React.FC = () => {
   const downloadGame = async (orderId: string, gameName: string) => {
     try {
       setDownloadingOrderId(orderId);
-      const response = await fetch(`http://localhost:8080/api/downloads/game/${orderId}`);
+      const response = await fetch(`${API_ENDPOINTS.DOWNLOADS}/game/${orderId}`);
       
       if (!response.ok) {
         alert('Error downloading file');
@@ -70,7 +71,7 @@ const UserOrders: React.FC = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/payments/user', {
+        const response = await fetch(`${API_ENDPOINTS.PAYMENTS}/user`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

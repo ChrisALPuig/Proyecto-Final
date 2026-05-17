@@ -7,6 +7,7 @@ import "./FormularioComponente.css";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useNotification } from "../../contexts/NotificationContext.tsx";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
+import { API_ENDPOINTS } from "../../config/apiConfig.ts";
 import { getUserProfile } from "../../services/userService.ts";
 
 const FormularioComponente: React.FC = () => {
@@ -105,7 +106,7 @@ const FormularioComponente: React.FC = () => {
 
     attachments.forEach(file => formData.append("attachments", file));
     try {
-      const response = await fetch("http://localhost:8080/api/tickets/create", {
+      const response = await fetch(`${API_ENDPOINTS.TICKETS}/create`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

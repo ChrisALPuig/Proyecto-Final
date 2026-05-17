@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext.tsx';
+import { API_ENDPOINTS } from '../config/apiConfig';
 
 export interface CartItem {
   id: string;
@@ -48,7 +49,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return;
       }
 
-      const res = await fetch('http://localhost:8080/api/cart', {
+      const res = await fetch(`${API_ENDPOINTS.CART}`, {
         credentials: 'include',
         headers: authHeaders,
       });
@@ -102,7 +103,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     try {
       console.log('useCart.addToCart headers', authHeaders);
-      const res = await fetch(`http://localhost:8080/api/cart/${item.id}`, {
+      const res = await fetch(`${API_ENDPOINTS.CART}/${item.id}`, {
         method: 'POST',
         credentials: 'include',
         headers: authHeaders,
@@ -128,7 +129,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCartItems(prev => prev.filter(i => i.id !== itemId));
 
     try {
-      const res = await fetch(`http://localhost:8080/api/cart/${itemId}`, {
+      const res = await fetch(`${API_ENDPOINTS.CART}/${itemId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: authHeaders,
@@ -155,7 +156,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
 
     try {
-      const res = await fetch(`http://localhost:8080/api/cart/${itemId}?quantity=${quantity}`, {
+      const res = await fetch(`${API_ENDPOINTS.CART}/${itemId}?quantity=${quantity}`, {
         method: 'PUT',
         credentials: 'include',
         headers: authHeaders,
@@ -179,7 +180,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setCartItems([]);
     try {
-      const res = await fetch('http://localhost:8080/api/cart', {
+      const res = await fetch(`${API_ENDPOINTS.CART}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: authHeaders,

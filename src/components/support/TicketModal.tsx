@@ -3,6 +3,7 @@ import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useNotification } from "../../contexts/NotificationContext.tsx";
 import { replyToTicket } from "../../services/ticketService.ts";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
+import { API_ENDPOINTS } from "../../config/apiConfig";
 import "./TicketModal.css";
 
 interface Ticket {
@@ -76,7 +77,7 @@ const TicketModal: React.FC<TicketModalProps> = ({
   const submitCloseTicket = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8080/api/tickets/${ticket.id}/status`, {
+      const res = await fetch(`${API_ENDPOINTS.TICKETS}/${ticket.id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

@@ -1,5 +1,7 @@
+import { API_ENDPOINTS, AUTH_ENDPOINTS } from '../config/apiConfig';
+
 export const generate2FAQR = async (token: string) => {
-  const response = await fetch('http://localhost:8080/api/2fa/setup', {
+  const response = await fetch(`${API_ENDPOINTS.TWO_FA}/setup`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -15,7 +17,7 @@ export const generate2FAQR = async (token: string) => {
 };
 
 export const verify2FACode = async (token: string, code: string) => {
-  const response = await fetch('http://localhost:8080/api/2fa/verify', {
+  const response = await fetch(`${API_ENDPOINTS.TWO_FA}/verify`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -32,7 +34,7 @@ export const verify2FACode = async (token: string, code: string) => {
 };
 
 export const disable2FA = async (token: string, code: string) => {
-  const response = await fetch('http://localhost:8080/api/2fa/disable', {
+  const response = await fetch(`${API_ENDPOINTS.TWO_FA}/disable`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -49,7 +51,7 @@ export const disable2FA = async (token: string, code: string) => {
 };
 
 export const get2FAStatus = async (token: string) => {
-  const response = await fetch('http://localhost:8080/api/2fa/status', {
+  const response = await fetch(`${API_ENDPOINTS.TWO_FA}/status`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -63,7 +65,7 @@ export const get2FAStatus = async (token: string) => {
 };
 
 export const verifyLogin2FA = async (verification: { email?: string; username?: string; code: string }) => {
-  const response = await fetch('http://localhost:8080/auth/login/verify', {
+  const response = await fetch(`${AUTH_ENDPOINTS.LOGIN_VERIFY}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import { useLanguage } from "../../contexts/LanguageContext.tsx";
+import { AUTH_ENDPOINTS } from "../../config/apiConfig";
 import Verify2FA from "./Verify2FA";
 import ForgotPassword from "./ForgotPassword";
 import { verifyLogin2FA } from "../../services/twoFactorService.ts";
@@ -48,7 +49,7 @@ const Login: React.FC<LoginProps> = ({ isModal = false, onClose }) => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8080/auth/login", {
+      const res = await fetch(`${AUTH_ENDPOINTS.LOGIN}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
