@@ -13,6 +13,8 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -211,13 +213,22 @@ public class PaymentController {
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
-    public List<Payment> getUserPayments(@AuthenticationPrincipal CustomUserDetails currentUserDetails) {
+    public ResponseEntity<List<Payment>> getUserPayments(@AuthenticationPrincipal CustomUserDetails currentUserDetails) {
         if (currentUserDetails == null) {
             throw new RuntimeException("Usuario no autenticado");
         }
         User currentUser = userRepository.findByUsername(currentUserDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return paymentRepository.findByUserOrderByCreatedAtDesc(currentUser);
+        
+        List<Payment> payments = paymentRepository.findByUserOrderByCreatedAtDesc(currentUser);
+        
+        // Agregar headers de caché para mejorar performance en el cliente
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CACHE_CONTROL, "private, max-age=60"); // 1 minuto
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(payments);
     }
 
     @PostMapping("/mark-paid/{orderId}")

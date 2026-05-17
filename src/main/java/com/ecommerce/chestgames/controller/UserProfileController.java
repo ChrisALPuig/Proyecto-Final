@@ -10,6 +10,8 @@ import com.ecommerce.chestgames.repository.UserRepository;
 import com.ecommerce.chestgames.security.CustomUserDetails;
 import com.ecommerce.chestgames.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,9 +29,17 @@ public class UserProfileController {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/profile")
-    public UserProfileResponse getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<UserProfileResponse> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        return mapToResponse(user);
+        UserProfileResponse response = mapToResponse(user);
+        
+        // Agregar headers de caché para mejorar performance
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CACHE_CONTROL, "private, max-age=300"); // 5 minutos
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(response);
     }
 
     @PutMapping("/profile")
