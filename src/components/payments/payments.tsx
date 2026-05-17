@@ -82,17 +82,38 @@ const Payments = () => {
       if (paymentMethod === 'card') {
         const items = cartItems.map(item => ({ price: item.price, quantity: item.quantity }));
 
-        // 1️⃣ Crear PaymentIntent en backend
-        const res = await fetch(`${API_ENDPOINTS.PAYMENTS}/create-intent`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ items, orderId }),
-        });
+        // 1️⃣ Crear PaymentIntent en backend CON TIMEOUT
+        let res;
+        let retries = 0;
+        const maxRetries = 2;
+        
+        while (retries < maxRetries) {
+          try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000); // 15 segundos
+            
+            res = await fetch(`${API_ENDPOINTS.PAYMENTS}/create-intent`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ items, orderId }),
+              signal: controller.signal,
+            });
+            clearTimeout(timeout);
+            break;
+          } catch (error) {
+            retries++;
+            if (retries >= maxRetries) {
+              throw error;
+            }
+            // Esperar un poco antes de reintentar
+            await new Promise(r => setTimeout(r, 1000));
+          }
+        }
 
-        const data = await res.json();
+        const data = await res!.json();
         if (!data.clientSecret || !data.paymentId) {
           alert('Error creando PaymentIntent: ' + (data.error || 'desconocido'));
           setLoading(false);
@@ -107,23 +128,24 @@ const Payments = () => {
         const cardElement = elements.getElement(CardElement);
         if (!cardElement) { alert('CardElement no encontrado'); setLoading(false); return; }
 
-        // 2️⃣ Confirmar pago con Stripe
+        // 2️⃣ Confirmar pago con Stripe (Stripe ya tiene timeouts internos)
         const result = await stripe.confirmCardPayment(clientSecret, {
           payment_method: { card: cardElement, billing_details: { name: formData.cardName || 'Cliente' } },
         });
 
         if (result.error) {
           alert(result.error.message);
+          setLoading(false);
         } else if (result.paymentIntent?.status === 'succeeded') {
-          // 3️⃣ Actualizar paymentId en backend (opcional)
-          await fetch(`${API_ENDPOINTS.PAYMENTS}/update/${paymentId}`, {
+          // 3️⃣ Actualizar paymentId en backend (sin bloquear si falla)
+          fetch(`${API_ENDPOINTS.PAYMENTS}/update/${paymentId}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ stripePaymentId: result.paymentIntent.id }),
-          });
+          }).catch(err => console.error('Error actualizando pago:', err));
 
           if (!saveCardData) {
             await clearCardDetails();
@@ -141,6 +163,7 @@ const Payments = () => {
           });
 
           history.push('/success');
+          setLoading(false);
         }
 
       } else if (paymentMethod === 'paypal') {
@@ -192,9 +215,9 @@ const Payments = () => {
         <div className="lista-carrito">
           <div className="item-carrito">
             <div className="circulo-payment">1</div>
-            <span className="texto-carrito-payment">{t('yourCart')}</span>
+            <span className="texto-carrito-payment">{t('Your Cart')}</span>
             <div className="circulo2-payment">2</div>
-            <span className="texto-carrito2-payment">{t('payment')}</span>
+            <span className="texto-carrito2-payment">{t('Payment')}</span>
           </div>
         </div>
 
@@ -208,7 +231,7 @@ const Payments = () => {
                 className={`payment-option ${paymentMethod === 'card' ? 'active' : ''}`}
                 onClick={() => setPaymentMethod(paymentMethod === 'card' ? '' : 'card')}
               >
-                💳 {t('creditDebitCard')}
+                💳 {t('Credit Debit Card')}
               </button>
                   {paymentMethod === 'card' && (
                 <div className='payment-form card-form'>
@@ -237,13 +260,13 @@ const Payments = () => {
                 className={`payment-option ${paymentMethod === 'paypal' ? 'active' : ''}`}
                 onClick={() => setPaymentMethod(paymentMethod === 'paypal' ? '' : 'paypal')}
               >
-                🅿️ {t('paypal')}
+                🅿️ {t('Paypal')}
               </button>
-              {paymentMethod === 'paypal' && (
+              {paymentMethod === 'Paypal' && (
                 <div className='payment-form paypal-form'>
                   <input
-                    name="paypalEmail"
-                    placeholder={t('paypalEmail')}
+                    name="paypal Email"
+                    placeholder={t('paypal Email')}
                     value={formData.paypalEmail}
                     onChange={handleInputChange}
                   />
@@ -259,10 +282,10 @@ const Payments = () => {
               </button>
               {paymentMethod === 'bank' && (
                 <div className='payment-form bank-form'>
-                  <input name="bankHolder" placeholder={t('bankAccountHolder')} value={formData.bankHolder} onChange={handleInputChange} />
+                  <input name="bankHolder" placeholder={t('bank Account Holder')} value={formData.bankHolder} onChange={handleInputChange} />
                   <input name="bankAccount" placeholder={t('iban')} value={formData.bankAccount} onChange={handleInputChange} />
                   <input name="bankCode" placeholder={t('bicBankCode')} value={formData.bankCode} onChange={handleInputChange} />
-                  <p className='payment-info'>{t('transferReference')} {orderId}</p>
+                  <p className='payment-info'>{t('transfer Reference')} {orderId}</p>
                 </div>
               )}
             </div>
@@ -270,7 +293,7 @@ const Payments = () => {
 
           {/* RESUMEN */}
           <div className="caja-resumen">
-            <h2>{t('orderSummary')}</h2>
+            <h2>{t('Order Summary')}</h2>
 
             {cartItems.map(item => (
               <div key={item.id} className='product-preview'>
@@ -283,7 +306,7 @@ const Payments = () => {
             ))}
 
             <div className="linea-resumen">
-              <span>{t('total')}</span>
+              <span>{t('Total')}</span>
               <span>{total.toFixed(2)}€</span>
             </div>
 
@@ -299,7 +322,7 @@ const Payments = () => {
           onClick={() => history.push('/carrito-juego')}
           type="button"
         >
-          ← {t('backToCart')}
+          ← {t('Back To Cart')}
         </button>
 
       </div>
