@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/tickets";
+import { API_ENDPOINTS } from "../config/apiConfig";
+
+const API_URL = API_ENDPOINTS.TICKETS;
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");

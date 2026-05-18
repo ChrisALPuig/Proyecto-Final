@@ -180,13 +180,13 @@
   color: #9ca3af;
 }
 
-.loading, .error {
+.error {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   font-size: 1.2rem;
-  color: #1f2937;
+  color: #ef4444;
 }
 
 @media (max-width: 768px) {

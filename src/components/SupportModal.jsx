@@ -4,6 +4,7 @@ import {
   replyToSupport,
   getMessages,
 } from "../services/supportService";
+import { API_BASE_URL } from "../config/apiConfig";
 import toast from "react-hot-toast";
 import "./SupportModal.css";
 
@@ -71,7 +72,7 @@ export default function SupportModal({ request, onClose }) {
   const isImage = fileName?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
   const isPDF = fileName?.endsWith(".pdf");
 
-  const fileUrl = `http://localhost:8080/uploads/${fileName}`;
+  const fileUrl = `${API_BASE_URL.replace('/api', '')}/uploads/${fileName}`;
 
   return (
     <div key={idx} className="attachment-item">

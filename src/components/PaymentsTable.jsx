@@ -71,7 +71,7 @@ export default function PaymentsTable() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Order ID, Payment ID, producto o usuario"
+            placeholder="Order ID, Payment ID, producto"
           />
         </div>
 
@@ -115,7 +115,6 @@ export default function PaymentsTable() {
               <th>ID de Pago</th>
               <th>Order ID</th>
               <th>Producto</th>
-              <th>Usuario</th>
               <th>Monto (€)</th>
               <th>Fecha</th>
               <th>Status</th>
@@ -125,7 +124,7 @@ export default function PaymentsTable() {
           <tbody>
             {filteredPayments.length === 0 ? (
               <tr>
-                <td colSpan="8" className="no-data">
+                <td colSpan="7" className="no-data">
                   No se encontraron pagos.
                 </td>
               </tr>
@@ -135,7 +134,6 @@ export default function PaymentsTable() {
                   <td className="order-id">{payment.paymentId || payment.id}</td>
                   <td>{payment.orderId || "-"}</td>
                   <td>{payment.productName || "-"}</td>
-                  <td>{payment.user?.username || payment.user?.email || "-"}</td>
                   <td className="amount">{formatMoney(payment.amount)}</td>
                   <td className="date">{formatDate(payment.createdAt)}</td>
                   <td>

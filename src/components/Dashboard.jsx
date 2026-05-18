@@ -8,6 +8,7 @@ import TopGamesChart from "./TopGamesChart";
 import PaymentStatusChart from "./PaymentStatusChart";
 import FiltersBar from "./FiltersBar";
 import RecentTransactions from "./RecentTransactions";
+import LoadingSpinner from "./LoadingSpinner";
 import { TrendingUp, DollarSign, ShoppingCart, Users, AlertCircle, Target } from "lucide-react";
 import "./Dashboard.css";
 
@@ -120,7 +121,7 @@ export default function Dashboard() {
     return Object.entries(statusCount).map(([name, value]) => ({ name, value }));
   }, [filteredPayments]);
 
-  if (loading) return <div className="loading">Loading dashboard...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">Error: {error}</div>;
 
   return (

@@ -1,9 +1,8 @@
 import { parseJsonResponse } from "./fetchUtils";
-
-const API_URL = "http://localhost:8080/auth";
+import { AUTH_ENDPOINTS } from "../config/apiConfig";
 
 export async function loginAdmin({ username, password }) {
-  const res = await fetch(`${API_URL}/login`, {
+  const res = await fetch(`${AUTH_ENDPOINTS.LOGIN}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),

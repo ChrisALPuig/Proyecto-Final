@@ -6,6 +6,7 @@ import {
 } from "../services/supportService";
 import SupportModal from "./SupportModal";
 import toast from "react-hot-toast";
+import { Eye, Clock, Trash2 } from "lucide-react";
 import "./SupportTable.css";
 
 const PAGE_SIZE = 5;
@@ -116,13 +117,20 @@ export default function SupportTable() {
               <td>{r.subject}</td>
               <td>{r.status}</td>
               <td>
-                <button onClick={() => setSelectedRequest(r)}>Ver</button>
-                <button onClick={() => handleUpdateStatus(r.id, "IN_PROGRESS")}>
-                  En progreso
-                </button>
-                <button onClick={() => handleDelete(r.id)}>
-                  Eliminar
-                </button>
+                <div className="action-buttons">
+                  <button className="btn-view" onClick={() => setSelectedRequest(r)} title="Ver detalles">
+                    <Eye size={16} />
+                    <span>Ver</span>
+                  </button>
+                  <button className="btn-progress" onClick={() => handleUpdateStatus(r.id, "IN_PROGRESS")} title="Marcar en progreso">
+                    <Clock size={16} />
+                    <span>Progreso</span>
+                  </button>
+                  <button className="btn-delete" onClick={() => handleDelete(r.id)} title="Eliminar solicitud">
+                    <Trash2 size={16} />
+                    <span>Eliminar</span>
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

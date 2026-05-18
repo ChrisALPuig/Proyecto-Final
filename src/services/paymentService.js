@@ -1,11 +1,11 @@
 // src/services/paymentService.js
 import { parseJsonResponse } from "./fetchUtils";
-const API_URL = "http://localhost:8080/api/payments";
+import { API_ENDPOINTS } from "../config/apiConfig";
 
 export const getAllPayments = async () => {
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch(API_URL, {
+    const res = await fetch(API_ENDPOINTS.PAYMENTS, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

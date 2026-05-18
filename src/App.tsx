@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { jwtDecode } from "jwt-decode";
 import Sidebar from "./components/Sidebar";
-import PaymentsTable from "./components/PaymentsTable";
-import SupportTable from "./components/SupportTable";
-import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import "./App.css";
+
+// Lazy load heavy components
+const PaymentsTable = lazy(() => import("./components/PaymentsTable"));
+const SupportTable = lazy(() => import("./components/SupportTable"));
+const Dashboard = lazy(() => import("./components/Dashboard"));
 
 type User = {
   token: string;
@@ -84,9 +86,11 @@ export default function App() {
           </div>
         </div>
         <div className="tab-content">
-          {activeTab === "dashboard" && <Dashboard />}
-          {activeTab === "payments" && <PaymentsTable />}
-          {activeTab === "support" && <SupportTable />}
+          <Suspense fallback={<div></div>}>
+            {activeTab === "dashboard" && <Dashboard />}
+            {activeTab === "payments" && <PaymentsTable />}
+            {activeTab === "support" && <SupportTable />}
+          </Suspense>
         </div>
       </main>
     </div>
