@@ -1,41 +1,50 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+
   build: {
-    // Optimizaciones de build
     target: 'ES2020',
     minify: 'terser',
+
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
-      }
+        drop_debugger: true,
+      },
     },
-    // Code splitting para mejor caching
+
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor': ['react', 'react-dom'],
-          'charts': ['recharts'],
-          'utils': ['date-fns', 'jwt-decode', 'framer-motion']
-        }
-      }
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('recharts')) {
+              return 'charts'
+            }
+
+            if (
+              id.includes('date-fns') ||
+              id.includes('jwt-decode') ||
+              id.includes('framer-motion')
+            ) {
+              return 'utils'
+            }
+
+            return 'vendor'
+          }
+        },
+      },
     },
-    // Optimización de assets
+
     assetsInlineLimit: 4096,
     chunkSizeWarningLimit: 1000,
     cssCodeSplit: true,
   },
-  // Optimizaciones de desarrollo
+
   server: {
-    middlewareMode: true,
+    port: 5173,
+    open: true,
+    cors: true,
   },
-  // Optimizaciones generales
-  esbuild: {
-    target: 'ES2020',
-    exclude: []
-  }
 })
