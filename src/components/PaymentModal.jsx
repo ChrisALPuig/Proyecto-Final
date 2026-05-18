@@ -67,10 +67,6 @@ export default function PaymentModal({ payment, onClose }) {
                 <label>Estado</label>
                 <p className={`status ${payment.status?.toLowerCase()}`}>{payment.status || "-"}</p>
               </div>
-              <div className="info-item">
-                <label>Usuario</label>
-                <p>{payment.user?.username || payment.user?.email || "-"}</p>
-              </div>
             </div>
           </div>
 

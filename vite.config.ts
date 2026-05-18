@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
 
   build: {
-    target: 'ES2020',
+    target: 'es2020',
     minify: 'terser',
 
     terserOptions: {
