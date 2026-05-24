@@ -93,6 +93,23 @@ La aplicación estará disponible en:
 
 ---
 
+# 4. Frontend Admin (React) (Rama Frontend-admin)
+
+## Instalar dependencias
+
+    cd Proyecto-Final-frontend-admin
+    npm install
+
+## Ejecutar proyecto
+
+    npm run dev
+
+La aplicación estará disponible en:
+
+    http://localhost:5174
+
+---
+
 # Autor
 
 Proyecto desarrollado como trabajo de final de curso.
